@@ -75,7 +75,7 @@ time = time_strings([params.nout, $
 ;; ;; @den1_ktt_frames
 
 ;; @get_den1_plane
-@den1_raw_frames
+;; @den1_raw_frames
 ;; @get_efield_plane
 ;; @efield_raw_frames
 ;; @efield_init_plots
