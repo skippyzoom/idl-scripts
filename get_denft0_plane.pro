@@ -1,5 +1,5 @@
 ;+
-; Script for reading phift from EPPIC simulations
+; Script for reading denft0 from EPPIC simulations
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
@@ -9,7 +9,7 @@
 @import_plane_defaults
 
 ;;==Load a plane of data
-phift = import_plane_data('phift', $
+denft0 = import_plane_data('denft0', $
                            timestep = long(time.index), $
                            axes = axes, $
                            ranges = ranges, $
