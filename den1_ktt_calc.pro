@@ -10,7 +10,7 @@
 ;;  sets of ranges)
 file_description = 'full'
 
-;;==Select a subarray
+;;==Select a subarray of which to calculate the FFT
 x0 = 0
 xf = nx
 y0 = 0

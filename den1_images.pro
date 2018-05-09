@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare frame type
-frame_type = '.pdf'
+if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
@@ -18,15 +18,26 @@ x0 = nx/2-256
 xf = nx/2+256
 y0 = ny/2-256
 yf = ny/2+256
+;; x0 = 0
+;; xf = nx
+;; y0 = 0
+;; yf = ny
+
 
 ;;==Load graphics keywords for den1
 @default_image_kw
 dsize = size(den1)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(yf-y0)/float(xf-x0)
-image_kw['min_value'] = -max(abs(den1[*,*,1:*]))
-image_kw['max_value'] = +max(abs(den1[*,*,1:*]))
+data_aspect = float(yf-y0)/(xf-x0)
+;; image_kw['min_value'] = -max(abs(den1[*,*,1:*]))
+;; image_kw['max_value'] = +max(abs(den1[*,*,1:*]))
+;; image_kw['min_value'] = -0.15
+;; image_kw['max_value'] = +0.15
+image_kw['min_value'] = -0.4
+image_kw['max_value'] = +0.4
+;; image_kw['min_value'] = min(den1)
+;; image_kw['max_value'] = max(den1)
 image_kw['rgb_table'] = 5
 image_kw['xtitle'] = 'Zonal [m]'
 image_kw['ytitle'] = 'Vertical [m]'
@@ -41,7 +52,7 @@ colorbar_kw['font_size'] = 12.0
 colorbar_kw['major'] = 5
 colorbar_kw['minor'] = 3
 
-;;==Create image frame(s) of den1 data
+;;==Create images
 if n_elements(file_description) eq 0 then $
    file_description = ''
 filename = expand_path(path+path_sep()+'frames')+ $

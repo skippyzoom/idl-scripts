@@ -7,7 +7,7 @@
 ;-
 
 ;;==Declare frame type
-frame_type = '.pdf'
+if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Get size of array
 dsize = size(rms_xy2kt)

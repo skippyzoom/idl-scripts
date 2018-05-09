@@ -36,7 +36,7 @@ ydata = shift(ydata,ny/2)
 dsize = size(denft1)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(ny)/nx
+data_aspect = float(yf-y0)/(xf-x0)
 image_kw['min_value'] = -60
 image_kw['max_value'] = 0
 image_kw['rgb_table'] = 39
@@ -49,7 +49,7 @@ image_kw['xrange'] = [-!pi,+!pi]
 image_kw['yrange'] = [   0,+!pi]
 colorbar_kw['title'] = '$Power [dB]$'
 
-;;==Create image frame of denft1 data
+;;==Create images
 filename = path+path_sep()+'frames'+ $
            path_sep()+'denft1-'+time.index+ $
            name_info+'.pdf'

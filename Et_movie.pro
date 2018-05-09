@@ -28,7 +28,7 @@ yf = ny
 dsize = size(Et)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(ny)/nx
+data_aspect = float(yf-y0)/(xf-x0)
 image_kw['min_value'] = -!pi
 image_kw['max_value'] = +!pi
 ct = get_custom_ct(2)
@@ -39,7 +39,7 @@ image_kw['xticklen'] = 0.02
 image_kw['yticklen'] = 0.02*data_aspect
 colorbar_kw['title'] = '$tan^{-1}(\delta E)$ [rad.]'
 
-;;==Create image movie of den1 data
+;;==Create images
 if n_elements(file_description) eq 0 then $
    file_description = ''
 filename = expand_path(path+path_sep()+'movies')+ $

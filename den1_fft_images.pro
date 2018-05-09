@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare frame type
-frame_type = '.pdf'
+if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
@@ -24,7 +24,7 @@ yf = ny/2+256
 dsize = size(fdata)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(ny)/nx
+data_aspect = float(yf-y0)/(xf-x0)
 image_kw['min_value'] = -30
 image_kw['max_value'] = 0
 image_kw['rgb_table'] = 39
@@ -54,7 +54,7 @@ else $
               '-'+time.index+ $
               '.'+get_extension(frame_type)
 
-;;==Create image frame(s) of den1 spatial FFT
+;;==Create images
 data_graphics, fdata[x0:xf-1,y0:yf-1,*], $
                kxdata[x0:xf-1],kydata[y0:yf-1], $
                /make_frame, $

@@ -33,7 +33,7 @@ ydata = 2*!pi*fftfreq(ny,dy)
 ydata = shift(ydata,ny/2)
 
 ;;==Declare file type
-movie_type = '.mp4'
+if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 
 ;;==Declare specific graphics keywords
 @denft1_kw

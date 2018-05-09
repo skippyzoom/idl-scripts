@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare file type
-frame_type = '.pdf'
+if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Load graphics keywords for interpolated FFT plots
 plot_kw = dictionary()

@@ -6,25 +6,25 @@
 ;-
 
 ;;==Declare file type
-movie_type = '.mp4'
+if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
 ;;  sets of ranges)
-file_description = 'full'
+file_description = 'center512'
 
 ;;==Declare graphics ranges wrt current plane
-x0 = 0
-xf = nx
-y0 = 0
-yf = ny
+x0 = nx/2-256
+xf = nx/2+256
+y0 = ny/2-256
+yf = ny/2+256
 
 ;;==Load graphics keywords for den1
 @default_image_kw
 dsize = size(den1)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(ny)/nx
+data_aspect = float(yf-y0)/(xf-x0)
 image_kw['min_value'] = -max(abs(den1[x0:xf-1,y0:yf-1,1:*]))
 image_kw['max_value'] = +max(abs(den1[x0:xf-1,y0:yf-1,1:*]))
 image_kw['rgb_table'] = 5
@@ -44,7 +44,7 @@ colorbar_kw['font_size'] = 18
 colorbar_kw['font_name'] = 'Times'
 colorbar_kw['major'] = 5
 
-;;==Create image movie of den1 data
+;;==Create movie
 if n_elements(file_description) eq 0 then $
    file_description = ''
 filename = expand_path(path+path_sep()+'movies')+ $

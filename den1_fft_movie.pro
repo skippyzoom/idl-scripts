@@ -9,27 +9,27 @@
 ;    making a movie of a long run can take prohibitively long.
 ;-
 ;;==Declare file type
-movie_type = '.mp4'
+if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
 ;;  sets of ranges)
-file_description = 'center512'
+file_description = 'full'
 
 ;;==Declare image ranges
-x0 = nx/2-256
-xf = nx/2+256
-y0 = ny/2-256
-yf = ny/2+256
+x0 = 0
+xf = nx
+y0 = 0
+yf = ny
 
 ;;==Load graphics keywords for FFT images
 @default_image_kw
 dsize = size(fdata)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(ny)/nx
-image_kw['min_value'] = -50
-image_kw['max_value'] = -20
+data_aspect = float(yf-y0)/(xf-x0)
+image_kw['min_value'] = -30
+image_kw['max_value'] = 0
 image_kw['rgb_table'] = 39
 image_kw['xtitle'] = '$k_{Zon}$ [m$^{-1}$]'
 image_kw['ytitle'] = '$k_{Ver}$ [m$^{-1}$]'
@@ -52,7 +52,7 @@ colorbar_kw['font_size'] = 18
 colorbar_kw['font_name'] = 'Times'
 colorbar_kw['major'] = 7
 
-;;==Create image movie of den1 spatial FFT
+;;==Create movie
 filename = expand_path(path+path_sep()+'movies')+ $
            path_sep()+'den1_fft'+ $
            '.'+get_extension(movie_type)

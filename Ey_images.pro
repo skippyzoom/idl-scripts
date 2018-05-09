@@ -11,7 +11,7 @@
 ;-
 
 ;;==Declare frame type
-frame_type = '.pdf'
+if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
@@ -29,7 +29,7 @@ yf = ny
 dsize = size(Ey)
 nx = dsize[1]
 ny = dsize[2]
-data_aspect = float(ny)/nx
+data_aspect = float(yf-y0)/(xf-x0)
 image_kw['min_value'] = -max(abs(Ey[*,*,1:*]))
 image_kw['max_value'] = +max(abs(Ey[*,*,1:*]))
 image_kw['rgb_table'] = 5
@@ -39,7 +39,7 @@ image_kw['xticklen'] = 0.02
 image_kw['yticklen'] = 0.02*data_aspect
 colorbar_kw['title'] = '$\delta E_y$ [V/m]'
 
-;;==Create image frame(s) of Ey data
+;;==Create images
 if n_elements(file_description) eq 0 then $
    file_description = ''
 filename = expand_path(path+path_sep()+'frames')+ $
