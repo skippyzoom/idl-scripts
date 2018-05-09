@@ -21,7 +21,8 @@ if n_elements(name) ne 0 then $
                                   info_path = info_path, $
                                   data_path = data_path, $
                                   data_type = data_type, $
-                                  data_isft = data_isft)
+                                  data_isft = data_isft, $
+                                  /verbose)
 
 ;;==Load plane-appropriate parameters
 pp = import_plane_params(path = info_path, $

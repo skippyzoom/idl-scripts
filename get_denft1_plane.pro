@@ -18,7 +18,8 @@ denft1 = import_plane_data('denft1', $
                            info_path = info_path, $
                            data_path = data_path, $
                            data_type = 6, $
-                           data_isft = 1B)
+                           data_isft = 1B, $
+                           /verbose)
 
 ;;==Load plane-appropriate parameters
 pp = import_plane_params(path = info_path, $

@@ -18,7 +18,8 @@ fluxz1 = import_plane_data('fluxz1', $
                            info_path = info_path, $
                            data_path = data_path, $
                            data_type = 4, $
-                           data_isft = 0B)
+                           data_isft = 0B, $
+                           /verbose)
 
 ;;==Load plane-appropriate parameters
 pp = import_plane_params(path = info_path, $
