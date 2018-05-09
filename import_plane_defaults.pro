@@ -1,5 +1,5 @@
 ;+
-; Common default values for import_data_plane.pro
+; Common default values for import_plane_data.pro
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
