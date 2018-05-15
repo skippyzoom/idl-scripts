@@ -10,5 +10,11 @@
 if n_elements(path) eq 0 then path = './'
 if n_elements(axes) eq 0 then axes = 'xy'
 
+;;==Declare filename
+filename = expand_path(path)+path_sep()+ $
+           'efield_'+axes+ $
+           '-subsample_2'+ $
+           '.sav'
+
 ;;==Save the arrays
-save, Ex,Ey,filename=expand_path(path)+path_sep()+'efield_'+axes+'.sav'
+save, Ex,Ey,filename=filename
