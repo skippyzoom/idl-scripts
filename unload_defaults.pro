@@ -14,4 +14,10 @@ delvar, $
    data_type, $
    data_isft, $
    ranges, $
-   time
+   time, $
+   frame, $
+   img, $
+   clr, $
+   plt, $
+   leg, $
+   txt, $
