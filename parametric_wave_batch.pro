@@ -9,7 +9,15 @@
 ;-
 
 @unload_defaults
-path = get_base_dir()+path_sep()+'parametric_wave/run015/'
+@unload_data
+path = get_base_dir()+path_sep()+'parametric_wave/nue_2.0e4-amp_0.05-E0_9.0/'
+rotate = 0
+axes = 'xy'
+@parametric_wave
+
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'parametric_wave/nue_3.0e4-amp_0.05-E0_9.0/'
 rotate = 0
 axes = 'xy'
 @parametric_wave

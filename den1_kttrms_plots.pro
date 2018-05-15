@@ -28,15 +28,19 @@ color = bytarr(nl,3)
 for il=0,nl-1 do $
    color[il,*] = rgb_table[il*(256/nl),*]
 
+;;==Plot the first wavelength
 plt = plot(1e3*params.dt*time.index, $
            rms_xy2kt[0,*], $
            color = reform(color[0,*]), $
            xstyle = 1, $
            xtitle = 'Time [ms]', $
            ytitle = '$\langle\delta n(k)\rangle$', $
+           yrange = [2e-5,5e-5], $
            ystyle = 0, $
            name = str_lam[0], $
            /buffer)
+
+;;==Plot additional wavelengths, if necessary
 opl = objarr(nl-1)
 for il=1,nl-1 do $
    opl[il-1] = plot(1e3*params.dt*time.index, $
@@ -46,6 +50,8 @@ for il=1,nl-1 do $
                     /overplot, $
                     name = str_lam[il], $
                     /buffer)
+
+;;==Add a legend
 xrange = plt.xrange
 yrange = plt.yrange
 leg = legend(target = [plt,opl], $
@@ -55,6 +61,7 @@ leg = legend(target = [plt,opl], $
              position = [xrange[1],yrange[0]], $
              /data)
 
+;;==Save plots
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1_rms_xy2kt'+ $
            '.'+get_extension(frame_type)

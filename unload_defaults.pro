@@ -1,6 +1,6 @@
 ;+
-; Script to unload variable defaults and other quantities that may
-; need to change between runs.
+; Script to unload variable defaults and other non-data quantities
+; that may need to change between runs.
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------

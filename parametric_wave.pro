@@ -5,7 +5,7 @@
 ;------------------------------------------------------------------------------
 ;-
 
-path = get_base_dir()+path_sep()+'parametric_wave/run018/'
+;; path = get_base_dir()+path_sep()+'parametric_wave/nue_2.0e4-amp_0.05-E0_9.0/'
 if n_elements(rotate) eq 0 then rotate = 0
 if n_elements(axes) eq 0 then axes = 'xy'
 if n_elements(path) eq 0 then path = './'
@@ -18,7 +18,11 @@ params['nt_max'] = nt_max
 frame_type = '.pdf'
 movie_type = '.mp4'
 
-time = time_strings(params.nout*lindgen(params.nt_max), $
+;; time = time_strings(params.nout*lindgen(params.nt_max), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
@@ -45,19 +49,20 @@ time = time_strings(params.nout*lindgen(params.nt_max), $
 ;;              [  nt_max/4,  nt_max/2], $
 ;;              [  nt_max/2,3*nt_max/4], $
 ;;              [3*nt_max/4,2*(nt_max/2)]]
+;; @den1_movie
 ;; @den1_ktt_calc
 ;; @den1_ktt_frames
 ;; @den1_ktt_movie
-;; @den1_movie
 ;; @den1_fft_calc
 ;; @den1_fft_movie
 ;; @den1_kttrms_calc
-;; @den1_kttrms_frames
-;; @get_efield_plane
-;; @save_efield_plane
+;; @den1_kttrms_plots
+;; @den1_ktw_test
+@get_efield_plane
+@save_efield_plane
 ;; @restore_efield_plane
 ;; @Ex_ymean_movie
-;; @efield_init_plots
+@efield_init_plots
 ;; @get_den1_plane
 ;; @den1_ktt_calc
 ;; @den1_ktt_frames

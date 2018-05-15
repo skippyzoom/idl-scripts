@@ -11,13 +11,13 @@ if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
 ;;  sets of ranges)
-file_description = 'center512'
+file_description = 'center256'
 
 ;;==Declare graphics ranges wrt current plane
-x0 = nx/2-256
-xf = nx/2+256
-y0 = ny/2-256
-yf = ny/2+256
+x0 = nx/2-128
+xf = nx/2+128
+y0 = ny/2-128
+yf = ny/2+128
 
 ;;==Load graphics keywords for den1
 @default_image_kw
