@@ -6,7 +6,7 @@
 ;------------------------------------------------------------------------------
 ;-
 
-;;==Declare frame type
+;;==Declare file type
 if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 
 ;;==Declare data scale

@@ -5,7 +5,7 @@
 ;------------------------------------------------------------------------------
 ;-
 
-;; path = get_base_dir()+path_sep()+'parametric_wave/nue_2.0e4-amp_0.05-E0_9.0/'
+;; path = get_base_dir()+path_sep()+'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0/'
 if n_elements(rotate) eq 0 then rotate = 0
 if n_elements(axes) eq 0 then axes = 'xy'
 if n_elements(path) eq 0 then path = './'
@@ -22,10 +22,10 @@ movie_type = '.mp4'
 ;;                     dt = params.dt, $
 ;;                     scale = 1e3, $
 ;;                     precision = 2)
-time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
-                    dt = params.dt, $
-                    scale = 1e3, $
-                    precision = 2)
+;; time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
 ;; time = time_strings(params.nout* $
 ;;                     [1,5,10, $
 ;;                      params.nt_max/4, $
@@ -33,13 +33,13 @@ time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
 ;;                      3*params.nt_max/4, $
 ;;                      params.nt_max-1], $
 ;;                     dt=params.dt,scale=1e3,precision=2)
-;; time = time_strings([params.nout, $
-;;                      5*params.nout, $
-;;                      10*params.nout, $
-;;                      1152, $
-;;                      3232, $
-;;                      params.nout*(2*(params.nt_max/2))], $
-;;                     dt=params.dt,scale=1e3,precision=2)
+time = time_strings([params.nout, $
+                     5*params.nout, $
+                     10*params.nout, $
+                     1152, $
+                     5056, $
+                     params.nout*(2*(params.nt_max/2))], $
+                    dt=params.dt,scale=1e3,precision=2)
 ;; time = time_strings([0,params.nout], $
 ;;                     dt=params.dt,scale=1e3,precision=2)
 
@@ -59,10 +59,11 @@ time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
 ;; @den1_kttrms_plots
 ;; @den1_ktw_test
 @get_efield_plane
-@save_efield_plane
+;; @save_efield_plane
 ;; @restore_efield_plane
 ;; @Ex_ymean_movie
-@efield_init_plots
+@Ex_ymean_plots
+;; @efield_init_plots
 ;; @get_den1_plane
 ;; @den1_ktt_calc
 ;; @den1_ktt_frames

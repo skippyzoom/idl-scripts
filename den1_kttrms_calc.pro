@@ -13,7 +13,8 @@ if n_elements(den1fft) eq 0 then $
                           shift = [nx/2,ny/2,0])
 
 ;;==Declare lambda (useful later for graphics)
-lambda = [2.0,3.0,4.0,6.0,10.0]
+;; lambda = [2.0,3.0,4.0,6.0,10.0]
+lambda = 3.0*(1+findgen(4))
 
 ;;==Interpolate and calculate RMS in time
 rms_xy2kt = get_rms_xy2kt(den1fft, $
