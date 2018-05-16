@@ -23,10 +23,9 @@ str_lam = "$\lambda$ = "+strcompress(str_lam,/remove_all)+" m"
 ;;==Get a color table
 loadct, 11,rgb_table=rgb_table
 
-;;==Get number of wavelengths
-color = bytarr(nl,3)
-for il=0,nl-1 do $
-   color[il,*] = rgb_table[il*(256/nl),*]
+;;==Declare wavelength color array
+clr = 256*indgen(nl)/(nl-1)
+color = rgb_table[clr,*]
 
 ;;==Plot the first wavelength
 plt = plot(1e3*params.dt*time.index, $
@@ -35,7 +34,7 @@ plt = plot(1e3*params.dt*time.index, $
            xstyle = 1, $
            xtitle = 'Time [ms]', $
            ytitle = '$\langle\delta n(k)\rangle$', $
-           yrange = [2e-5,5e-5], $
+           ;; yrange = [2e-5,5e-5], $
            ystyle = 0, $
            name = str_lam[0], $
            /buffer)
@@ -56,13 +55,21 @@ xrange = plt.xrange
 yrange = plt.yrange
 leg = legend(target = [plt,opl], $
              /auto_text_color, $
-             horizontal_alignment = 'right', $
-             vertical_alignment = 'bottom', $
-             position = [xrange[1],yrange[0]], $
+             ;; horizontal_alignment = 'right', $
+             ;; vertical_alignment = 'bottom', $
+             ;; position = [xrange[1],yrange[0]], $
+             horizontal_alignment = 'left', $
+             vertical_alignment = 'top', $
+             position = [xrange[0],yrange[1]], $
+             sample_width = 0.0, $
+             vertical_spacing = 0.05, $
              /data)
+leg.scale, 2.0,0.9
+leg.translate, 0.005,0.0,/normal
 
 ;;==Save plots
 filename = expand_path(path+path_sep()+'frames')+ $
-           path_sep()+'den1_rms_xy2kt'+ $
+           path_sep()+'den1ktt_rms'+ $
+           ;; '-TEST'+ $
            '.'+get_extension(frame_type)
 frame_save, plt,filename=filename
