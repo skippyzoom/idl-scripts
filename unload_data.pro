@@ -14,6 +14,10 @@ delvar, $
    Ey, $
    Er, $
    Et, $
+   Ex0, $
+   Ey0, $
+   Er0, $
+   Et0, $
    fluxx0, $
    fluxy0, $
    fluxz0, $
