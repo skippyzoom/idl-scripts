@@ -5,7 +5,7 @@
 ;------------------------------------------------------------------------------
 ;-
 
-path = get_base_dir()+path_sep()+'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0/'
+;; path = get_base_dir()+path_sep()+'parametric_wave/nue_3.0e4-amp_0.05-E0_9.0/'
 if n_elements(rotate) eq 0 then rotate = 0
 if n_elements(axes) eq 0 then axes = 'xy'
 if n_elements(path) eq 0 then path = './'
@@ -22,10 +22,10 @@ movie_type = '.mp4'
 ;;                     dt = params.dt, $
 ;;                     scale = 1e3, $
 ;;                     precision = 2)
-;; time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
-;;                     dt = params.dt, $
-;;                     scale = 1e3, $
-;;                     precision = 2)
+time = time_strings(2*params.nout*lindgen(params.nt_max/2+1), $
+                    dt = params.dt, $
+                    scale = 1e3, $
+                    precision = 2)
 ;; time = time_strings(params.nout* $
 ;;                     [1,5,10, $
 ;;                      params.nt_max/4, $
@@ -33,31 +33,37 @@ movie_type = '.mp4'
 ;;                      3*params.nt_max/4, $
 ;;                      params.nt_max-1], $
 ;;                     dt=params.dt,scale=1e3,precision=2)
-time = time_strings([params.nout, $
-                     5*params.nout, $
-                     10*params.nout, $
-                     1152, $
-                     5056, $
-                     params.nout*(2*(params.nt_max/2))], $
-                    dt=params.dt,scale=1e3,precision=2)
+;; time = time_strings([params.nout, $
+;;                      5*params.nout, $
+;;                      10*params.nout, $
+;;                      1152, $
+;;                      5056, $
+;;                      params.nout*(2*(params.nt_max/2))], $
+;;                     dt=params.dt,scale=1e3,precision=2)
 ;; time = time_strings([0,params.nout], $
 ;;                     dt=params.dt,scale=1e3,precision=2)
 
-;; @analyze_moments
-@get_den1_plane
 ;; rms_range = [[         0,  nt_max/4], $
 ;;              [  nt_max/4,  nt_max/2], $
 ;;              [  nt_max/2,3*nt_max/4], $
 ;;              [3*nt_max/4,2*(nt_max/2)]]
+
+;; @analyze_moments
+@get_den1_plane
 ;; @den1_movie
-;; @den1_ktt_calc
+@calc_den1fft_t
+@calc_den1ktt_rms
+@den1ktt_rms_plots
+;; @calc_den1fft_w
+;; @calc_den1ktw
+
+
 ;; @den1_ktt_frames
 ;; @den1_ktt_movie
-;; @den1_fft_calc
 ;; @den1_fft_movie
 ;; @den1_kttrms_calc
 ;; @den1_kttrms_plots
-;; @den1_ktw_test
+
 ;; @get_efield_plane
 ;; @save_efield_plane
 ;; @restore_efield_plane
@@ -67,7 +73,7 @@ time = time_strings([params.nout, $
 ;; @get_den1_plane
 ;; @den1_ktt_calc
 ;; @den1_ktt_frames
-@den1_images
+;; @den1_images
 ;; @efield_images
 ;; @Ex_mean_plots
 ;; @Ey_mean_plots

@@ -5,19 +5,19 @@
 ;------------------------------------------------------------------------------
 ;-
 
-;;==Declare frame type
+;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
 ;;  sets of ranges)
-file_description = 'center512'
+file_description = 'center256'
 
 ;;==Declare image ranges
-x0 = nx/2-256
-xf = nx/2+256
-y0 = ny/2-256
-yf = ny/2+256
+x0 = nx/2-128
+xf = nx/2+128
+y0 = ny/2-128
+yf = ny/2+128
 ;; x0 = 0
 ;; xf = nx
 ;; y0 = 0
