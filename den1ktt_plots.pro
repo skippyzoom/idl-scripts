@@ -1,5 +1,5 @@
 ;+
-; Script for plotting interpolated den1 FFT data. See den1_ktt_calc.pro.
+; Script for plotting interpolated den1 FFT data. See calc_den1ktt.pro
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ else $
    filebase = expand_path(path+path_sep()+'frames')+ $
               path_sep()+'den1-xy2kt'+ $
               '-'+file_description+ $
-              '-'+time.index
-xy2kt_plots, xy2kt, $
+              '-'+time.index           
+xy2kt_plots, den1ktt, $
              data_isdB = to_dB, $
              plot_kw = plot_kw, $
              filebase = filebase, $
