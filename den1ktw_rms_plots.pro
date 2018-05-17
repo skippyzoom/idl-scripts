@@ -1,5 +1,8 @@
 ;+
-; Graphics script for (k,theta,w) interpolated den1
+; Script for creating theta-RMS plots of den1(k,theta,w).
+;
+; Created by Matt Young.
+;------------------------------------------------------------------------------
 ;-
 
 ;;==Set default frame type
@@ -41,7 +44,6 @@ for il=0,nl-1 do $
 filename = expand_path(path)+path_sep()+ $
            'frames'+path_sep()+ $
            'den1ktw_rms-'+lambda.toarray()+'m'+ $
-           '-TEST_new'+ $
            '.'+get_extension(frame_type)
 
 ;;==Save individual frames

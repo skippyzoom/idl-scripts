@@ -55,9 +55,6 @@ xrange = plt.xrange
 yrange = plt.yrange
 leg = legend(target = [plt,opl], $
              /auto_text_color, $
-             ;; horizontal_alignment = 'right', $
-             ;; vertical_alignment = 'bottom', $
-             ;; position = [xrange[1],yrange[0]], $
              horizontal_alignment = 'left', $
              vertical_alignment = 'top', $
              position = [xrange[0],yrange[1]], $
@@ -70,6 +67,5 @@ leg.translate, 0.005,0.0,/normal
 ;;==Save plots
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1ktt_rms'+ $
-           ;; '-TEST'+ $
            '.'+get_extension(frame_type)
 frame_save, plt,filename=filename
