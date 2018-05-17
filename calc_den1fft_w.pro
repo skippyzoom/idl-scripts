@@ -14,7 +14,7 @@ nky = ny
 nw = next_power2(nt)
 
 ;;==Set up full FFT array (may be padded)
-den1fft_w = fltarr(nkx,nky,nw)
+den1fft_w = complexarr(nkx,nky,nw)
 den1fft_w[0:nx-1,0:ny-1,0:nt-1] = den1
 
 ;;==Calculate full FFT

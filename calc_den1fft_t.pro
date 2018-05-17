@@ -13,7 +13,7 @@ nkx = nx
 nky = ny
 
 ;;==Set up spatial FFT array (may be padded)
-den1fft_t = fltarr(nkx,nky,nt)
+den1fft_t = complexarr(nkx,nky,nt)
 den1fft_t[0:nx-1,0:ny-1,*] = den1
 
 ;;==Calculate spatial FFT
