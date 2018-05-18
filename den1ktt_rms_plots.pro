@@ -13,23 +13,41 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 lambda = den1ktt_rms.keys()
 nl = den1ktt_rms.count()
 
+;;==Declare wavelengths to call out
+l_callout = [3.0,10.6]
+
+;;==Get number of call-outs
+nlc = n_elements(l_callout)
+
+;;==Ensure correct format (cf. interp_xy2kt.pro)
+if nlc gt 0 then l_callout = string(l_callout,format='(f06.2)')
+
+;;==Construct call-outs label for file name
+str_l_callout = ''
+for ilc=0,nlc-1 do $
+   str_l_callout += l_callout[ilc]+'_'
+if nlc gt 0 then $
+   str_l_callout = str_l_callout.remove(-1)+'m' $
+
+;;==Sort wavelength keys from smallest to largest
+lambda = lambda.sort()
+
 ;;==Create wavelength labels
-str_lam = string(lambda.toarray(),format='(f04.1)')
-str_lam = "$\lambda$ = "+strcompress(str_lam,/remove_all)+" m"
+str_lam = "$\lambda$ = "+strcompress(lambda.toarray(),/remove_all)+" m"
 
 ;;==Declare color array
 ;; loadct, 39,rgb_table=rgb_table
 ;; color = [rgb_table[80,*],rgb_table[240,*]]
-loadct, 0,rgb_table=rgb_table
+loadct, 43,rgb_table=rgb_table,bottom=30
+rgb_table = reverse(rgb_table,1)
 clr = 256*indgen(nl)/(nl-1)
 color = rgb_table[clr,*]
-color[lambda.where('3.0'),*] = [255,0,0]
-color[lambda.where('10.6'),*] = [0,0,255]
 
 ;;==Declare line-thickness array
 thick = make_array(nl,value=0.5)
-thick[lambda.where('3.0'),*] = 2.0
-thick[lambda.where('10.6'),*] = 2.0
+if nlc gt 0 then $
+   for ilc=0,nlc-1 do $
+      thick[(lambda.where(l_callout[ilc]))[0]] = 2.0
 
 
 ;;==Plot the first wavelength
@@ -74,6 +92,6 @@ for il=1,nl-1 do $
 ;;==Save plots
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1ktt_rms'+ $
-           '-3.0_10.6'+ $
+           '-'+str_l_callout+ $
            '.'+get_extension(frame_type)
 frame_save, plt,filename=filename
