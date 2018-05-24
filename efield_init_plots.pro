@@ -26,8 +26,9 @@ if n_elements(Er0) eq 0 then $
 pos = multi_position([1,2], $
                      edges = [0.1,0.1,1.0,0.9], $
                      buffers = [0,0.05])
-;;==Set the "initial" time step
-it0 = 1
+
+;;==Declare the array index of the "initial" time step
+it0 = 0
 
 ;;==Declare y-axis ranges
 erange = [0,20]
@@ -55,7 +56,16 @@ plt = plot(xdata,mean(Et0[*,*,it0],dim=2)/!dtor, $
            font_name = 'Times', $
            font_size = 14, $
            /current)
-filename = expand_path(path+path_sep()+'frames')+ $
+
+;;==Add a path label
+txt = text(0.0,0.005, $
+           path, $
+           target = plt, $
+           font_name = 'Courier', $
+           font_size = 10.0)
+
+;;==Save the plot
+filename = expand_path(path)+path_sep()+'frames'+ $
            path_sep()+'Ert_init_stack.pdf'
 frame_save, plt,filename=filename
 
@@ -88,6 +98,15 @@ yax = axis('y', $
            axis_range = trange, $
            tickfont_name = 'Times', $
            tickfont_size = 14)
-filename = expand_path(path+path_sep()+'frames')+ $
+
+;;==Add a path label
+txt = text(0.0,0.005, $
+           path, $
+           target = plt, $
+           font_name = 'Courier', $
+           font_size = 10.0)
+
+;;==Save the plot
+filename = expand_path(path)+path_sep()+'frames'+ $
            path_sep()+'Ert_init_overplot.pdf'
 frame_save, plt,filename=filename

@@ -8,7 +8,10 @@
 
 ;;==Declare wavelengths of interest, in meters
 ;; lambda = [3.0,10.6]
-lambda = [2.0+findgen(11),10.6]
+lam0 = 2.0
+lamf = 5.0
+dlam = 0.1
+lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
 
 ;;==Declare angles of interest, in radians
 theta = [0,!pi]

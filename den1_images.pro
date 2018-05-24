@@ -11,17 +11,17 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Add a description to the file name
 ;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
 ;;  sets of ranges)
-file_description = 'center256'
+file_description = 'full'
 
 ;;==Declare image ranges
-x0 = nx/2-128
-xf = nx/2+128
-y0 = ny/2-128
-yf = ny/2+128
-;; x0 = 0
-;; xf = nx
-;; y0 = 0
-;; yf = ny
+;; x0 = nx/2-128
+;; xf = nx/2+128
+;; y0 = ny/2-128
+;; yf = ny/2+128
+x0 = 0
+xf = nx
+y0 = 0
+yf = ny
 
 ;;==Get dimensions of den1
 dsize = size(den1)
@@ -57,10 +57,10 @@ for it=0,nt-1 do $
                    ;; max_value = +max(abs(fdata[*,*,1:*])), $
                    ;; min_value = -0.15, $
                    ;; max_value = +0.15, $
-                   min_value = -0.2, $
-                   max_value = +0.2, $
-                   ;; min_value = min(fdata), $
-                   ;; max_value = max(fdata), $
+                   ;; min_value = -0.2, $
+                   ;; max_value = +0.2, $
+                   min_value = min(fdata), $
+                   max_value = max(fdata), $
                    rgb_table = 5, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $

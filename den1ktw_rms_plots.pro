@@ -8,7 +8,6 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-
 ;;==Get effective time step
 ;;  This will differ from params.dt*params.nout in cases when the main
 ;;  script imported data at a sample rate > 1. It assumes a uniform
@@ -39,6 +38,14 @@ for il=0,nl-1 do $
                   xrange = vrange, $
                   font_name = 'Times', $
                   font_size = 16.0)
+
+;;==Add a path label
+for il=0,nl-1 do $
+   txt = text(0.0,0.005, $
+              path, $
+              target = img[il], $
+              font_name = 'Courier', $
+              font_size = 10.0)
 
 ;;==Create array of file names
 filename = expand_path(path)+path_sep()+ $
