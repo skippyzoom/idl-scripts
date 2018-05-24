@@ -28,9 +28,12 @@ delvar, $
    denft1, $
    phift, $
    fdata, $
-   den0fft, $
-   den1fft, $
-   phifft, $
+   den0fft_t, $
+   den1fft_t, $
+   den0fft_w, $
+   den1fft_w, $
+   phifft_t, $
+   phifft_w, $
    den0ktt, $
    den1ktt, $
    phiktt, $
