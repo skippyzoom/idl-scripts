@@ -57,20 +57,24 @@ for ir=0,nr-1 do $
                   ytitle = '$\langle\delta n(k,t)/\delta n(k,0)\rangle$', $
                   overplot = (ir gt 0), $
                   color = color[ir], $
+                  ystyle = 0, $
                   linestyle = linestyle[ir], $
                   /buffer)
-                 
+
+;;==Extract y-axis range
+yrange = plt[0].yrange
+
 ;;==Add time markers corresponding to images
 image_times = 1e3*params.dt* $
               [5056, $
                15104, $
                params.nout*(2*(params.nt_max/2))]
 nit = n_elements(image_times)
-yrange = plt[0].yrange
 for it=0,nit-1 do $
    plt = plot([image_times[it],image_times[it]], $
               [yrange[0],yrange[1]], $
               color = 'black', $
+              yrange = yrange, $
               linestyle = 0, $
               /overplot)
 image_times = 1e3*params.dt* $
@@ -78,11 +82,11 @@ image_times = 1e3*params.dt* $
                10048, $
                params.nout*(2*(params.nt_max/2))]
 nit = n_elements(image_times)
-yrange = plt[0].yrange
 for it=0,nit-1 do $
    plt = plot([image_times[it],image_times[it]], $
               [yrange[0],yrange[1]], $
               color = 'black', $
+              yrange = yrange, $
               linestyle = 2, $
               /overplot)
 
