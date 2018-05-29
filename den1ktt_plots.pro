@@ -8,6 +8,13 @@
 ;;==Declare file type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
+;;==Preserve den1ktt
+fdata = den1ktt
+
+;;==Condition data
+fdata = 10*alog10(fdata^2)
+fdata -= max(fdata)
+
 ;;==Load graphics keywords for interpolated FFT plots
 plot_kw = dictionary()
 plot_kw['xstyle'] = 1
@@ -18,12 +25,12 @@ plot_kw['font_size'] = 18
 plot_kw['xtitle'] = 'Angle from Zenith [deg.]'
 plot_kw['ytitle'] = 'Power [dB]'
 
-;;==Set up file name(s)
+;;==Set up file name(s) without extension
 if n_elements(file_description) eq 0 then $
    file_description = ''
 if keyword_set(rms_range) then $
    filebase = expand_path(path+path_sep()+'frames')+ $
-              path_sep()+'den1-xy2kt'+ $
+              path_sep()+'den1ktt'+ $
               '-'+file_description+ $
               '-rms_'+ $
               string(params.nout*rms_range[0,*],format='(i06)')+ $
@@ -31,7 +38,7 @@ if keyword_set(rms_range) then $
               string(params.nout*rms_range[1,*],format='(i06)') $
 else $
    filebase = expand_path(path+path_sep()+'frames')+ $
-              path_sep()+'den1-xy2kt'+ $
+              path_sep()+'den1ktt'+ $
               '-'+file_description+ $
               '-'+time.index           
 xy2kt_plots, den1ktt, $

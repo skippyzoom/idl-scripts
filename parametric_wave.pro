@@ -45,14 +45,16 @@ time = time_strings(subsample*params.nout* $
 ;; @analyze_moments
 @get_den1_plane
 ;; @den1_movie
-;; @calc_den1fft_t
+@calc_den1fft_t
 ;; @den1fft_t_movie
+@calc_den1ktt
+;; @den1ktt_movie
 ;; @calc_den1ktt_rms
 ;; save, time,den1ktt_rms, $
-;;       filename=expand_path(path)+path_sep()+'den1ktt_rms-few_meter.sav'
+;;       filename=expand_path(path)+path_sep()+'den1ktt_rms-02to05_meter-044to046_deg.sav'
 ;; @den1ktt_rms_plots
-@calc_den1fft_w
-@calc_den1ktw
+;; @calc_den1fft_w
+;; @calc_den1ktw
 ;; @den1ktw_images
 ;; @den1ktw_rms_plots
 ;; @den1_ktt_frames

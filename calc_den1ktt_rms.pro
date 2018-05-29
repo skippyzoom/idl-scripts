@@ -14,7 +14,8 @@ dlam = 0.1
 lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
 
 ;;==Declare angles of interest, in radians
-theta = [0,!pi]
+;; theta = [0,!pi]
+theta = [44,46]*!dtor
 
 ;;==Interpolate and calculate RMS in time
 den1ktt_rms = interp_xy2kt_rms(abs(den1fft_t), $

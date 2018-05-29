@@ -13,7 +13,7 @@ proj_path = get_base_dir()+path_sep()+'parametric_wave/'
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
 ;;==Declare save-file name
-save_name = 'den1ktt_rms-meter_scale.sav'
+save_name = 'den1ktt_rms-02to05_meter-044to046_deg.sav'
 
 ;;==Declare runs
 run = ['nue_2.0e4-amp_0.05-E0_9.0/', $

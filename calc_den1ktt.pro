@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare wavelengths of interest, in meters
-lambda = [3.0,10.6]
+lambda = 2.0+findgen(4)
 
 ;;==Declare angles of interest, in radians
 theta = [0,!pi]
