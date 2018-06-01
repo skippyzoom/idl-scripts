@@ -14,6 +14,10 @@ delvar, $
    Ey, $
    Er, $
    Et, $
+   Exktt, $
+   Eyktt, $
+   Erktt, $
+   Etktt, $
    Ex0, $
    Ey0, $
    Er0, $
