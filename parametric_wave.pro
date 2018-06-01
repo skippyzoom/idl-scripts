@@ -5,8 +5,11 @@
 ;------------------------------------------------------------------------------
 ;-
 
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0/'
+if n_elements(path) eq 0 then $
+   path = get_base_dir()+path_sep()+ $
+          'parametric_wave/nue_4.0e4-amp_0.05-E0_9.0/'
+if n_elements(lun) eq 0 then lun = -1
+printf, lun, "[PARAMETRIC_WAVE] path = "+path
 if n_elements(rotate) eq 0 then rotate = 0
 if n_elements(axes) eq 0 then axes = 'xy'
 if n_elements(path) eq 0 then path = './'
@@ -43,11 +46,11 @@ time = time_strings(subsample*params.nout* $
 ;;              [3*nt_max/4,2*(nt_max/2)]]
 
 ;; @analyze_moments
-@get_den1_plane
+;; @get_den1_plane
 ;; @den1_movie
-@calc_den1fft_t
+;; @calc_den1fft_t
 ;; @den1fft_t_movie
-@calc_den1ktt
+;; @calc_den1ktt
 ;; @den1ktt_movie
 ;; @calc_den1ktt_rms
 ;; save, time,den1ktt_rms, $
@@ -64,7 +67,27 @@ time = time_strings(subsample*params.nout* $
 ;; @den1_kttrms_plots
 ;; @get_efield_plane
 ;; @save_efield_plane
-;; @restore_efield_plane
+
+;; @calc_Erktt
+
+@restore_efield_plane
+Er = sqrt(Ex*Ex + Ey*Ey)
+
+@calc_Erfft_t
+theta = [44,46]*!dtor
+;; lambda = [3.0,10.6]
+lam0 = 2.0
+lamf = 5.0
+dlam = 0.1
+lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
+@calc_Erktt_rms
+save, time,Erktt_rms, $
+      filename=expand_path(path)+path_sep()+'Erktt_rms-02to05_meter-044to046_deg.sav'
+lambda = 50.0
+@calc_Erktt_rms
+save, time,Erktt_rms, $
+      filename=expand_path(path)+path_sep()+'Erktt_rms-50_meter-044to046_deg.sav'
+
 ;; @Ex_ymean_movie
 ;; @Ex_ymean_plots
 ;; @efield_init_plots
