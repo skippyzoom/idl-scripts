@@ -67,26 +67,34 @@ time = time_strings(subsample*params.nout* $
 ;; @den1_kttrms_plots
 ;; @get_efield_plane
 ;; @save_efield_plane
-
-;; @calc_Erktt
+;; @calc_Erfft_t
+;; save, time,Erfft_t, $
+;;       filename=expand_path(path)+path_sep()+'Erfft_t.sav'
 
 @restore_efield_plane
 Er = sqrt(Ex*Ex + Ey*Ey)
-
 @calc_Erfft_t
-theta = [44,46]*!dtor
-;; lambda = [3.0,10.6]
-lam0 = 2.0
-lamf = 5.0
-dlam = 0.1
-lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
-@calc_Erktt_rms
-save, time,Erktt_rms, $
-      filename=expand_path(path)+path_sep()+'Erktt_rms-02to05_meter-044to046_deg.sav'
-lambda = 50.0
-@calc_Erktt_rms
-save, time,Erktt_rms, $
-      filename=expand_path(path)+path_sep()+'Erktt_rms-50_meter-044to046_deg.sav'
+save, time,Erfft_t, $
+      filename=expand_path(path)+path_sep()+'Erfft_t.sav'
+
+;; @calc_Erktt
+
+;; @restore_efield_plane
+;; Er = sqrt(Ex*Ex + Ey*Ey)
+;; @calc_Erfft_t
+;; theta = [44,46]*!dtor
+;; ;; lambda = [3.0,10.6]
+;; lam0 = 2.0
+;; lamf = 5.0
+;; dlam = 0.1
+;; lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
+;; @calc_Erktt_rms
+;; save, time,Erktt_rms, $
+;;       filename=expand_path(path)+path_sep()+'Erktt_rms-02to05_meter-044to046_deg.sav'
+;; lambda = 50.0
+;; @calc_Erktt_rms
+;; save, time,Erktt_rms, $
+;;       filename=expand_path(path)+path_sep()+'Erktt_rms-50_meter-044to046_deg.sav'
 
 ;; @Ex_ymean_movie
 ;; @Ex_ymean_plots

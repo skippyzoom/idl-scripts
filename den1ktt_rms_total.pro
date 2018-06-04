@@ -12,15 +12,15 @@ proj_path = get_base_dir()+path_sep()+'parametric_wave/'
 ;;==Declare plot path
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
-;;==Declare save-file name
-save_name = 'den1ktt_rms-02to05_meter-044to046_deg.sav'
-
 ;;==Declare runs
 run = ['nue_2.0e4-amp_0.05-E0_9.0/', $
        'nue_3.0e4-amp_0.05-E0_9.0/', $
        'nue_3.0e4-amp_0.10-E0_9.0/', $
        'nue_4.0e4-amp_0.05-E0_9.0/']
 nr = n_elements(run)
+
+;;==Declare save-file name
+save_name = 'den1ktt_rms-02to05_meter-044to046_deg.sav'
 
 ;;==Get information from first hash
 path = expand_path(proj_path)+path_sep()+'nue_2.0e4-amp_0.05-E0_9.0/'
@@ -34,14 +34,19 @@ nl = n_elements(lambda)
 ;;==Get number of time steps
 nt = n_elements(den1ktt_rms[lambda[0]])
 
+;;==Free hash memory
+den1ktt_rms = !NULL
+
 ;;==Get input parameters
 params = set_eppic_params(path=path)
 nt_max = calc_timesteps(path=path)
 params['nt_max'] = nt_max
 
 ;;==Build the summed RMS array
-rms_total = build_rms_total(proj_path,run,save_name, $
-                            data_name='den1ktt_rms')
+rms_total = build_rms_total(proj_path, $
+                            run, $
+                            save_name, $
+                            'den1ktt_rms')
 
 ;;==Set up colors and line styles
 color = ['red','blue','blue','green']
@@ -49,16 +54,23 @@ linestyle = [0,0,2,0]
 
 ;;==Create plot frame
 plt = objarr(nr)
+xdata = 1e3*params.dt*time.index
+ydata = fltarr(nr,nt)
+for ir=0,nr-1 do ydata[ir,*] = rms_total[ir,*]/rms_total[ir,1] - 1
 for ir=0,nr-1 do $
-   plt[ir] = plot(1e3*params.dt*time.index, $
-                  rms_total[ir,*]/rms_total[ir,0], $
+   plt[ir] = plot(xdata, $
+                  ydata[ir,*], $
                   xstyle = 1, $
                   xtitle = 'Time [ms]', $
-                  ytitle = '$\langle\delta n(k,t)/\delta n(k,0)\rangle$', $
+                  ;; ytitle = '$\langle\delta n(k,t)/n_0\rangle$', $
+                  ytitle = '$\langle\delta n/n_0\rangle$', $
                   overplot = (ir gt 0), $
                   color = color[ir], $
+                  yrange = [-0.5,3], $
                   ystyle = 0, $
                   linestyle = linestyle[ir], $
+                  font_name = 'Times', $
+                  font_size = 14.0, $
                   /buffer)
 
 ;;==Extract y-axis range
@@ -74,7 +86,6 @@ for it=0,nit-1 do $
    plt = plot([image_times[it],image_times[it]], $
               [yrange[0],yrange[1]], $
               color = 'black', $
-              yrange = yrange, $
               linestyle = 0, $
               /overplot)
 image_times = 1e3*params.dt* $
@@ -86,7 +97,6 @@ for it=0,nit-1 do $
    plt = plot([image_times[it],image_times[it]], $
               [yrange[0],yrange[1]], $
               color = 'black', $
-              yrange = yrange, $
               linestyle = 2, $
               /overplot)
 
@@ -104,5 +114,4 @@ filename = expand_path(plot_path)+path_sep()+'frames'+ $
 frame_save, plt,filename=filename
 
 ;;==Free memory
-den1ktt_rms = !NULL
-rms_total = !NULL
+;; rms_total = !NULL

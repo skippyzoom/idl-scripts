@@ -19,15 +19,11 @@ run = ['nue_2.0e4-amp_0.05-E0_9.0/', $
        'nue_4.0e4-amp_0.05-E0_9.0/']
 nr = n_elements(run)
 
-;;==Declare save-file name
-;; save_name = ['Erktt_rms-02to05_meter-044to046_deg.sav', $
-;;              'Erktt_rms-50_meter-044to046_deg.sav']
-;; ns = n_elements(save_name)
-save_name = 'Erktt_rms-50_meter-044to046_deg.sav'
+;;==Declare save-file name for ktt_rms
+save_name = 'Erktt_rms-02to05_meter-044to046_deg.sav'
 
 ;;==Get information from first hash
 path = expand_path(proj_path)+path_sep()+'nue_2.0e4-amp_0.05-E0_9.0/'
-;; restore, expand_path(path)+path_sep()+save_name[0]
 restore, expand_path(path)+path_sep()+save_name
 
 ;;==Get wavelengths
@@ -38,18 +34,19 @@ nl = n_elements(lambda)
 ;;==Get number of time steps
 nt = n_elements(Erktt_rms[lambda[0]])
 
+;;==Free hash memory
+Erktt_rms = !NULL
+
 ;;==Get input parameters
 params = set_eppic_params(path=path)
 nt_max = calc_timesteps(path=path)
 params['nt_max'] = nt_max
 
 ;;==Build the summed RMS array
-;; rms_total = hash()
-;; for is=0,ns-1 do $
-;;    rms_total[is] = build_rms_total(proj_path,run,save_name[is], $
-;;                                    data_name='Erktt_rms')
-rms_total = build_rms_total(proj_path,run,save_name, $
-                            data_name='Erktt_rms')
+rms_total = build_rms_total(proj_path, $
+                            run, $
+                            save_name, $
+                            'Erktt_rms')
 
 ;;==Set up colors and line styles
 color = ['red','blue','blue','green']
@@ -57,15 +54,19 @@ linestyle = [0,0,2,0]
 
 ;;==Create plot frame
 plt = objarr(nr)
+xdata = 1e3*params.dt*time.index
+ydata = fltarr(nr,nt)
+for ir=0,nr-1 do ydata[ir,*] = rms_total[ir,*]/rms_total[ir,1] - 1
 for ir=0,nr-1 do $
-   plt[ir] = plot(1e3*params.dt*time.index, $
-                  rms_total[ir,*]/rms_total[ir,1] - 1, $
+   plt[ir] = plot(xdata, $
+                  ydata[ir,*], $
                   xstyle = 1, $
                   xtitle = 'Time [ms]', $
-                  ytitle = '$\langle\delta E(k,t)/E_0\rangle$', $
+                  ;; ytitle = '$\langle\delta E(k,t)/E_0\rangle$', $
+                  ytitle = '$\langle\delta E/E_0\rangle$', $
                   overplot = (ir gt 0), $
                   color = color[ir], $
-                  ;; yrange = [0,2], $
+                  yrange = [0,2], $
                   ystyle = 0, $
                   linestyle = linestyle[ir], $
                   font_name = 'Times', $
@@ -85,7 +86,6 @@ for it=0,nit-1 do $
    plt = plot([image_times[it],image_times[it]], $
               [yrange[0],yrange[1]], $
               color = 'black', $
-              ;; yrange = yrange, $
               linestyle = 0, $
               /overplot)
 image_times = 1e3*params.dt* $
@@ -97,7 +97,6 @@ for it=0,nit-1 do $
    plt = plot([image_times[it],image_times[it]], $
               [yrange[0],yrange[1]], $
               color = 'black', $
-              ;; yrange = yrange, $
               linestyle = 2, $
               /overplot)
 
@@ -115,5 +114,4 @@ filename = expand_path(plot_path)+path_sep()+'frames'+ $
 frame_save, plt,filename=filename
 
 ;;==Free memory
-Erktt_rms = !NULL
-rms_total = !NULL
+;; rms_total = !NULL
