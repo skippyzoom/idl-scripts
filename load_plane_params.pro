@@ -1,5 +1,6 @@
 ;+
-; Script for loading simulation parameters for a given plane
+; Script for loading simulation parameters for a given plane without
+; reading in any data.
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
