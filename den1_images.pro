@@ -47,11 +47,11 @@ if total(sw) gt ndim then $
 data_aspect = float(yf-y0)/(xf-x0)
 
 ;;==Declare an array of image handles
-img = objarr(nt)
+frm = objarr(nt)
 
 ;;==Create image frames
 for it=0,nt-1 do $
-   img[it] = image(fdata[x0:xf-1,y0:yf-1,it], $
+   frm[it] = image(fdata[x0:xf-1,y0:yf-1,it], $
                    xdata[x0:xf-1],ydata[y0:yf-1], $
                    ;; min_value = -max(abs(fdata[*,*,1:*])), $
                    ;; max_value = +max(abs(fdata[*,*,1:*])), $
@@ -87,7 +87,7 @@ for it=0,nt-1 do $
 
 ;;==Add a colorbar to each image
 for it=0,nt-1 do $
-   clr = colorbar(target = img[it], $
+   clr = colorbar(target = frm[it], $
                   title = '$\delta n/n_0$', $
                   major = 5, $
                   minor = 3, $
@@ -103,7 +103,7 @@ for it=0,nt-1 do $
    ply = polygon(dx*[nx/2-128,nx/2+128,nx/2+128,nx/2-128], $
                  dy*[ny/2-128,ny/2-128,ny/2+128,ny/2+128], $
                  /data, $
-                 target = img[it], $
+                 target = frm[it], $
                  color = 'white', $
                  fill_background = 0, $
                  linestyle = 0, $
@@ -114,7 +114,7 @@ for it=0,nt-1 do $
 for it=0,nt-1 do $
    txt = text(0.0,0.005, $
               path, $
-              target = img[it], $
+              target = frm[it], $
               font_name = 'Courier', $
               font_size = 10.0)
 
@@ -129,7 +129,7 @@ filename = expand_path(path+path_sep()+'frames')+ $
 
 ;;==Save individual images
 for it=0,nt-1 do $
-   frame_save, img[it],filename=filename[it]
+   frame_save, frm[it],filename=filename[it]
 
 ;;==Clear fdata
 fdata = !NULL
