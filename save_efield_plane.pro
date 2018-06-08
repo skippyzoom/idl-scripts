@@ -17,4 +17,4 @@ filename = expand_path(path)+path_sep()+ $
            '.sav'
 
 ;;==Save the arrays
-save, Ex,Ey,filename=filename
+save, time,efield,filename=filename
