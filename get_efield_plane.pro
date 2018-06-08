@@ -44,14 +44,3 @@ Ey0 = pp.Ey0
 
 ;;==Calculate electric field
 efield = calc_grad_xyzt(phi,dx=dx,dy=dy,scale=-1.0)
-
-;;==Extract component arrays
-Ex = efield.x
-Ey = efield.y
-
-;;==Free memory
-delvar, efield
-
-;;==Calculate magnitude and angle
-Er = sqrt(Ex*Ex + Ey*Ey)
-Et = atan(Ey,Ex)
