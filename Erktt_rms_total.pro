@@ -56,21 +56,24 @@ linestyle = [0,0,2,0]
 plt = objarr(nr)
 xdata = 1e3*params.dt*time.index
 ydata = fltarr(nr,nt)
-for ir=0,nr-1 do ydata[ir,*] = rms_total[ir,*]/rms_total[ir,1] - 1
+for ir=0,nr-1 do $
+   ydata[ir,*] = rms_total[ir,*]/mean(rms_total[ir,1:10])
 for ir=0,nr-1 do $
    plt[ir] = plot(xdata, $
                   ydata[ir,*], $
                   xstyle = 1, $
                   xtitle = 'Time [ms]', $
                   ;; ytitle = '$\langle\delta E(k,t)/E_0\rangle$', $
-                  ytitle = '$\langle\delta E/E_0\rangle$', $
+                  ytitle = '$\langle\delta E\rangle/E_0$', $
                   overplot = (ir gt 0), $
                   color = color[ir], $
-                  yrange = [0,2], $
+                  yrange = [1,2.5], $
                   ystyle = 0, $
+                  xtickfont_size = 16.0, $
+                  ytickfont_size = 16.0, $
                   linestyle = linestyle[ir], $
                   font_name = 'Times', $
-                  font_size = 14.0, $
+                  font_size = 16.0, $
                   /buffer)
 
 ;;==Extract y-axis range

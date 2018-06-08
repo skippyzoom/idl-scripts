@@ -68,9 +68,11 @@ for ir=0,nr-1 do $
                   color = color[ir], $
                   yrange = [-0.5,3], $
                   ystyle = 0, $
+                  xtickfont_size = 16.0, $
+                  ytickfont_size = 16.0, $
                   linestyle = linestyle[ir], $
                   font_name = 'Times', $
-                  font_size = 14.0, $
+                  font_size = 16.0, $
                   /buffer)
 
 ;;==Extract y-axis range
