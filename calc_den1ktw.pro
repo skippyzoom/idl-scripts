@@ -9,10 +9,32 @@
 lambda = [2.0,3.0,4.0,5.0,10.0,20.0]
 
 ;;==Declare angles of interest, in radians
-theta = [0,!pi]
+theta = [!pi,0]
 
-;;==Interpolate the magnitude of the full FFT
-den1ktw = interp_xy2kt(abs(den1fft_w), $
+;;==Preserve raw FFT
+fdata = den1fft_w
+
+;;==Get dimensions
+fsize = size(fdata)
+nkx = fsize[1]
+nky = fsize[2]
+nw = fsize[3]
+
+;;==Convert complex FFT to its magnitude
+fdata = abs(fdata)
+
+;;==Rotate FFT
+;; for iw=0,nw-1 do $
+;;    fdata[*,*,iw] = rotate(fdata[*,*,iw],2)
+
+;;==Reverse frequency dimension
+fdata = reverse(fdata,3)
+
+;;==Shift FFT
+fdata = shift(fdata,nkx/2,nky/2,nw/2)
+
+;;==Interpolate the FFT
+den1ktw = interp_xy2kt(fdata, $
                        lambda = lambda, $
                        theta = theta, $
                        dx = dx, $
