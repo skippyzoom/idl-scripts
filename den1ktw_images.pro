@@ -31,21 +31,32 @@ img = objarr(nl)
 
 ;;==Generate images
 ;;-->Kind of a hack
-vrange_lt_10 = [-500,+500]
-vrange_ge_10 = [-100,+100]
+;; vrange_lt_10 = [-500,+500]
+;; vrange_ge_10 = [-100,+100]
+vrange = hash(lambda)
+vrange['002.00'] = [-1000,+1000]
+vrange['003.00'] = [-500,+500]
+vrange['004.00'] = [-500,+500]
+vrange['005.00'] = [-500,+500]
+vrange['010.00'] = [-100,+100]
+vrange['020.00'] = [-100,+100]
 ;;<--
 trange = [0,180]
+;; trange = [min(theta),max(theta)]/!dtor
+;; trange = theta/!dtor
+;; tdir = (theta[0] lt theta[1]) ? 1 : -1
 xmajor = 7
 xminor = 2
 xtickvalues = (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
 xticklen = 0.02
 xy_scale = 1.0
-ymajor = 5
-yminor = 4
+ymajor = 11
+yminor = 1
 for il=0,nl-1 do $
-   img[il] = image(den1ktw[lambda[il]].f_interp, $
+   img[il] = image(reverse(den1ktw[lambda[il]].f_interp,1), $
                    den1ktw[lambda[il]].t_interp/!dtor, $
                    wdata/float(lambda[il]), $
+   ;; img[il] = image(den1ktw[lambda[il]].f_interp,$
                    /buffer, $
                    rgb_table = 39, $
                    axis_style = 1, $
@@ -58,13 +69,16 @@ for il=0,nl-1 do $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
-                   yrange = float(lambda[il]) lt 10.0 ? $
-                   vrange_lt_10 : vrange_ge_10, $
+                   ;; yrange = float(lambda[il]) lt 10.0 ? $
+                   ;; vrange_lt_10 : vrange_ge_10, $
+                   yrange = vrange[lambda[il]], $
                    xmajor = xmajor, $
                    ymajor = ymajor, $
                    xminor = xminor, $
                    yminor = yminor, $
                    xtickvalues = xtickvalues, $
+                   xshowtext = 1, $
+                   yshowtext = 1, $
                    font_name = 'Times', $
                    font_size = 16.0)
 
