@@ -18,7 +18,4 @@ den1fft_w = complexarr(nkx,nky,nw)
 den1fft_w[0:nx-1,0:ny-1,0:nt-1] = den1
 
 ;;==Calculate full FFT
-den1fft_w = fft(den1fft_w,/center,/overwrite)
-
-;;==Reverse frequency dimension
-den1fft_w = reverse(den1fft_w,3)
+den1fft_w = fft(den1fft_w,/overwrite)
