@@ -1,7 +1,7 @@
 ;+
-; Script for plotting hashes for multirun_Ert0_main, wrapped by
+; Script for plotting differences in Er0 from multiple runs, wrapped by
 ; nx/2. This is useful for showing the initialy asymmetry in Er in the
-; parametric_wave project.
+; parametric_wave project. See multirun_Ert0_main.
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare the file name
 filename = expand_path(plot_path)+path_sep()+ $
            'frames'+path_sep()+ $
-           'Er0-init_multi_wrap'+ $
+           'Er0-init_multi_diff'+ $
            '.pdf'
 
 ;;==Declare the array index of the "initial" time step
