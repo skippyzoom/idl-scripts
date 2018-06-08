@@ -27,7 +27,19 @@ nl = n_elements(lambda)
 plt = objarr(nl)
 
 ;;==Generate plots
-vrange = [-500,+500]
+;;-->Kind of a hack
+;; vrange_lt_10 = [-500,+500]
+;; vrange_ge_10 = [-100,+100]
+vrange = hash(lambda)
+vrange['002.00'] = [-1000,+1000]
+vrange['003.00'] = [-500,+500]
+vrange['004.00'] = [-500,+500]
+vrange['005.00'] = [-500,+500]
+vrange['010.00'] = [-100,+100]
+vrange['020.00'] = [-100,+100]
+;;<--
+xmajor = 11
+xminor = 1
 for il=0,nl-1 do $
    plt[il] = plot(wdata/float(lambda[il]), $
                   rms(den1ktw[lambda[il]].f_interp,dim=1,/norm), $
@@ -35,7 +47,11 @@ for il=0,nl-1 do $
                   xstyle = 1, $
                   xtitle = '$V_{ph}$ [m/s]', $
                   ytitle = 'Power', $
-                  xrange = vrange, $
+                  ;; xrange = float(lambda[il]) lt 10.0 ? $
+                  ;; vrange_lt_10 : vrange_ge_10, $
+                  xrange = vrange[lambda[il]], $
+                  xmajor = xmajor, $
+                  xminor = xminor, $
                   font_name = 'Times', $
                   font_size = 16.0)
 
@@ -43,7 +59,7 @@ for il=0,nl-1 do $
 for il=0,nl-1 do $
    txt = text(0.0,0.005, $
               path, $
-              target = img[il], $
+              target = plt[il], $
               font_name = 'Courier', $
               font_size = 10.0)
 
