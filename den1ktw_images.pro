@@ -27,7 +27,7 @@ lambda = lambda.sort()
 nl = n_elements(lambda)
 
 ;;==Create an array of plot objects
-img = objarr(nl)
+frm = objarr(nl)
 
 ;;==Generate images
 ;;-->Kind of a hack
@@ -53,10 +53,10 @@ xy_scale = 1.0
 ymajor = 11
 yminor = 1
 for il=0,nl-1 do $
-   img[il] = image(reverse(den1ktw[lambda[il]].f_interp,1), $
+   frm[il] = image(reverse(den1ktw[lambda[il]].f_interp,1), $
                    den1ktw[lambda[il]].t_interp/!dtor, $
                    wdata/float(lambda[il]), $
-   ;; img[il] = image(den1ktw[lambda[il]].f_interp,$
+   ;; frm[il] = image(den1ktw[lambda[il]].f_interp,$
                    /buffer, $
                    rgb_table = 39, $
                    axis_style = 1, $
@@ -84,16 +84,16 @@ for il=0,nl-1 do $
 
 ;;==Adjust aspect ratio of each image
 for il=0,nl-1 do $
-   img[il].aspect_ratio = $
+   frm[il].aspect_ratio = $
    xy_scale* $
-   (float(img[il].xrange[1])-float(img[il].xrange[0]))/ $
-   (float(img[il].yrange[1])-float(img[il].yrange[0]))
+   (float(frm[il].xrange[1])-float(frm[il].xrange[0]))/ $
+   (float(frm[il].yrange[1])-float(frm[il].yrange[0]))
 
 ;;==Add a path label
 for il=0,nl-1 do $
    txt = text(0.0,0.005, $
               path, $
-              target = img[il], $
+              target = frm[il], $
               font_name = 'Courier', $
               font_size = 10.0)
 
@@ -105,5 +105,5 @@ filename = expand_path(path)+path_sep()+ $
 
 ;;==Save individual frames
 for il=0,nl-1 do $
-   frame_save, img[il],filename=filename[il]
+   frame_save, frm[il],filename=filename[il]
 

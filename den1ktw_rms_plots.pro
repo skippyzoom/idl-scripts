@@ -24,7 +24,7 @@ lambda = den1ktw.keys()
 nl = n_elements(lambda)
 
 ;;==Create an array of plot objects
-plt = objarr(nl)
+frm = objarr(nl)
 
 ;;==Generate plots
 ;;-->Kind of a hack
@@ -40,8 +40,10 @@ vrange['020.00'] = [-100,+100]
 ;;<--
 xmajor = 11
 xminor = 1
+xticklen = 0.02
+xy_scale = 1.0
 for il=0,nl-1 do $
-   plt[il] = plot(wdata/float(lambda[il]), $
+   frm[il] = plot(wdata/float(lambda[il]), $
                   rms(den1ktw[lambda[il]].f_interp,dim=1,/norm), $
                   /buffer, $
                   xstyle = 1, $
@@ -52,14 +54,23 @@ for il=0,nl-1 do $
                   xrange = vrange[lambda[il]], $
                   xmajor = xmajor, $
                   xminor = xminor, $
+                  xticklen = xticklen, $
+                  yticklen = xticklen/xy_scale, $
                   font_name = 'Times', $
                   font_size = 16.0)
+
+;;==Adjust aspect ratio of each image
+for il=0,nl-1 do $
+   frm[il].aspect_ratio = $
+   xy_scale* $
+   (float(frm[il].xrange[1])-float(frm[il].xrange[0]))/ $
+   (float(frm[il].yrange[1])-float(frm[il].yrange[0]))
 
 ;;==Add a path label
 for il=0,nl-1 do $
    txt = text(0.0,0.005, $
               path, $
-              target = plt[il], $
+              target = frm[il], $
               font_name = 'Courier', $
               font_size = 10.0)
 
@@ -71,4 +82,4 @@ filename = expand_path(path)+path_sep()+ $
 
 ;;==Save individual frames
 for il=0,nl-1 do $
-   frame_save, plt[il],filename=filename[il]
+   frame_save, frm[il],filename=filename[il]
