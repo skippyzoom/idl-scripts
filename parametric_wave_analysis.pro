@@ -22,12 +22,20 @@ params['nt_max'] = nt_max
 frame_type = '.pdf'
 movie_type = '.mp4'
 
-subsample = 2
+subsample = 1
+;; time = time_strings(subsample*params.nout* $
+;;                     lindgen(params.nt_max/subsample+1), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+t0 = nt_max/2
+tf = nt_max
 time = time_strings(subsample*params.nout* $
-                    lindgen(params.nt_max/subsample+1), $
+                    (tf-t0-1 + lindgen((tf-t0)/subsample)), $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
+
 ;; time = time_strings([params.nout, $
 ;;                      5*params.nout, $
 ;;                      10*params.nout, $
@@ -55,7 +63,7 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;              [3*nt_max/4,2*(nt_max/2)]]
 
 ;; @analyze_moments
-;; @get_den1_plane
+@get_den1_plane
 ;; @den1_movie
 ;; @calc_den1fft_t
 ;; @den1fft_t_movie
@@ -66,10 +74,10 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;       filename=expand_path(path)+path_sep()+ $
 ;;       'den1ktt_rms-02to05_meter-044to046_deg.sav'
 ;; @den1ktt_rms_plots
-;; @calc_den1fft_w
-;; @calc_den1ktw
-;; @den1ktw_images
-;; @den1ktw_rms_plots
+@calc_den1fft_w
+@calc_den1ktw
+@den1ktw_images
+@den1ktw_rms_plots
 ;; @den1_ktt_frames
 ;; @den1_ktt_movie
 ;; @den1_fft_movie
@@ -81,9 +89,9 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; @calc_Erfft_t
 ;; save, time,Erfft_t, $
 ;;       filename=expand_path(path)+path_sep()+'Erfft_t.sav'
-restore, filename=efield_save_name,/verbose
-@load_plane_params
-@build_efield_components
+;; restore, filename=efield_save_name,/verbose
+;; @load_plane_params
+;; @build_efield_components
 
 ;; @calc_Erfft_t
 ;; save, time,Erfft_t, $
