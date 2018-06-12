@@ -19,6 +19,7 @@ filename = expand_path(path)+path_sep()+ $
            'frames'+path_sep()+ $
            'den1ktw_rms-'+lambda.toarray()+'m'+ $
            '-second_half'+ $
+           '-norm_max'+ $
            '.'+get_extension(frame_type)
 
 ;;==Get effective time step
@@ -51,28 +52,28 @@ vrange['020.00'] = [-100,+100]
 xticklen = 0.02
 xy_scale = 1.0
 for il=0,nl-1 do $
-   frm[il] = plot(wdata/float(lambda[il]), $
-                  ;; rms(10*alog10(den1ktw[lambda[il]].f_interp^2), $
-                  ;;     dim=1,/norm), $
-                  rms(den1ktw[lambda[il]].f_interp, $
-                      dim=1,/norm), $
-                  xstyle = 1, $
-                  xtitle = '$V_{ph}$ [m/s]', $
-                  ytitle = 'Norm. Amplitude', $
-                  ;; xrange = float(lambda[il]) lt 10.0 ? $
-                  ;; vrange_lt_10 : vrange_ge_10, $
-                  xrange = vrange[lambda[il]], $
-                  xmajor = 11, $
-                  xminor = 1, $
-                  xticklen = xticklen, $
-                  yticklen = xticklen/xy_scale, $
-                  xtickfont_size = 12.0, $
-                  ytickfont_size = 12.0, $
-                  color = 'black', $
-                  background_color = 'white', $
-                  font_size = 16.0, $
-                  font_name = 'Times', $
-                  /buffer)
+   frm[il] = $
+   den1ktw_plot_frame(wdata/float(lambda[il]), $
+                      rms(den1ktw[lambda[il]].f_interp,dim=1), $
+                      /normalize, $
+                      /log, $
+                      /power, $
+                      yrange = [-30,0], $
+                      xstyle = 1, $
+                      xtitle = '$V_{ph}$ [m/s]', $
+                      ytitle = 'Power [dB]', $
+                      xrange = vrange[lambda[il]], $
+                      xmajor = 11, $
+                      xminor = 1, $
+                      xticklen = xticklen, $
+                      yticklen = xticklen/xy_scale, $
+                      xtickfont_size = 12.0, $
+                      ytickfont_size = 12.0, $
+                      color = 'black', $
+                      background_color = 'white', $
+                      font_size = 16.0, $
+                      font_name = 'Times', $
+                      /buffer)
 
 ;;==Adjust aspect ratio of each image
 for il=0,nl-1 do $

@@ -19,6 +19,7 @@ filename = expand_path(path)+path_sep()+ $
            'frames'+path_sep()+ $
            'den1ktw-'+lambda.toarray()+'m'+ $
            '-second_half'+ $
+           '-norm_max'+ $
            '.'+get_extension(frame_type)
 
 ;;==Get effective time step
@@ -60,31 +61,37 @@ xy_scale = 1.0
 ymajor = 11
 yminor = 1
 for il=0,nl-1 do $
-   frm[il] = image(reverse(den1ktw[lambda[il]].f_interp,1), $
-                   den1ktw[lambda[il]].t_interp/!dtor, $
-                   wdata/float(lambda[il]), $
-                   /buffer, $
-                   rgb_table = 39, $
-                   axis_style = 1, $
-                   xtitle = 'Angle [deg].', $
-                   ytitle = '$V_{ph}$ [m/s]', $
-                   xstyle = 1, $
-                   ystyle = 1, $
-                   xtickdir = 1, $
-                   ytickdir = 1, $
-                   xticklen = xticklen, $
-                   yticklen = xticklen/xy_scale, $
-                   xrange = trange, $
-                   yrange = vrange[lambda[il]], $
-                   xmajor = xmajor, $
-                   ymajor = ymajor, $
-                   xminor = xminor, $
-                   yminor = yminor, $
-                   xtickvalues = xtickvalues, $
-                   xshowtext = 1, $
-                   yshowtext = 1, $
-                   font_name = 'Times', $
-                   font_size = 16.0)
+   frm[il] = $
+   den1ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
+                       den1ktw[lambda[il]].t_interp/!dtor, $
+                       wdata/float(lambda[il]), $
+                       /power, $
+                       /log, $
+                       /normalize, $
+                       /buffer, $
+                       min_value = -30, $
+                       max_value = 0, $
+                       rgb_table = 39, $
+                       axis_style = 1, $
+                       xtitle = 'Angle [deg].', $
+                       ytitle = '$V_{ph}$ [m/s]', $
+                       xstyle = 1, $
+                       ystyle = 1, $
+                       xtickdir = 1, $
+                       ytickdir = 1, $
+                       xticklen = xticklen, $
+                       yticklen = xticklen/xy_scale, $
+                       xrange = trange, $
+                       yrange = vrange[lambda[il]], $
+                       xmajor = xmajor, $
+                       ymajor = ymajor, $
+                       xminor = xminor, $
+                       yminor = yminor, $
+                       xtickvalues = xtickvalues, $
+                       xshowtext = 1, $
+                       yshowtext = 1, $
+                       font_name = 'Times', $
+                       font_size = 16.0)
 
 ;;==Adjust aspect ratio of each image
 for il=0,nl-1 do $
