@@ -23,10 +23,6 @@ nw = fsize[3]
 ;;==Convert complex FFT to its magnitude
 fdata = abs(fdata)
 
-;;==Rotate FFT
-;; for iw=0,nw-1 do $
-;;    fdata[*,*,iw] = rotate(fdata[*,*,iw],2)
-
 ;;==Reverse frequency dimension
 fdata = reverse(fdata,3)
 
