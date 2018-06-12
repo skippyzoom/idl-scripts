@@ -63,7 +63,6 @@ for il=0,nl-1 do $
    frm[il] = image(reverse(den1ktw[lambda[il]].f_interp,1), $
                    den1ktw[lambda[il]].t_interp/!dtor, $
                    wdata/float(lambda[il]), $
-   ;; frm[il] = image(den1ktw[lambda[il]].f_interp,$
                    /buffer, $
                    rgb_table = 39, $
                    axis_style = 1, $
@@ -76,8 +75,6 @@ for il=0,nl-1 do $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
-                   ;; yrange = float(lambda[il]) lt 10.0 ? $
-                   ;; vrange_lt_10 : vrange_ge_10, $
                    yrange = vrange[lambda[il]], $
                    xmajor = xmajor, $
                    ymajor = ymajor, $
