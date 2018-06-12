@@ -8,6 +8,19 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
+;;==Get wavelength keys
+lambda = den1ktw.keys()
+
+;;==Sort wavelength keys from smallest to largest
+lambda = lambda.sort()
+
+;;==Declare file names (one for each wavelength)
+filename = expand_path(path)+path_sep()+ $
+           'frames'+path_sep()+ $
+           'den1ktw-'+lambda.toarray()+'m'+ $
+           '-second_half'+ $
+           '.'+get_extension(frame_type)
+
 ;;==Get effective time step
 ;;  This will differ from params.dt*params.nout in cases when the main
 ;;  script imported data at a sample rate > 1. It assumes a uniform
@@ -16,12 +29,6 @@ dt = params.dt* $
      (long(time.index[1])-long(time.index[0]))
 wdata = 2*!pi*fftfreq(nw,dt)
 wdata = shift(wdata,nw/2-1)
-
-;;==Get wavelength keys
-lambda = den1ktw.keys()
-
-;;==Sort wavelength keys from smallest to largest
-lambda = lambda.sort()
 
 ;;==Get number of wavelengths
 nl = n_elements(lambda)
@@ -96,12 +103,6 @@ for il=0,nl-1 do $
               target = frm[il], $
               font_name = 'Courier', $
               font_size = 10.0)
-
-;;==Create array of file names
-filename = expand_path(path)+path_sep()+ $
-           'frames'+path_sep()+ $
-           'den1ktw-'+lambda.toarray()+'m'+ $
-           '.'+get_extension(frame_type)
 
 ;;==Save individual frames
 for il=0,nl-1 do $
