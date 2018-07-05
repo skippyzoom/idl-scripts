@@ -19,7 +19,7 @@ save_name = 'efield_'+axes+ $
             '-initial_five_steps'+ $
             '.sav'
 
-;==Set up multi-run hashes
+;;==Set up multi-run hashes
 Et0_hash = hash()
 Er0_hash = hash()
 color = hash()
@@ -29,4 +29,5 @@ linestyle = hash()
 @multirun_Ert0_restore
 
 ;;==Create plots
-;; @multirun_Ert0_plots
+@multirun_Er0_plot
+@multirun_Et0_plot
