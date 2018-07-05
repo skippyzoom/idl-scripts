@@ -19,6 +19,7 @@ filename = expand_path(path)+path_sep()+ $
            'frames'+path_sep()+ $
            'den1ktw_rms-'+lambda.toarray()+'m'+ $
            '-second_half'+ $
+           ;; '-first_half'+ $
            '-norm_max'+ $
            '.'+get_extension(frame_type)
 
@@ -43,9 +44,9 @@ frm = objarr(nl)
 ;; vrange_ge_10 = [-100,+100]
 vrange = hash(lambda)
 vrange['002.00'] = [-1000,+1000]
-vrange['003.00'] = [-500,+500]
-vrange['004.00'] = [-500,+500]
-vrange['005.00'] = [-500,+500]
+vrange['003.00'] = [-400,+400]
+vrange['004.00'] = [-400,+400]
+vrange['005.00'] = [-400,+400]
 vrange['010.00'] = [-100,+100]
 vrange['020.00'] = [-100,+100]
 ;;<--
@@ -58,12 +59,13 @@ for il=0,nl-1 do $
                       /normalize, $
                       /log, $
                       /power, $
-                      yrange = [-30,0], $
+                      yrange = [-10,0], $
                       xstyle = 1, $
+                      title = lambda[il]+' m', $
                       xtitle = '$V_{ph}$ [m/s]', $
                       ytitle = 'Power [dB]', $
                       xrange = vrange[lambda[il]], $
-                      xmajor = 11, $
+                      xmajor = 9, $
                       xminor = 1, $
                       xticklen = xticklen, $
                       yticklen = xticklen/xy_scale, $

@@ -5,17 +5,19 @@
 ;------------------------------------------------------------------------------
 ;-
 
-;;==Get number of time steps
-nt = n_elements(time.index)
+;;==Get dimensions of den1
+fsize = size(den1)
 
 ;;==Declare dimensions of full FFT array
-nkx = nx
-nky = ny
-nw = next_power2(nt)
+nkx = fsize[1]
+nky = fsize[2]
+nw = next_power2(fsize[3])
 
 ;;==Set up full FFT array (may be padded)
 den1fft_w = complexarr(nkx,nky,nw)
-den1fft_w[0:nx-1,0:ny-1,0:nt-1] = den1
+den1fft_w[0:fsize[1]-1, $
+          0:fsize[2]-1, $
+          0:fsize[3]-1] = den1
 
 ;;==Calculate full FFT
 den1fft_w = fft(den1fft_w,/overwrite)

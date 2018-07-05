@@ -12,6 +12,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare filename
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'efield_x-y_mean'+ $
+           '-shift'+ $
            '-'+time.index+ $           
            '.'+get_extension(frame_type)
 

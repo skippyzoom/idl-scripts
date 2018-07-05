@@ -8,10 +8,13 @@
 ;-
 
 ;;==Create zeroth-order E components
-if n_elements(Ex0) eq 0 then Ex0 = 0.0
-if n_elements(Ey0) eq 0 then Ey0 = 0.0
-if n_elements(Ex0) eq 1 then Ex0 = Ex + Ex0
-if n_elements(Ey0) eq 1 then Ey0 = Ey + Ey0
+;; if n_elements(Ex0) eq 0 then Ex0 = 0.0
+;; if n_elements(Ey0) eq 0 then Ey0 = 0.0
+;; if n_elements(Ex0) eq 1 then Ex0 = Ex + Ex0
+;; if n_elements(Ey0) eq 1 then Ey0 = Ey + Ey0
+;;==Construct Ex0, Ey0
+Ex0 = Ex + pp.Ex0
+Ey0 = Ey + pp.Ey0
 
 ;;==Create zeroth-order Et and Er from smoothed components
 sw = 10.0/dx
@@ -31,7 +34,7 @@ pos = multi_position([1,2], $
 it0 = 0
 
 ;;==Declare y-axis ranges
-erange = [0,20]
+erange = [0,40]
 trange = [0,180]
 
 ;;==Create two stacked plot frames
@@ -66,7 +69,9 @@ txt = text(0.0,0.005, $
 
 ;;==Save the plot
 filename = expand_path(path)+path_sep()+'frames'+ $
-           path_sep()+'Ert_init_stack.pdf'
+           path_sep()+'Ert_init_stack'+ $
+           '-shift'+ $
+           '.pdf'
 frame_save, plt,filename=filename
 
 ;;==Create two overplotted frames
@@ -82,10 +87,12 @@ plt = plot(xdata,mean(Er0[*,*,it0],dim=2)*1e3, $
            position = [0.1,0.1,0.8,0.9], $
            font_name = 'Times', $
            font_size = 14, $
+           thick = 2, $
            /buffer)
 ymax = (plt.yrange)[1]
 opl = plot(xdata,(ymax/180.0)*mean(Et0[*,*,it0],dim=2)/!dtor, $
            color = 'blue', $           
+           thick = 2, $
            /overplot)
 yax = axis('y', $
            target = opl, $
@@ -108,5 +115,7 @@ txt = text(0.0,0.005, $
 
 ;;==Save the plot
 filename = expand_path(path)+path_sep()+'frames'+ $
-           path_sep()+'Ert_init_overplot.pdf'
+           path_sep()+'Ert_init_overplot'+ $
+           '-shift'+ $
+           '.pdf'
 frame_save, plt,filename=filename

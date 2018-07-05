@@ -18,7 +18,9 @@ lambda = lambda.sort()
 filename = expand_path(path)+path_sep()+ $
            'frames'+path_sep()+ $
            'den1ktw-'+lambda.toarray()+'m'+ $
+           ;; '-shift'+ $
            '-second_half'+ $
+           ;; '-first_half'+ $
            '-norm_max'+ $
            '.'+get_extension(frame_type)
 
@@ -43,9 +45,9 @@ frm = objarr(nl)
 ;; vrange_ge_10 = [-100,+100]
 vrange = hash(lambda)
 vrange['002.00'] = [-1000,+1000]
-vrange['003.00'] = [-500,+500]
-vrange['004.00'] = [-500,+500]
-vrange['005.00'] = [-500,+500]
+vrange['003.00'] = [-400,+400]
+vrange['004.00'] = [-400,+400]
+vrange['005.00'] = [-400,+400]
 vrange['010.00'] = [-100,+100]
 vrange['020.00'] = [-100,+100]
 ;;<--
@@ -58,7 +60,7 @@ xminor = 2
 xtickvalues = (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
 xticklen = 0.02
 xy_scale = 1.0
-ymajor = 11
+ymajor = 9
 yminor = 1
 for il=0,nl-1 do $
    frm[il] = $
@@ -73,6 +75,7 @@ for il=0,nl-1 do $
                        max_value = 0, $
                        rgb_table = 39, $
                        axis_style = 1, $
+                       title = lambda[il]+' m', $
                        xtitle = 'Angle [deg].', $
                        ytitle = '$V_{ph}$ [m/s]', $
                        xstyle = 1, $

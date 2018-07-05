@@ -8,14 +8,18 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-;;==Add a description to the file name
-;;  (e.g., 'full', 'center512', 'right_half' to distinguish different
-;;  sets of ranges)
-file_description = 'full'
+;;==Declare file name(s)
+filename = expand_path(path+path_sep()+'frames')+ $
+           path_sep()+'den1'+ $
+           ;; '-right_256'+ $
+           '-full_shifted'+ $
+           ;; '-full_rescale'+ $
+           '-'+time.index+ $
+           '.'+get_extension(frame_type)
 
 ;;==Declare image ranges
-;; x0 = nx/2-128
-;; xf = nx/2+128
+;; x0 = 3*nx/4-128
+;; xf = 3*nx/4+128
 ;; y0 = ny/2-128
 ;; yf = ny/2+128
 x0 = 0
@@ -38,7 +42,7 @@ fdata = den1
 ;;==Optionally smooth
 ;; sw = [10.0/dx,10.0/dy]
 sw = [1,1]
-for isw=n_elements(sw),nt-1 do $
+for isw=n_elements(sw),ndim-1 do $
    sw = [sw,0]
 if total(sw) gt ndim then $
    fdata = smooth(fdata,sw,/edge_wrap)
@@ -57,10 +61,10 @@ for it=0,nt-1 do $
                    ;; max_value = +max(abs(fdata[*,*,1:*])), $
                    ;; min_value = -0.15, $
                    ;; max_value = +0.15, $
-                   ;; min_value = -0.2, $
-                   ;; max_value = +0.2, $
-                   min_value = min(fdata), $
-                   max_value = max(fdata), $
+                   min_value = -0.2, $
+                   max_value = +0.2, $
+                   ;; min_value = min(fdata), $
+                   ;; max_value = max(fdata), $
                    rgb_table = 5, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $
@@ -117,15 +121,6 @@ for it=0,nt-1 do $
               target = frm[it], $
               font_name = 'Courier', $
               font_size = 10.0)
-
-;;==Declare file name
-if n_elements(file_description) eq 0 then $
-   file_description = ''
-filename = expand_path(path+path_sep()+'frames')+ $
-           path_sep()+'den1'+ $
-           '-'+file_description+ $
-           '-'+time.index+ $
-           '.'+get_extension(frame_type)
 
 ;;==Save individual images
 for it=0,nt-1 do $
