@@ -28,10 +28,15 @@ nt = fsize[3]
 ;;==Calculate the mean over y
 Ex_ymean = mean(Ex,dim=2)
 
+;;==Set up object array for plot handles
 frm = objarr(nt)
+
+;;==Set up color array
 loadct, 42,rgb_table=rgb_table
 clr = 256*indgen(nt)/(nt-1)
 color = rgb_table[clr,*]
+
+;;==Create plot objects
 for it=0,nt-1 do $
    frm[it] = plot(xdata,scale*Ex_ymean[*,it], $
                   xstyle = 1, $
@@ -47,7 +52,7 @@ for it=0,nt-1 do $
                   ;; overplot = (it gt 0), $
                   /buffer)
 
-;;==Add a path label
+;;==Add a path label to each plot
 for it=0,nt-1 do $
    txt = text(0.0,0.005, $
               path, $
