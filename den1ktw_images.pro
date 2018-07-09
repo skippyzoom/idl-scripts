@@ -41,8 +41,6 @@ frm = objarr(nl)
 
 ;;==Generate images
 ;;-->Kind of a hack
-;; vrange_lt_10 = [-500,+500]
-;; vrange_ge_10 = [-100,+100]
 vrange = hash(lambda)
 vrange['002.00'] = [-1000,+1000]
 vrange['003.00'] = [-400,+400]
@@ -64,37 +62,37 @@ ymajor = 9
 yminor = 1
 for il=0,nl-1 do $
    frm[il] = $
-   den1ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
-                       den1ktw[lambda[il]].t_interp/!dtor, $
-                       wdata/float(lambda[il]), $
-                       /power, $
-                       /log, $
-                       /normalize, $
-                       /buffer, $
-                       min_value = -30, $
-                       max_value = 0, $
-                       rgb_table = 39, $
-                       axis_style = 1, $
-                       title = lambda[il]+' m', $
-                       xtitle = 'Angle [deg].', $
-                       ytitle = '$V_{ph}$ [m/s]', $
-                       xstyle = 1, $
-                       ystyle = 1, $
-                       xtickdir = 1, $
-                       ytickdir = 1, $
-                       xticklen = xticklen, $
-                       yticklen = xticklen/xy_scale, $
-                       xrange = trange, $
-                       yrange = vrange[lambda[il]], $
-                       xmajor = xmajor, $
-                       ymajor = ymajor, $
-                       xminor = xminor, $
-                       yminor = yminor, $
-                       xtickvalues = xtickvalues, $
-                       xshowtext = 1, $
-                       yshowtext = 1, $
-                       font_name = 'Times', $
-                       font_size = 16.0)
+   ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
+                   den1ktw[lambda[il]].t_interp/!dtor, $
+                   wdata/float(lambda[il]), $
+                   /power, $
+                   /log, $
+                   /normalize, $
+                   /buffer, $
+                   min_value = -30, $
+                   max_value = 0, $
+                   rgb_table = 39, $
+                   axis_style = 1, $
+                   title = lambda[il]+' m', $
+                   xtitle = 'Angle [deg].', $
+                   ytitle = '$V_{ph}$ [m/s]', $
+                   xstyle = 1, $
+                   ystyle = 1, $
+                   xtickdir = 1, $
+                   ytickdir = 1, $
+                   xticklen = xticklen, $
+                   yticklen = xticklen/xy_scale, $
+                   xrange = trange, $
+                   yrange = vrange[lambda[il]], $
+                   xmajor = xmajor, $
+                   ymajor = ymajor, $
+                   xminor = xminor, $
+                   yminor = yminor, $
+                   xtickvalues = xtickvalues, $
+                   xshowtext = 1, $
+                   yshowtext = 1, $
+                   font_name = 'Times', $
+                   font_size = 16.0)
 
 ;;==Adjust aspect ratio of each image
 for il=0,nl-1 do $
