@@ -7,9 +7,9 @@
 
 if n_elements(path) eq 0 then $
    path = get_base_dir()+path_sep()+ $
-          'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0/'
+          ;; 'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0/'
           ;; 'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0-doubled/'
-          ;; 'parametric_wave/nue_3.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
+          'parametric_wave/nue_3.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
 if n_elements(lun) eq 0 then lun = -1
 printf, lun, "[PARAMETRIC_WAVE] path = "+path
 if n_elements(rotate) eq 0 then rotate = 0
@@ -29,12 +29,12 @@ efield_save_name = expand_path(path)+path_sep()+ $
                    '-subsample_2'+ $
                    ;; '-initial_five_steps'+ $
                    '.sav'
-;; subsample = 1
-;; t0 = params.nt_max/2
-;; tf = params.nt_max
-;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+subsample = 2
+t0 = 0
+tf = params.nt_max
+timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
-timesteps = params.nout*[1,params.nt_max-1]
+;; timesteps = params.nout*[1,params.nt_max-1]
 
 ;; timesteps = [params.nout, $
 ;;              5*params.nout, $
@@ -63,11 +63,11 @@ time = time_strings(timesteps, $
 ;; fluxx1 = shift(fluxx1,[nx/4,0,0])
 ;; fluxy1 = shift(fluxy1,[nx/4,0,0])
 
-;; @get_den1_plane
-;; den1 = shift(den1,[nx/4,0,0])
+@get_den1_plane
+den1 = shift(den1,[nx/4,0,0])
 ;; @den1_images
 
-;; @den1_movie
+@den1_movie
 ;; @calc_den1fft_t
 ;; @den1fft_t_movie
 ;; @calc_den1ktt
@@ -92,13 +92,13 @@ time = time_strings(timesteps, $
 ;; @get_efield_plane
 ;; save, time,efield,filename=efield_save_name
 
-@get_efield_plane
-@build_efield_components
-shifts = [nx/4,0,0]
-Ex = shift(Ex,shifts)
-Ey = shift(Ey,shifts)
-Er = shift(Er,shifts)
-Et = shift(Et,shifts)
+;; @get_efield_plane
+;; @build_efield_components
+;; shifts = [nx/4,0,0]
+;; Ex = shift(Ex,shifts)
+;; Ey = shift(Ey,shifts)
+;; Er = shift(Er,shifts)
+;; Et = shift(Et,shifts)
 
 ;; @calc_Erfft_t
 ;; save, time,Erfft_t, $
