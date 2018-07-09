@@ -11,9 +11,9 @@ if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 ;;==Declare file name
 filename = expand_path(path+path_sep()+'movies')+ $
            path_sep()+'den1'+ $
-           ;; '-full_shift'+ $
-           '-from_denft1'+ $
-           '-reset_TEST'+ $
+           '-full_shift'+ $
+           ;; '-from_denft1'+ $
+           ;; '-reset_TEST'+ $
            '.'+get_extension(movie_type)
 
 ;;==Declare graphics ranges wrt current plane
@@ -60,10 +60,10 @@ dsize = size(den1)
 nx = dsize[1]
 ny = dsize[2]
 data_aspect = float(yf-y0)/(xf-x0)
-image_kw['min_value'] = -max(abs(den1[x0:xf-1,y0:yf-1,1:*]))
-image_kw['max_value'] = +max(abs(den1[x0:xf-1,y0:yf-1,1:*]))
-;; image_kw['min_value'] = -0.2
-;; image_kw['max_value'] = +0.2
+;; image_kw['min_value'] = -max(abs(den1[x0:xf-1,y0:yf-1,1:*]))
+;; image_kw['max_value'] = +max(abs(den1[x0:xf-1,y0:yf-1,1:*]))
+image_kw['min_value'] = -0.2
+image_kw['max_value'] = +0.2
 image_kw['axis_style'] = 2
 image_kw['rgb_table'] = 5
 image_kw['xtitle'] = 'Zonal [m]'
@@ -77,10 +77,10 @@ image_kw['ymajor'] = 5
 image_kw['yminor'] = 3
 image_kw['font_size'] = 18
 image_kw['font_name'] = 'Times'
-;; image_kw['dimensions'] = [1024,256]
-;; image_kw['image_dimensions'] = [1024,256]
-image_kw['dimensions'] = [512,512]
-image_kw['image_dimensions'] = [512,512]
+image_kw['dimensions'] = [1024,256]
+image_kw['image_dimensions'] = [1024,256]
+;; image_kw['dimensions'] = [512,512]
+;; image_kw['image_dimensions'] = [512,512]
 colorbar_kw['title'] = '$\delta n/n_0$'
 colorbar_kw['font_size'] = 18
 colorbar_kw['font_name'] = 'Times'
