@@ -20,4 +20,4 @@ delvar, $
    clr, $
    plt, $
    leg, $
-   txt, $
+   txt
