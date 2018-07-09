@@ -36,28 +36,18 @@ time = time_strings(timesteps, $
                     precision = 2)
 
 ;; @analyze_moments
-
 @get_denft1_plane
+;;-->Copy rotate(denft1,2) into empty half plane?
+;;   Something still looks weird in the resulting ktw images. 
+for it=0,(size(denft1))[3]-1 do $
+   denft1[*,*,it] += rotate(denft1[*,*,it],2)
+if rotate ne 0 then $
+   for it=0,(size(denft1))[3]-1 do $
+      denft1[*,*,it] = rotate(denft1[*,*,it],rotate)
+@calc_denft1_w
+@calc_denft1ktw
 
-
-;; @get_den0_plane
-;; @get_den1_plane
-;; @get_phi_plane
-;; @get_efield_plane
-
-;; @get_phift_plane
-;; phi = arr_from_arrft(phift,rotate=rotate)
-;; @get_denft1_plane
-den1 = arr_from_arrft(denft1,rotate=rotate)
-
-;; @get_denft1_plane
-;; if rotate ne 0 then $
-;;    for it=0,(size(denft1))[3]-1 do denft1[*,*,it] = rotate(denft1[*,*,it],rotate)
-;; if params.ndim_space eq 3 && strcmp(axes,'yz') then $
-;;    denft1 = transpose(denft1,[1,0,2])
-;; @denft1_raw_movies
-;; den1 = arr_from_arrft(denft1,rotate=rotate)
-;; @den1_raw_movies
+;; den1 = arr_from_arrft(denft1)
 ;; @denft1_rms_frames
 ;; @denft1_ktt
 
