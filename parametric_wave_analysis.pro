@@ -29,8 +29,8 @@ efield_save_name = expand_path(path)+path_sep()+ $
                    '-subsample_2'+ $
                    ;; '-initial_five_steps'+ $
                    '.sav'
-subsample = 2
-t0 = 0
+subsample = 1
+t0 = params.nt_max/2
 tf = params.nt_max
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
@@ -63,11 +63,11 @@ time = time_strings(timesteps, $
 ;; fluxx1 = shift(fluxx1,[nx/4,0,0])
 ;; fluxy1 = shift(fluxy1,[nx/4,0,0])
 
-@get_den1_plane
-den1 = shift(den1,[nx/4,0,0])
+;; @get_den1_plane
+;; den1 = shift(den1,[nx/4,0,0])
 ;; @den1_images
 
-@den1_movie
+;; @den1_movie
 ;; @calc_den1fft_t
 ;; @den1fft_t_movie
 ;; @calc_den1ktt
@@ -104,14 +104,14 @@ den1 = shift(den1,[nx/4,0,0])
 ;; save, time,Erfft_t, $
 ;;       filename=expand_path(path)+path_sep()+'Erfft_t.sav'
 
-;; restore, filename=efield_save_name,/verbose
-;; @load_plane_params
-;; @build_efield_components
-;; shifts = [nx/4,0,0]
-;; Ex = shift(Ex,shifts)
-;; Ey = shift(Ey,shifts)
-;; Er = shift(Er,shifts)
-;; Et = shift(Et,shifts)
+restore, filename=efield_save_name,/verbose
+@load_plane_params
+@build_efield_components
+shifts = [nx/4,0,0]
+Ex = shift(Ex,shifts)
+Ey = shift(Ey,shifts)
+Er = shift(Er,shifts)
+Et = shift(Et,shifts)
 
 ;; @calc_Erfft_t
 ;; save, time,Erfft_t, $
@@ -119,22 +119,22 @@ den1 = shift(den1,[nx/4,0,0])
 
 ;; @calc_Erktt
 
-;; @calc_Erfft_t
-;; theta = [44,46]*!dtor
-;; ;; lambda = [3.0,10.6]
-;; lam0 = 2.0
-;; lamf = 5.0
-;; dlam = 0.1
-;; lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
-;; @calc_Erktt_rms
-;; save, time,Erktt_rms, $
-;;       filename=expand_path(path)+path_sep()+ $
-;;       'Erktt_rms-02to05_meter-044to046_deg.sav'
-;; lambda = 50.0
-;; @calc_Erktt_rms
-;; save, time,Erktt_rms, $
-;;       filename=expand_path(path)+path_sep()+ $
-;;       'Erktt_rms-50_meter-044to046_deg.sav'
+@calc_Erfft_t
+theta = [40,60]*!dtor
+;; lambda = [3.0,10.6]
+lam0 = 2.0
+lamf = 5.0
+dlam = 0.1
+lambda = [2.0+dlam*findgen((lamf-lam0)/dlam + 1)]
+@calc_Erktt_rms
+save, time,Erktt_rms, $
+      filename=expand_path(path)+path_sep()+ $
+      'Erktt_rms-02to05_meter-040to060_deg.sav'
+lambda = 50.0
+@calc_Erktt_rms
+save, time,Erktt_rms, $
+      filename=expand_path(path)+path_sep()+ $
+      'Erktt_rms-50_meter-040to060_deg.sav'
 
 ;; @Ex_ymean_movie
 ;; @Ex_ymean_plots

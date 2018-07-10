@@ -6,6 +6,9 @@
 ;------------------------------------------------------------------------------
 ;-
 
+;;==Set default frame type
+if n_elements(frame_type) eq 0 then frame_type = '.pdf'
+
 ;;==Declare project path
 proj_path = get_base_dir()+path_sep()+'parametric_wave/'
 
@@ -13,17 +16,21 @@ proj_path = get_base_dir()+path_sep()+'parametric_wave/'
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
 ;;==Declare runs
-run = ['nue_2.0e4-amp_0.05-E0_9.0/', $
-       'nue_3.0e4-amp_0.05-E0_9.0/', $
-       'nue_3.0e4-amp_0.10-E0_9.0/', $
-       'nue_4.0e4-amp_0.05-E0_9.0/']
+;; run = ['nue_2.0e4-amp_0.05-E0_9.0/', $
+;;        'nue_3.0e4-amp_0.05-E0_9.0/', $
+;;        'nue_3.0e4-amp_0.10-E0_9.0/', $
+;;        'nue_4.0e4-amp_0.05-E0_9.0/']
+run = ['nue_3.0e4-amp_0.05-E0_9.0-petsc_subcomm/', $
+       'nue_3.0e4-amp_0.10-E0_9.0-petsc_subcomm//', $
+       'nue_4.0e4-amp_0.05-E0_9.0-petsc_subcomm//', $
+       'nue_4.0e4-amp_0.10-E0_9.0-petsc_subcomm//']
 nr = n_elements(run)
 
 ;;==Declare save-file name for ktt_rms
-save_name = 'Erktt_rms-02to05_meter-044to046_deg.sav'
+save_name = 'Erktt_rms-02to05_meter-040to060_deg.sav'
 
 ;;==Get information from first hash
-path = expand_path(proj_path)+path_sep()+'nue_2.0e4-amp_0.05-E0_9.0/'
+path = expand_path(proj_path)+path_sep()+run[0]
 restore, expand_path(path)+path_sep()+save_name
 
 ;;==Get wavelengths
@@ -49,25 +56,21 @@ rms_total = build_rms_total(proj_path, $
                             'Erktt_rms')
 
 ;;==Set up colors and line styles
-color = ['red','blue','blue','green']
-linestyle = [0,0,2,0]
+color = ['blue','blue','green','green']
+linestyle = [0,2,0,2]
 
 ;;==Create plot frame
 plt = objarr(nr)
 xdata = 1e3*params.dt*time.index
-ydata = fltarr(nr,nt)
-for ir=0,nr-1 do $
-   ydata[ir,*] = rms_total[ir,*]/mean(rms_total[ir,1:10])
 for ir=0,nr-1 do $
    plt[ir] = plot(xdata, $
-                  ydata[ir,*], $
+                  rms_total[ir,*], $
                   xstyle = 1, $
                   xtitle = 'Time [ms]', $
-                  ;; ytitle = '$\langle\delta E(k,t)/E_0\rangle$', $
                   ytitle = '$\langle\delta E\rangle/E_0$', $
                   overplot = (ir gt 0), $
                   color = color[ir], $
-                  yrange = [1,2.5], $
+                  yrange = [0,8e-4], $
                   ystyle = 0, $
                   xtickfont_size = 16.0, $
                   ytickfont_size = 16.0, $
@@ -112,8 +115,9 @@ txt = text(0.0,0.005, $
 
 ;;==Save plots
 filename = expand_path(plot_path)+path_sep()+'frames'+ $
-           path_sep()+strip_extension(save_name)+ $
-           '.pdf'
+           path_sep()+ $
+           strip_extension(save_name)+ $
+           '.'+get_extension(frame_type)
 frame_save, plt,filename=filename
 
 ;;==Free memory
