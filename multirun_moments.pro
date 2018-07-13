@@ -15,53 +15,27 @@ proj_path = get_base_dir()+path_sep()+'parametric_wave/'
 ;;==Declare plot path
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
-;;==Set up the list of run directories
-run = list()
+;;==Set up array of read paths
 run = ['parametric_wave/nue_2.0e4-subthreshold-petsc_subcomm/', $
        'parametric_wave/nue_3.0e4-subthreshold-petsc_subcomm/', $
        'parametric_wave/nue_4.0e4-subthreshold-petsc_subcomm/', $
        'parametric_wave/nue_5.0e4-subthreshold-petsc_subcomm/']
 nr = n_elements(run)
+path = get_base_dir()+path_sep()+run
 
 ;;==Set up the hash to contain all moments files
 all_moments = hash(run)
 
 ;;==Read moments files.
-;;-->This could be a loop over calls to a function (e.g.,
-;;'build_all_moments'). If so, you should extract the actual function
-;;calls from the analyze_moments script.
-ir = 0       
-path = get_base_dir()+path_sep()+run[ir]
-params = set_eppic_params(path=path)
-nt_max = calc_timesteps(path=path)
-params['nt_max'] = nt_max
-@analyze_moments
-all_moments[run[ir]] = moments
+for ir=0,nr-1 do $
+   all_moments[run[ir]] = read_moments(path=path[ir])
 
-ir = 1
-path = get_base_dir()+path_sep()+run[ir]
-params = set_eppic_params(path=path)
-nt_max = calc_timesteps(path=path)
-params['nt_max'] = nt_max
-@analyze_moments
-all_moments[run[ir]] = moments
+;;==Set up the hash to contain all parameter files
+all_params = hash(run)
 
-ir = 2
-path = get_base_dir()+path_sep()+run[ir]
-params = set_eppic_params(path=path)
-nt_max = calc_timesteps(path=path)
-params['nt_max'] = nt_max
-@analyze_moments
-all_moments[run[ir]] = moments
-
-ir = 3
-path = get_base_dir()+path_sep()+run[ir]
-params = set_eppic_params(path=path)
-nt_max = calc_timesteps(path=path)
-params['nt_max'] = nt_max
-@analyze_moments
-all_moments[run[ir]] = moments
-
+;;==Read parameter files
+for ir=0,nr-1 do $
+   all_params[run[ir]] = set_eppic_params(path=path[ir])
 
 ;;==Plot multi-run parameters
-@multrun_psi_plot
+@multirun_psi_plot

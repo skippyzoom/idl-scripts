@@ -6,10 +6,9 @@
 ;------------------------------------------------------------------------------
 ;-
 
-xdata = 1e3*params.dt* $
-        findgen(n_elements(reform(all_moments[run[0]].psi)))
 for ir=0,nr-1 do $
-   frm = plot(xdata, $
+   frm = plot(1e3*all_params[run[ir]].dt* $
+              findgen(n_elements(all_moments[run[ir]].psi)), $
               all_moments[run[ir]].psi, $
               color = (list('black', $
                             'blue', $
