@@ -6,7 +6,8 @@
 ;-
 
 ;;==Declare wavelengths of interest, in meters
-lambda = [2.0,3.0,4.0,5.0,10.0,20.0]
+if n_elements(lambda) eq 0 then $
+   lambda = 1.0 + findgen(10)
 
 ;;==Declare angles of interest, in radians
 theta = [!pi,0]
