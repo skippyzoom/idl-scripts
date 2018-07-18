@@ -6,13 +6,28 @@
 ;-
 
 ;;==Declare wavelengths of interest, in meters
-lambda = 2.0+findgen(4)
+if n_elements(lambda) eq 0 then $
+   lambda = 1.0 + findgen(10)
 
 ;;==Declare angles of interest, in radians
-theta = [0,!pi]
+theta = [!pi,0]
 
-;;==Interpolate the magnitude of the spatial FFT
-Erktt = interp_xy2kt(abs(Erfft_t), $
+;;==Preserve raw FFT
+fdata = Erfft_t
+
+;;==Get dimensions
+fsize = size(fdata)
+nkx = fsize[1]
+nky = fsize[2]
+
+;;==Convert complex FFT to its magnitude
+fdata = abs(fdata)
+
+;;==Shift FFT
+fdata = shift(fdata,nkx/2,nky/2,0)
+
+;;==Interpolate the FFT
+Erktt = interp_xy2kt(fdata, $
                      lambda = lambda, $
                      theta = theta, $
                      dx = dx, $
