@@ -19,7 +19,8 @@ plot_path = expand_path(proj_path)+path_sep()+'common'
 run = ['parametric_wave/nue_2.0e4-subthreshold-petsc_subcomm/', $
        'parametric_wave/nue_3.0e4-subthreshold-petsc_subcomm/', $
        'parametric_wave/nue_4.0e4-subthreshold-petsc_subcomm/', $
-       'parametric_wave/nue_5.0e4-subthreshold-petsc_subcomm/']
+       'parametric_wave/nue_5.0e4-subthreshold-petsc_subcomm/', $
+       'parametric_wave/nue_6.0e4-subthreshold-petsc_subcomm/']
 nr = n_elements(run)
 path = get_base_dir()+path_sep()+run
 
