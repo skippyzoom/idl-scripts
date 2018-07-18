@@ -10,7 +10,8 @@ if n_elements(lambda) eq 0 then $
    lambda = 1.0 + findgen(10)
 
 ;;==Declare angles of interest, in radians
-theta = [!pi,0]
+if n_elements(theta) eq 0 then $
+   theta = [0,2*!pi]
 
 ;;==Preserve raw FFT
 fdata = den1fft_t
