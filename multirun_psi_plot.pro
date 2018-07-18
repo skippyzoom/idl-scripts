@@ -10,15 +10,16 @@ for ir=0,nr-1 do $
    frm = plot(1e3*all_params[run[ir]].dt* $
               findgen(n_elements(all_moments[run[ir]].psi)), $
               all_moments[run[ir]].psi, $
-              color = (list('black', $
+              color = (list('cyan', $
                             'blue', $
                             'green', $
-                            'red'))[ir], $
+                            'red', $
+                            'black'))[ir], $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$\Psi_0$', $
-              yrange = [0,1], $
-              ymajor = 11, $
+              yrange = [0,1.1], $
+              ymajor = 12, $
               yminor = 3, $
               font_name = 'Times', $
               font_size = 16, $
