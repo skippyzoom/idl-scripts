@@ -15,12 +15,12 @@
 ;; axes = 'xy'
 ;; @fb_flow_angle_analysis
 
-;; @unload_defaults
-;; @unload_data
-;; path = get_base_dir()+path_sep()+'fb_flow_angle/2D/h1-Ey0_050/'
-;; rotate = 0
-;; axes = 'xy'
-;; @fb_flow_angle_analysis
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'fb_flow_angle/2D/h1-Ey0_050/'
+rotate = 0
+axes = 'xy'
+@fb_flow_angle_analysis
 
 ;; @unload_defaults
 ;; @unload_data
@@ -36,12 +36,12 @@
 ;; axes = 'yz'
 ;; @fb_flow_angle_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050/'
-rotate = 3
-axes = 'yz'
-@fb_flow_angle_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050/'
+;; rotate = 3
+;; axes = 'yz'
+;; @fb_flow_angle_analysis
 
 ;; @unload_defaults
 ;; @unload_data
