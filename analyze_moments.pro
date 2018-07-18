@@ -1,5 +1,8 @@
 ;+
 ; Script for reading moments files and plotting derived quantities
+;
+; Created by Matt Young.
+;------------------------------------------------------------------------------
 ;-
 
 ;;==Set default paths, if necessary
@@ -15,4 +18,4 @@ moments = read_moments(path=path)
 ;;==Create plots
 plot_moments, moments, $
               params = params, $
-              save_path = path+path_sep()+'frames'
+              save_path = expand_path(path)+path_sep()+'frames'
