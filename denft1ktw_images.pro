@@ -42,29 +42,31 @@ frm = objarr(nl)
 ;;==Generate images
 ;;-->Kind of a hack
 ;; vrange = hash(lambda)
-;; vrange['002.00'] = [-1000,+1000]
+;; vrange['002.00'] = [-1500,+1500]
 ;; vrange['003.00'] = [-400,+400]
 ;; vrange['004.00'] = [-400,+400]
 ;; vrange['005.00'] = [-400,+400]
 ;; vrange['010.00'] = [-100,+100]
 ;; vrange['020.00'] = [-100,+100]
 ;;<--
-trange = [0,360]
+trange = [-90,+90]
 ;; trange = [min(theta),max(theta)]/!dtor
 ;; trange = theta/!dtor
 ;; tdir = (theta[0] lt theta[1]) ? 1 : -1
 xmajor = 7
 xminor = 2
-xtickvalues = (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
+xtickvalues = trange[0] + $
+              (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
 xticklen = 0.02
 xy_scale = 1.0
-ymajor = 9
-yminor = 2
+ymajor = 7
+yminor = 3
 for il=0,nl-1 do $
    frm[il] = $
-   ktw_image_frame(reverse(denft1ktw[lambda[il]].f_interp,1), $
+   ktw_image_frame(denft1ktw[lambda[il]].f_interp, $
                    denft1ktw[lambda[il]].t_interp/!dtor, $
-                   wdata/float(lambda[il]), $
+                   ;; wdata/float(lambda[il]), $
+                   wdata, $
                    /power, $
                    /log, $
                    /normalize, $
@@ -75,7 +77,8 @@ for il=0,nl-1 do $
                    axis_style = 1, $
                    title = lambda[il]+' m', $
                    xtitle = 'Angle [deg].', $
-                   ytitle = '$V_{ph}$ [m/s]', $
+                   ;; ytitle = '$V_{ph}$ [m/s]', $
+                   ytitle = '$\omega_r$ [rad/s]', $
                    xstyle = 1, $
                    ystyle = 1, $
                    xtickdir = 1, $
@@ -84,7 +87,8 @@ for il=0,nl-1 do $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
                    ;; yrange = vrange[lambda[il]], $
-                   yrange = [-1200,+1200], $
+                   ;; yrange = [-1200,+1200], $
+                   yrange = [-6e3,+6e3], $
                    xmajor = xmajor, $
                    ymajor = ymajor, $
                    xminor = xminor, $
