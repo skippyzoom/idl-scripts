@@ -62,8 +62,8 @@ time = time_strings(timesteps, $
 
 ;; @analyze_moments
 
-@get_den1_plane
-den1 = shift(den1,[nx/4,0,0])
+;; @get_den1_plane
+;; den1 = shift(den1,[nx/4,0,0])
 
 ;; @get_fluxx1_plane
 ;; @get_fluxy1_plane
@@ -79,27 +79,27 @@ den1 = shift(den1,[nx/4,0,0])
 
 ;; @den1_movie
 
-dlam = max([dx,dy])
-lam0 = 4*dlam
-lamf = 40*dlam
-lambda = [lam0+dlam*findgen((lamf-lam0)/dlam + 1)]
-theta = [40,60]*!dtor
-den1ktt_save_name = 'den1ktt'+ $
-                    '-'+ $
-                    string(lambda[0],format='(f04.1)')+ $
-                    '_'+ $
-                    string(lambda[n_elements(lambda)-1],format='(f04.1)')+ $
-                    '_m'+ $
-                    '-'+ $
-                    string(theta[0]/!dtor,format='(f04.1)')+ $
-                    '_'+ $
-                    string(theta[1]/!dtor,format='(f04.1)')+ $
-                    '_deg'+ $
-                    '.sav'
-@calc_den1fft_t
-@calc_den1ktt
-save, time,den1ktt, $
-      filename=expand_path(path)+path_sep()+den1ktt_save_name
+;; dlam = max([dx,dy])
+;; lam0 = 4*dlam
+;; lamf = 40*dlam
+;; lambda = [lam0+dlam*findgen((lamf-lam0)/dlam + 1)]
+;; theta = [40,60]*!dtor
+;; den1ktt_save_name = 'den1ktt'+ $
+;;                     '-'+ $
+;;                     string(lambda[0],format='(f04.1)')+ $
+;;                     '_'+ $
+;;                     string(lambda[n_elements(lambda)-1],format='(f04.1)')+ $
+;;                     '_m'+ $
+;;                     '-'+ $
+;;                     string(theta[0]/!dtor,format='(f04.1)')+ $
+;;                     '_'+ $
+;;                     string(theta[1]/!dtor,format='(f04.1)')+ $
+;;                     '_deg'+ $
+;;                     '.sav'
+;; @calc_den1fft_t
+;; @calc_den1ktt
+;; save, time,den1ktt, $
+;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
 
 ;; @calc_den1fft_t
 ;; @den1fft_t_movie
@@ -137,14 +137,14 @@ save, time,den1ktt, $
 ;; Er = shift(Er,shifts)
 ;; Et = shift(Et,shifts)
 
-;; restore, filename=efield_save_name,/verbose
-;; @load_plane_params
-;; @build_efield_components
-;; shifts = [nx/4,0,0]
-;; Ex = shift(Ex,shifts)
-;; Ey = shift(Ey,shifts)
-;; Er = shift(Er,shifts)
-;; Et = shift(Et,shifts)
+restore, filename=efield_save_name,/verbose
+@load_plane_params
+@build_efield_components
+shifts = [nx/4,0,0]
+Ex = shift(Ex,shifts)
+Ey = shift(Ey,shifts)
+Er = shift(Er,shifts)
+Et = shift(Et,shifts)
 
 ;; @Ex_ymean_movie
 
@@ -173,3 +173,25 @@ save, time,den1ktt, $
 ;; save, time,Erktt_rms, $
 ;;       filename=expand_path(path)+path_sep()+ $
 ;;       'Erktt_rms-50_meter-040to060_deg.sav'
+
+dlam = max([dx,dy])
+lam0 = 4*dlam
+lamf = 40*dlam
+lambda = [lam0+dlam*findgen((lamf-lam0)/dlam + 1)]
+theta = [40,60]*!dtor
+Erktt_save_name = 'Erktt'+ $
+                  '-'+ $
+                  string(lambda[0],format='(f04.1)')+ $
+                  '_'+ $
+                  string(lambda[n_elements(lambda)-1],format='(f04.1)')+ $
+                  '_m'+ $
+                  '-'+ $
+                  string(theta[0]/!dtor,format='(f04.1)')+ $
+                  '_'+ $
+                  string(theta[1]/!dtor,format='(f04.1)')+ $
+                  '_deg'+ $
+                  '.sav'
+@calc_Erfft_t
+@calc_Erktt
+save, time,Erktt, $
+      filename=expand_path(path)+path_sep()+Erktt_save_name

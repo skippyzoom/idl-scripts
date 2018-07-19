@@ -16,8 +16,14 @@ plot_path = expand_path(proj_path)+path_sep()+'common'
 ;;==Declare plot file name
 filename = expand_path(plot_path)+path_sep()+'frames'+ $
            path_sep()+ $
-           strip_extension(save_name)+ $
-           '-TEST2'+ $
+           'Erktt'+ $
+           '-'+ $
+           string(lambda[0],format='(f04.1)')+ $
+           '_'+ $
+           string(lambda[n_elements(lambda)-1],format='(f04.1)')+ $
+           '_m'+ $
+           '-'+ $
+           'theta_rms'+ $
            '.'+get_extension(frame_type)
 
 ;;==Declare index of parameter hash
@@ -50,11 +56,19 @@ for ir=0,nr-1 do $
 
 ;;==Declare reference vector of time steps
 timesteps = float(time.stamp)
+max_nt = n_elements(timesteps)
+
+;;==Preset some graphical parameters
+xmajor = 5
+xtickvalues = timesteps[max_nt-1]*findgen(xmajor)/(xmajor-1)
+xtickname = string(xtickvalues,format='(f6.2)')
+xtickname = strcompress(xtickname,/remove_all)
 
 ;;==Create plot frame
 for ir=0,nr-1 do $
    frm = plot(timesteps[0:mr_nt[ir]-1], $
               mr_kttrms[run[ir],1:*]/mr_kttrms[run[ir],1], $
+              axis_style = 2, $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$\langle P(\delta E)\rangle/P(E_0)$', $
@@ -62,6 +76,10 @@ for ir=0,nr-1 do $
               ystyle = 0, $
               color = color[ir], $
               linestyle = linestyle[ir], $
+              xmajor = xmajor, $
+              xminor = 3, $
+              xtickvalues = xtickvalues, $
+              xtickname = xtickname, $
               xtickfont_size = 16.0, $
               ytickfont_size = 16.0, $
               font_name = 'Times', $
@@ -73,18 +91,24 @@ for ir=0,nr-1 do $
 yrange = frm[0].yrange
 
 ;;==Add time markers corresponding to images
-;; image_times = [2048,4096,24576]
-;; nit = n_elements(image_times)
-;; for it=0,nit-1 do $
-;;    frm = plot([image_times[it],image_times[it]], $
-;;               [yrange[0],yrange[1]], $
-;;               color = 'black', $
-;;               linestyle = 2, $
-;;               /overplot)
+image_times = 1e3*[2048,4096,24576]*params.dt
+nit = n_elements(image_times)
+for it=0,nit-1 do $
+   frm = plot([image_times[it],image_times[it]], $
+              [yrange[0],yrange[1]], $
+              color = 'black', $
+              linestyle = 2, $
+              /overplot)
 
 ;;==Add a path label
 txt = text(0.0,0.005, $
-           plot_path, $
+           proj_path+'(petsc_subcomm)', $
+           target = frm, $
+           font_name = 'Courier', $
+           font_size = 10.0)
+;;==Add save-file label
+txt = text(0.0,0.955, $
+           'original file: '+save_name, $
            target = frm, $
            font_name = 'Courier', $
            font_size = 10.0)
