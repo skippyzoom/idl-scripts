@@ -7,7 +7,7 @@
 
 if n_elements(path) eq 0 then $
    path = get_base_dir()+path_sep()+ $
-          'parametric_wave/nue_4.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
+          'parametric_wave/nue_2.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
 if n_elements(lun) eq 0 then lun = -1
 printf, lun, "[PARAMETRIC_WAVE] path = "+path
 if n_elements(rotate) eq 0 then rotate = 0
@@ -24,13 +24,13 @@ movie_type = '.mp4'
 
 efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
-                   '-subsample_2'+ $
-                   ;; '-initial_five_steps'+ $
+                   ;; '-subsample_2'+ $
+                   '-initial_five_steps'+ $
                    '.sav'
-subsample = 2
-t0 = 0
-tf = params.nt_max
-timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; subsample = 2
+;; t0 = 0
+;; tf = params.nt_max
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
 ;; timesteps = params.nout*[1,params.nt_max-1]
 
@@ -45,12 +45,12 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;              params.nout*(2*(params.nt_max/2))]
 
 ;;==For petsc_subcomm runs
-;; timesteps = [params.nout, $     ;One collision time
-;;              5*params.nout, $   ;Five collision times
-;;              10*params.nout, $  ;Ten collision times
-;;              2048, $            ;Growth of 5% runs
-;;              4096, $            ;Growth of 10% runs
-;;              24576]             ;Saturated
+timesteps = [params.nout, $     ;One collision time
+             5*params.nout, $   ;Five collision times
+             10*params.nout, $  ;Ten collision times
+             2048, $            ;Growth of 5% runs
+             4096, $            ;Growth of 10% runs
+             24576]             ;Saturated
 
 ;; nt = 5
 ;; timesteps = params.nout*lindgen(nt)
@@ -102,7 +102,10 @@ time = time_strings(timesteps, $
 ;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
 
 ;; @calc_den1fft_t
+;; @den1fft_t_images
+
 ;; @den1fft_t_movie
+
 ;; @calc_den1ktt
 ;; @den1ktt_movie
 ;; @calc_den1ktt_rms
@@ -129,16 +132,7 @@ time = time_strings(timesteps, $
 ;; @get_efield_plane
 ;; save, time,efield,filename=efield_save_name
 
-;; @get_efield_plane
-;; @build_efield_components
-;; shifts = [nx/4,0,0]
-;; Ex = shift(Ex,shifts)
-;; Ey = shift(Ey,shifts)
-;; Er = shift(Er,shifts)
-;; Et = shift(Et,shifts)
-
-restore, filename=efield_save_name,/verbose
-@load_plane_params
+@get_efield_plane
 @build_efield_components
 shifts = [nx/4,0,0]
 Ex = shift(Ex,shifts)
@@ -146,12 +140,23 @@ Ey = shift(Ey,shifts)
 Er = shift(Er,shifts)
 Et = shift(Et,shifts)
 
+;; restore, filename=efield_save_name,/verbose
+;; @load_plane_params
+;; @build_efield_components
+;; shifts = [nx/4,0,0]
+;; Ex = shift(Ex,shifts)
+;; Ey = shift(Ey,shifts)
+;; Er = shift(Er,shifts)
+;; Et = shift(Et,shifts)
+
 ;; @Ex_ymean_movie
 
 ;; @Ex_ymean_plots
 ;; @den1_Ex_ymean_plots
 
-;; @calc_Erfft_t
+@calc_Erfft_t
+@Erfft_t_images
+
 ;; save, time,Erfft_t, $
 ;;       filename=expand_path(path)+path_sep()+'Erfft_t.sav'
 
@@ -174,24 +179,24 @@ Et = shift(Et,shifts)
 ;;       filename=expand_path(path)+path_sep()+ $
 ;;       'Erktt_rms-50_meter-040to060_deg.sav'
 
-dlam = max([dx,dy])
-lam0 = 4*dlam
-lamf = 40*dlam
-lambda = [lam0+dlam*findgen((lamf-lam0)/dlam + 1)]
-theta = [40,60]*!dtor
-Erktt_save_name = 'Erktt'+ $
-                  '-'+ $
-                  string(lambda[0],format='(f04.1)')+ $
-                  '_'+ $
-                  string(lambda[n_elements(lambda)-1],format='(f04.1)')+ $
-                  '_m'+ $
-                  '-'+ $
-                  string(theta[0]/!dtor,format='(f04.1)')+ $
-                  '_'+ $
-                  string(theta[1]/!dtor,format='(f04.1)')+ $
-                  '_deg'+ $
-                  '.sav'
-@calc_Erfft_t
-@calc_Erktt
-save, time,Erktt, $
-      filename=expand_path(path)+path_sep()+Erktt_save_name
+;; dlam = max([dx,dy])
+;; lam0 = 4*dlam
+;; lamf = 40*dlam
+;; lambda = [lam0+dlam*findgen((lamf-lam0)/dlam + 1)]
+;; theta = [40,60]*!dtor
+;; Erktt_save_name = 'Erktt'+ $
+;;                   '-'+ $
+;;                   string(lambda[0],format='(f04.1)')+ $
+;;                   '_'+ $
+;;                   string(lambda[n_elements(lambda)-1],format='(f04.1)')+ $
+;;                   '_m'+ $
+;;                   '-'+ $
+;;                   string(theta[0]/!dtor,format='(f04.1)')+ $
+;;                   '_'+ $
+;;                   string(theta[1]/!dtor,format='(f04.1)')+ $
+;;                   '_deg'+ $
+;;                   '.sav'
+;; @calc_Erfft_t
+;; @calc_Erktt
+;; save, time,Erktt, $
+;;       filename=expand_path(path)+path_sep()+Erktt_save_name

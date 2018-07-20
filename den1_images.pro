@@ -11,21 +11,21 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare file name(s)
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1'+ $
-           ;; '-left_256'+ $
-           '-full'+ $
+           '-right_256'+ $
+           ;; '-full'+ $
            ;; '-shift'+ $
            '-'+time.index+ $
            '.'+get_extension(frame_type)
 
 ;;==Declare image ranges
-;; x0 = nx/4-128
-;; xf = nx/4+128
-;; y0 = ny/2-128
-;; yf = ny/2+128
-x0 = 0
-xf = nx
-y0 = 0
-yf = ny
+x0 = 3*nx/4-128
+xf = 3*nx/4+128
+y0 = ny/2-128
+yf = ny/2+128
+;; x0 = 0
+;; xf = nx
+;; y0 = 0
+;; yf = ny
 
 ;;==Get dimensions of den1
 dsize = size(den1)

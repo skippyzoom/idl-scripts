@@ -5,6 +5,10 @@
 ;------------------------------------------------------------------------------
 ;-
 
+;;-------------------
+;; ORIGINAL DATA SET
+;;-------------------
+
 ;; path = expand_path(proj_path)+path_sep()+'nue_2.0e4-amp_0.05-E0_9.0/'
 ;; color[path] = 'red'
 ;; linestyle[path] = 0
@@ -56,6 +60,10 @@
 ;; Er = shift(Er,shifts)
 ;; Et = shift(Et,shifts)
 ;; @build_Ert0_hashes
+
+;;------------------------
+;; PETSC SUBCOMM DATA SET
+;;------------------------
 
 path = expand_path(proj_path)+path_sep()+'nue_2.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
 color[path] = 'magenta'
