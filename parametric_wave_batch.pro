@@ -73,13 +73,13 @@ rotate = 0
 axes = 'xy'
 @parametric_wave_analysis
 
-;; @unload_defaults
-;; @unload_data
-;; path = get_base_dir()+path_sep()+ $
-;;        'parametric_wave/nue_2.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
-;; rotate = 0
-;; axes = 'xy'
-;; @parametric_wave_analysis
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+ $
+       'parametric_wave/nue_2.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
+rotate = 0
+axes = 'xy'
+@parametric_wave_analysis
 
 @unload_defaults
 @unload_data

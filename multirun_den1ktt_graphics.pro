@@ -7,7 +7,7 @@
 ;-
 
 ;;==Declare wavelengths of interest
-lambda = sindgen(7,start=2.0,increment=0.5)
+lambda = sindgen(9,start=2.0,increment=0.5)
 lambda = string(lambda,format='(f06.2)')
 
 ;;==Build the multi-run kttrms hash
@@ -18,26 +18,3 @@ mr_kttrms = build_multirun_kttrms(mr_den1ktt, $
 ;;==Create a plot of RMS-theta power
 @multirun_den1ktt_rms_plot
 
-;;==Declare wavelengths of interest
-lambda = sindgen(7,start=3.0,increment=0.5)
-lambda = string(lambda,format='(f06.2)')
-
-;;==Build the multi-run kttrms hash
-mr_kttrms = build_multirun_kttrms(mr_den1ktt, $
-                                  'den1ktt', $
-                                  lambda=lambda)
-
-;;==Create a plot of RMS-theta power
-@multirun_den1ktt_rms_plot
-
-;;==Declare wavelengths of interest
-lambda = sindgen(21,start=10.0,increment=0.5)
-lambda = string(lambda,format='(f06.2)')
-
-;;==Build the multi-run kttrms hash
-mr_kttrms = build_multirun_kttrms(mr_den1ktt, $
-                                  'den1ktt', $
-                                  lambda=lambda)
-
-;;==Create a plot of RMS-theta power
-@multirun_den1ktt_rms_plot
