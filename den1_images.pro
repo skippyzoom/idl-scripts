@@ -11,21 +11,23 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare file name(s)
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1'+ $
-           '-right_256'+ $
-           ;; '-full'+ $
+           ;; '-right_256'+ $
+           '-full'+ $
            ;; '-shift'+ $
+           ;; '-TEST'+ $
+           ;; '-hp_filter'+ $
            '-'+time.index+ $
            '.'+get_extension(frame_type)
 
 ;;==Declare image ranges
-x0 = 3*nx/4-128
-xf = 3*nx/4+128
-y0 = ny/2-128
-yf = ny/2+128
-;; x0 = 0
-;; xf = nx
-;; y0 = 0
-;; yf = ny
+;; x0 = 3*nx/4-128
+;; xf = 3*nx/4+128
+;; y0 = ny/2-128
+;; yf = ny/2+128
+x0 = 0
+xf = nx
+y0 = 0
+yf = ny
 
 ;;==Get dimensions of den1
 dsize = size(den1)
@@ -59,10 +61,12 @@ for it=0,nt-1 do $
                    xdata[x0:xf-1],ydata[y0:yf-1], $
                    ;; min_value = -max(abs(fdata[*,*,1:*])), $
                    ;; max_value = +max(abs(fdata[*,*,1:*])), $
-                   ;; min_value = -0.15, $
-                   ;; max_value = +0.15, $
-                   min_value = -0.2, $
-                   max_value = +0.2, $
+                   ;; min_value = -0.2, $
+                   ;; max_value = +0.2, $
+                   min_value = -float(strmid(path, $
+                                             strpos(path,'amp_0')+4,4)), $
+                   max_value = +float(strmid(path, $
+                                             strpos(path,'amp_0')+4,4)), $
                    ;; min_value = min(fdata), $
                    ;; max_value = max(fdata), $
                    rgb_table = 5, $
@@ -93,8 +97,10 @@ for it=0,nt-1 do $
 for it=0,nt-1 do $
    clr = colorbar(target = frm[it], $
                   title = '$\delta n/n_0$', $
-                  major = 5, $
-                  minor = 3, $
+                  major = 11, $
+                  minor = 1, $
+                  ;; major = 5, $
+                  ;; minor = 3, $
                   orientation = 1, $
                   textpos = 1, $
                   position = [0.82,0.10,0.84,0.80], $

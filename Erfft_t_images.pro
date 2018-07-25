@@ -97,7 +97,7 @@ for it=0,nt-1 do $
 ;;==Add a colorbar to each image
 for it=0,nt-1 do $
    clr = colorbar(target = frm[it], $
-                  title = '$P(\delta n/n_0)$', $
+                  title = '$P(\delta E/E_I)$', $
                   major = 7, $
                   minor = 3, $
                   orientation = 1, $

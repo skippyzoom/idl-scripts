@@ -16,5 +16,5 @@ mr_kttrms = build_multirun_kttrms(mr_den1ktt, $
                                   lambda=lambda)
 
 ;;==Create a plot of RMS-theta power
-@multirun_den1ktt_rms_plot
+;; @multirun_den1ktt_rms_plot
 
