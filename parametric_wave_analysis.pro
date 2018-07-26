@@ -28,6 +28,7 @@ efield_save_name = expand_path(path)+path_sep()+ $
                    ;; '-initial_five_steps'+ $
                    '.sav'
 
+;;==Declare time steps
 ;;-----------------------------------------------------------------------------
 ;; Equally spaced time steps at a subsample frequency given relative
 ;; to params.nout, in the range [t0,tf)
@@ -57,25 +58,25 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: most batch runs
 ;;-----------------------------------------------------------------------------
-;; timesteps = [params.nout, $     ;One collision time
-;;              5*params.nout, $   ;Five collision times
-;;              10*params.nout, $  ;Ten collision times
-;;              2048, $            ;Growth of 10% runs
-;;              4096, $            ;Growth of 5% runs
-;;              24576]             ;Saturated
+timesteps = [params.nout, $     ;One collision time
+             5*params.nout, $   ;Five collision times
+             10*params.nout, $  ;Ten collision times
+             2048, $            ;Growth of 10% runs
+             4096, $            ;Growth of 5% runs
+             24576]             ;Saturated
 
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: Ex_ymean_multiplot batch runs
 ;;-----------------------------------------------------------------------------
-amp = strmid(path,strpos(path,'amp_0')+4,4)
-if strcmp(amp,'0.10') then $
-   timesteps = [params.nout, $  ;One collision time
-                2048, $         ;Growth of 10% runs
-                24576]          ;Saturated
-if strcmp(amp,'0.05') then $
-   timesteps = [params.nout, $  ;One collision time
-                4096, $         ;Growth of 5% runs
-                24576]          ;Saturated
+;; amp = strmid(path,strpos(path,'amp_0')+4,4)
+;; if strcmp(amp,'0.10') then $
+;;    timesteps = [params.nout, $  ;One collision time
+;;                 2048, $         ;Growth of 10% runs
+;;                 24576]          ;Saturated
+;; if strcmp(amp,'0.05') then $
+;;    timesteps = [params.nout, $  ;One collision time
+;;                 4096, $         ;Growth of 5% runs
+;;                 24576]          ;Saturated
 
 ;;-----------------------------------------------------------------------------
 ;; An array of 'nt' time steps, equally spaced at the output frequency
@@ -84,6 +85,7 @@ if strcmp(amp,'0.05') then $
 ;; nt = 5
 ;; timesteps = params.nout*lindgen(nt)
 
+;;==Create time struct
 time = time_strings(timesteps, $
                     dt = params.dt, $
                     scale = 1e3, $
@@ -91,8 +93,8 @@ time = time_strings(timesteps, $
 
 ;; @analyze_moments
 
-;; @get_den1_plane
-;; den1 = shift(den1,[nx/4,0,0])
+@get_den1_plane
+den1 = shift(den1,[nx/4,0,0])
 ;; den1 = params.n0d1*(1 + den1)
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    den1[*,*,it] = high_pass_filter(den1[*,*,it], $
@@ -170,13 +172,13 @@ time = time_strings(timesteps, $
 ;; @get_efield_plane
 ;; save, time,efield,filename=efield_save_name
 
-@get_efield_plane
-@build_efield_components
-shifts = [nx/4,0,0]
-Ex = shift(Ex,shifts)
-Ey = shift(Ey,shifts)
-Er = shift(Er,shifts)
-Et = shift(Et,shifts)
+;; @get_efield_plane
+;; @build_efield_components
+;; shifts = [nx/4,0,0]
+;; Ex = shift(Ex,shifts)
+;; Ey = shift(Ey,shifts)
+;; Er = shift(Er,shifts)
+;; Et = shift(Et,shifts)
 
 ;; restore, filename=efield_save_name,/verbose
 ;; @load_plane_params
@@ -191,7 +193,7 @@ Et = shift(Et,shifts)
 
 ;; @Ex_ymean_plots
 ;; @den1_Ex_ymean_plots
-@Ex_ymean_multiplot
+;; @Ex_ymean_multiplot
 
 ;; @calc_Erfft_t
 ;; @Erfft_t_images
