@@ -6,11 +6,12 @@
 ;-
 
 ;;==Declare wavelengths of interest, in meters
-;; lambda = [2.0,3.0,4.0,5.0]
-lambda = findgen(17,start=2,increment=0.5)
+if n_elements(lambda) eq 0 then $
+   lambda = 1.0 + findgen(10)
 
 ;;==Declare angles of interest, in radians
-theta = [-!pi/2,+!pi/2]
+if n_elements(theta) eq 0 then $
+   theta = [0,2*!pi]
 
 ;;==Preserve raw FFT
 fdata = denft1_w
