@@ -41,13 +41,13 @@ frm = objarr(nl)
 
 ;;==Generate images
 ;;-->Kind of a hack
-vrange = hash(lambda)
-vrange['002.00'] = [-1000,+1000]
-vrange['003.00'] = [-400,+400]
-vrange['004.00'] = [-400,+400]
-vrange['005.00'] = [-400,+400]
-vrange['010.00'] = [-100,+100]
-vrange['020.00'] = [-100,+100]
+;; vrange = hash(lambda)
+;; vrange['002.00'] = [-1000,+1000]
+;; vrange['003.00'] = [-400,+400]
+;; vrange['004.00'] = [-400,+400]
+;; vrange['005.00'] = [-400,+400]
+;; vrange['010.00'] = [-100,+100]
+;; vrange['020.00'] = [-100,+100]
 ;;<--
 trange = [0,180]
 ;; trange = [min(theta),max(theta)]/!dtor
@@ -55,16 +55,18 @@ trange = [0,180]
 ;; tdir = (theta[0] lt theta[1]) ? 1 : -1
 xmajor = 7
 xminor = 2
-xtickvalues = (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
+xtickvalues = trange[0] + $
+              (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
 xticklen = 0.02
 xy_scale = 1.0
-ymajor = 9
-yminor = 1
+ymajor = 7
+yminor = 3
 for il=0,nl-1 do $
    frm[il] = $
    ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
                    den1ktw[lambda[il]].t_interp/!dtor, $
-                   wdata/float(lambda[il]), $
+                   ;; wdata/float(lambda[il]), $
+                   wdata, $
                    /power, $
                    /log, $
                    /normalize, $
@@ -83,7 +85,8 @@ for il=0,nl-1 do $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
-                   yrange = vrange[lambda[il]], $
+                   ;; yrange = vrange[lambda[il]], $
+                   yrange = [-6e3,+6e3], $
                    xmajor = xmajor, $
                    ymajor = ymajor, $
                    xminor = xminor, $
