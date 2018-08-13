@@ -38,44 +38,35 @@ nl = n_elements(lambda)
 ;;==Create an array of plot objects
 frm = objarr(nl)
 
-;;==Generate plots
-;;-->Kind of a hack
-;; vrange_lt_10 = [-500,+500]
-;; vrange_ge_10 = [-100,+100]
-vrange = hash(lambda)
-vrange['002.00'] = [-1000,+1000]
-vrange['003.00'] = [-400,+400]
-vrange['004.00'] = [-400,+400]
-vrange['005.00'] = [-400,+400]
-vrange['010.00'] = [-100,+100]
-vrange['020.00'] = [-100,+100]
-;;<--
+;;==Set graphics parameters
 xticklen = 0.02
 xy_scale = 1.0
+
+;;==Create plot frames
 for il=0,nl-1 do $
    frm[il] = $
-   den1ktw_plot_frame(wdata/float(lambda[il]), $
-                      rms(den1ktw[lambda[il]].f_interp,dim=1), $
-                      /normalize, $
-                      /log, $
-                      /power, $
-                      yrange = [-10,0], $
-                      xstyle = 1, $
-                      title = lambda[il]+' m', $
-                      xtitle = '$V_{ph}$ [m/s]', $
-                      ytitle = 'Power [dB]', $
-                      xrange = vrange[lambda[il]], $
-                      xmajor = 9, $
-                      xminor = 1, $
-                      xticklen = xticklen, $
-                      yticklen = xticklen/xy_scale, $
-                      xtickfont_size = 12.0, $
-                      ytickfont_size = 12.0, $
-                      color = 'black', $
-                      background_color = 'white', $
-                      font_size = 16.0, $
-                      font_name = 'Times', $
-                      /buffer)
+   ktw_plot_frame(wdata, $
+                  rms(den1ktw[lambda[il]].f_interp,dim=1), $
+                  /normalize, $
+                  /log, $
+                  /power, $
+                  xstyle = 1, $
+                  title = lambda[il]+' m', $
+                  xtitle = '$V_{ph}$ [m/s]', $
+                  ytitle = 'Power [dB]', $
+                  xrange = [-1.2e3,+1.2e3], $
+                  yrange = [-10,0], $
+                  xmajor = 5, $
+                  xminor = 4, $
+                  xticklen = xticklen, $
+                  yticklen = xticklen/xy_scale, $
+                  xtickfont_size = 12.0, $
+                  ytickfont_size = 12.0, $
+                  color = 'black', $
+                  background_color = 'white', $
+                  font_size = 16.0, $
+                  font_name = 'Times', $
+                  /buffer)
 
 ;;==Adjust aspect ratio of each image
 for il=0,nl-1 do $
@@ -83,6 +74,60 @@ for il=0,nl-1 do $
    xy_scale* $
    (float(frm[il].xrange[1])-float(frm[il].xrange[0]))/ $
    (float(frm[il].yrange[1])-float(frm[il].yrange[0]))
+
+;;==Print value of RMS sound speed
+if n_elements(Cs_rms) ne 0 then $
+   for il=0,nl-1 do $
+      txt = text(0.0,0.95, $
+                 '$\langle C_s \rangle$ = '+ $
+                 string(Cs_rms,format='(f5.1)')+ $
+                 ' m/s', $
+                 target = frm[il], $
+                 font_name = 'Times', $
+                 font_size = 10.0)
+
+;;==Overplot lines at +/- RMS sound speed
+if n_elements(Cs_rms) ne 0 then $
+   for il=0,nl-1 do $
+      !NULL = plot([+(2*!pi/lambda[il])*Cs_rms, $
+                    +(2*!pi/lambda[il])*Cs_rms], $
+                   [frm[il].yrange[0],frm[il].yrange[1]], $
+                   linestyle = 1, $
+                   overplot = frm[il])
+if n_elements(Cs_rms) ne 0 then $
+   for il=0,nl-1 do $
+      !NULL = plot([-(2*!pi/lambda[il])*Cs_rms, $
+                    -(2*!pi/lambda[il])*Cs_rms], $
+                   [frm[il].yrange[0],frm[il].yrange[1]], $
+                   linestyle = 1, $
+                   overplot = frm[il])
+
+;;==Print value of RMS drift
+if n_elements(Vd_rms) ne 0 then $
+   for il=0,nl-1 do $
+      txt = text(0.0,0.92, $
+                 '$\langle V_d \rangle$ = '+ $
+                 string(Vd_rms,format='(f5.1)')+ $
+                 ' m/s', $
+                 target = frm[il], $
+                 font_name = 'Times', $
+                 font_size = 10.0)
+
+;;==Overplot lines at +/- RMS drift speed
+;; if n_elements(Vd_rms) ne 0 then $
+;;    for il=0,nl-1 do $
+;;       !NULL = plot([+(2*!pi/lambda[il])*Vd_rms, $
+;;                     +(2*!pi/lambda[il])*Vd_rms], $
+;;                    [frm[il].yrange[0],frm[il].yrange[1]], $
+;;                    linestyle = 2, $
+;;                    overplot = frm[il])
+;; if n_elements(Vd_rms) ne 0 then $
+;;    for il=0,nl-1 do $
+;;       !NULL = plot([-(2*!pi/lambda[il])*Vd_rms, $
+;;                     -(2*!pi/lambda[il])*Vd_rms], $
+;;                    [frm[il].yrange[0],frm[il].yrange[1]], $
+;;                    linestyle = 2, $
+;;                    overplot = frm[il])
 
 ;;==Add a path label
 for il=0,nl-1 do $

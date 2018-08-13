@@ -13,14 +13,9 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1fft_t'+ $
            ;; '-self_norm'+ $
+           '-zoom'+ $
            '-'+time.index+ $
            '.'+get_extension(frame_type)
-
-;;==Get dimensions of den1
-dsize = size(den1)
-ndim = dsize[0]
-nx = dsize[1]
-ny = dsize[2]
 
 ;;==Get the number of time steps
 nt = n_elements(time.index)
@@ -70,8 +65,10 @@ for it=0,nt-1 do $
                    rgb_table = 39, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $
-                   xrange = [0,+2*!pi], $
-                   yrange = [-2*!pi,+2*!pi], $
+                   ;; xrange = [0,+2*!pi], $
+                   ;; yrange = [-2*!pi,+2*!pi], $
+                   xrange = [0,+!pi], $
+                   yrange = [-!pi,+!pi], $
                    xmajor = 5, $
                    xminor = 1, $
                    ymajor = 5, $
@@ -108,7 +105,8 @@ for it=0,nt-1 do $
                   hide = 0)
 
 ;;==Add radius and angle markers
-r_overlay = 2*!pi/(1+findgen(6))
+;; r_overlay = 2*!pi/(1+findgen(6))
+r_overlay = 2*!pi/(2+findgen(6))
 theta_overlay = 10*(findgen(19)-9)
 for it=0,nt-1 do $
    frm[it] = overlay_rtheta(frm[it], $

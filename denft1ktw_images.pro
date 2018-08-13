@@ -19,9 +19,15 @@ filename = expand_path(path)+path_sep()+ $
            'frames'+path_sep()+ $
            'denft1ktw-'+lambda.toarray()+'m'+ $
            ;; '-shift'+ $
-           ;; '-second_half'+ $
+           ;; '-norm_max'+ $
+           ;; '-linear'+ $
+           ;; '-transition'+ $
+           ;; '-saturated'+ $
+           ;; '-growth'+ $
+           ;; '-post_growth'+ $
            ;; '-first_half'+ $
-           '-norm_max'+ $
+           '-second_half'+ $
+           ;; '-TEST'+ $
            '.'+get_extension(frame_type)
 
 ;;==Get effective time step
@@ -39,16 +45,7 @@ nl = n_elements(lambda)
 ;;==Create an array of plot objects
 frm = objarr(nl)
 
-;;==Generate images
-;;-->Kind of a hack
-;; vrange = hash(lambda)
-;; vrange['002.00'] = [-1500,+1500]
-;; vrange['003.00'] = [-400,+400]
-;; vrange['004.00'] = [-400,+400]
-;; vrange['005.00'] = [-400,+400]
-;; vrange['010.00'] = [-100,+100]
-;; vrange['020.00'] = [-100,+100]
-;;<--
+;;==Set up graphics parameters
 trange = [-90,+90]
 ;; trange = [min(theta),max(theta)]/!dtor
 ;; trange = theta/!dtor
@@ -61,11 +58,12 @@ xticklen = 0.02
 xy_scale = 1.0
 ymajor = 7
 yminor = 3
+
+;;==Generate image frames
 for il=0,nl-1 do $
    frm[il] = $
    ktw_image_frame(denft1ktw[lambda[il]].f_interp, $
                    denft1ktw[lambda[il]].t_interp/!dtor, $
-                   ;; wdata/float(lambda[il]), $
                    wdata, $
                    /power, $
                    /log, $
@@ -76,8 +74,7 @@ for il=0,nl-1 do $
                    rgb_table = 39, $
                    axis_style = 1, $
                    title = lambda[il]+' m', $
-                   xtitle = 'Angle [deg].', $
-                   ;; ytitle = '$V_{ph}$ [m/s]', $
+                   xtitle = 'Angle from E$\times$B [deg].', $
                    ytitle = '$\omega_r$ [rad/s]', $
                    xstyle = 1, $
                    ystyle = 1, $
@@ -86,8 +83,6 @@ for il=0,nl-1 do $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
-                   ;; yrange = vrange[lambda[il]], $
-                   ;; yrange = [-1200,+1200], $
                    yrange = [-6e3,+6e3], $
                    xmajor = xmajor, $
                    ymajor = ymajor, $

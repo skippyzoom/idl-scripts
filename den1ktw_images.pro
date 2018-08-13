@@ -40,15 +40,6 @@ nl = n_elements(lambda)
 frm = objarr(nl)
 
 ;;==Generate images
-;;-->Kind of a hack
-;; vrange = hash(lambda)
-;; vrange['002.00'] = [-1000,+1000]
-;; vrange['003.00'] = [-400,+400]
-;; vrange['004.00'] = [-400,+400]
-;; vrange['005.00'] = [-400,+400]
-;; vrange['010.00'] = [-100,+100]
-;; vrange['020.00'] = [-100,+100]
-;;<--
 trange = [0,180]
 ;; trange = [min(theta),max(theta)]/!dtor
 ;; trange = theta/!dtor
@@ -59,13 +50,10 @@ xtickvalues = trange[0] + $
               (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
 xticklen = 0.02
 xy_scale = 1.0
-ymajor = 7
-yminor = 3
 for il=0,nl-1 do $
    frm[il] = $
    ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
                    den1ktw[lambda[il]].t_interp/!dtor, $
-                   ;; wdata/float(lambda[il]), $
                    wdata, $
                    /power, $
                    /log, $
@@ -85,12 +73,11 @@ for il=0,nl-1 do $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
-                   ;; yrange = vrange[lambda[il]], $
-                   yrange = [-6e3,+6e3], $
+                   yrange = [-1.2e3,+1.2e3], $
                    xmajor = xmajor, $
-                   ymajor = ymajor, $
                    xminor = xminor, $
-                   yminor = yminor, $
+                   ymajor = 5, $
+                   yminor = 4, $
                    xtickvalues = xtickvalues, $
                    xshowtext = 1, $
                    yshowtext = 1, $
@@ -103,6 +90,64 @@ for il=0,nl-1 do $
    xy_scale* $
    (float(frm[il].xrange[1])-float(frm[il].xrange[0]))/ $
    (float(frm[il].yrange[1])-float(frm[il].yrange[0]))
+
+;;==Print value of RMS sound speed
+if n_elements(Cs_rms) ne 0 then $
+   for il=0,nl-1 do $
+      txt = text(0.0,0.95, $
+                 '$\langle C_s \rangle$ = '+ $
+                 string(Cs_rms,format='(f5.1)')+ $
+                 ' m/s', $
+                 target = frm[il], $
+                 font_name = 'Times', $
+                 font_size = 10.0)
+
+;;==Overplot lines at +/- sound speed
+if n_elements(Cs_rms) ne 0 then $
+   for il=0,nl-1 do $
+      !NULL = plot([frm[il].xrange[0],frm[il].xrange[1]], $
+                   [+(2*!pi/lambda[il])*Cs_rms, $
+                    +(2*!pi/lambda[il])*Cs_rms], $
+                   linestyle = 1, $
+                   color = 'white', $
+                   overplot = frm[il])
+if n_elements(Cs_rms) ne 0 then $
+   for il=0,nl-1 do $
+      !NULL = plot([frm[il].xrange[0],frm[il].xrange[1]], $
+                   [-(2*!pi/lambda[il])*Cs_rms, $
+                    -(2*!pi/lambda[il])*Cs_rms], $
+                   linestyle = 1, $
+                   color = 'white', $
+                   overplot = frm[il])
+
+;;==Print value of RMS drift
+if n_elements(Vd_rms) ne 0 then $
+   for il=0,nl-1 do $
+      txt = text(0.0,0.92, $
+                 '$\langle V_d \rangle$ = '+ $
+                 string(Vd_rms,format='(f5.1)')+ $
+                 ' m/s', $
+                 target = frm[il], $
+                 font_name = 'Times', $
+                 font_size = 10.0)
+
+;;==Overplot lines at +/- drift speed
+;; if n_elements(Vd_rms) ne 0 then $
+;;    for il=0,nl-1 do $
+;;       !NULL = plot([frm[il].xrange[0],frm[il].xrange[1]], $
+;;                    [+(2*!pi/lambda[il])*Vd_rms, $
+;;                     +(2*!pi/lambda[il])*Vd_rms], $
+;;                    linestyle = 2, $
+;;                    color = 'white', $
+;;                    overplot = frm[il])
+;; if n_elements(Vd_rms) ne 0 then $
+;;    for il=0,nl-1 do $
+;;       !NULL = plot([frm[il].xrange[0],frm[il].xrange[1]], $
+;;                    [-(2*!pi/lambda[il])*Vd_rms, $
+;;                     -(2*!pi/lambda[il])*Vd_rms], $
+;;                    linestyle = 2, $
+;;                    color = 'white', $
+;;                    overplot = frm[il])
 
 ;;==Add a path label
 for il=0,nl-1 do $
