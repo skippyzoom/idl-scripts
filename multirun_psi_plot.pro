@@ -18,12 +18,17 @@ filename = expand_path(plot_path)+path_sep()+'frames'+ $
            'mr_psi'+ $
            '.'+get_extension(frame_type)
 
-;;==Declare line colors
+;;==Declare line parameters
 color = ['magenta', $
          'blue', $
          'green', $
          'black', $
          'red']
+linestyle = make_array(nr,value=0,/integer)
+;; color = ['blue', $
+;;          'green', $
+;;          'red']
+;; linestyle = [2,2,2,0,0,0]
 
 ;;==Get number of time steps in each run
 mr_nt = lonarr(nr)
@@ -33,7 +38,8 @@ for ir=0,nr-1 do $
 ;;==Declare x and y data for ease of use
 xdata = hash(run)
 for ir=0,nr-1 do $
-   xdata[run[ir]] = 1e3*mr_params[run[ir]].dt*findgen(mr_nt[ir])
+   xdata[run[ir]] = $
+   1e3*mr_params[run[ir]].dt*mr_params[run[ir]].nout*findgen(mr_nt[ir])
 ydata = hash(run)
 for ir=0,nr-1 do $
    ydata[run[ir]] = mr_moments[run[ir]].psi
@@ -43,6 +49,7 @@ for ir=0,nr-1 do $
    frm = plot(xdata[run[ir]], $
               ydata[run[ir]], $
               color = color[ir], $
+              linestyle = linestyle[ir], $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$\Psi_0$', $

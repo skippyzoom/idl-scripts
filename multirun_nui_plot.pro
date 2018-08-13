@@ -33,7 +33,8 @@ for ir=0,nr-1 do $
 ;;==Declare x and y data for ease of use
 xdata = hash(run)
 for ir=0,nr-1 do $
-   xdata[run[ir]] = 1e3*mr_params[run[ir]].dt*findgen(mr_nt[ir])
+   xdata[run[ir]] = $
+   1e3*mr_params[run[ir]].dt*mr_params[run[ir]].nout*findgen(mr_nt[ir])
 ydata = hash(run)
 for ir=0,nr-1 do $
    ydata[run[ir]] = mr_moments[run[ir]].dist1.nu
