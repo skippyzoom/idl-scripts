@@ -7,7 +7,7 @@
 
 if n_elements(path) eq 0 then $
    path = get_base_dir()+path_sep()+ $
-          'parametric_wave/nue_4.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
+          'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
 if n_elements(lun) eq 0 then lun = -1
 printf, lun, "[PARAMETRIC_WAVE] path = "+path
 if n_elements(rotate) eq 0 then rotate = 0
@@ -24,7 +24,8 @@ movie_type = '.mp4'
 
 efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
-                   '-subsample_2'+ $
+                   ;; '-subsample_2'+ $
+                   '-second_half'+ $
                    ;; '-initial_five_steps'+ $
                    '.sav'
 
@@ -33,8 +34,8 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; Equally spaced time steps at a subsample frequency given relative
 ;; to params.nout, in the range [t0,tf)
 ;;-----------------------------------------------------------------------------
-;; subsample = 2
-;; t0 = 0
+;; subsample = 1
+;; t0 = params.nt_max/2
 ;; tf = params.nt_max
 ;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
@@ -95,21 +96,59 @@ time = time_strings(timesteps, $
 
 @get_den1_plane
 den1 = shift(den1,[nx/4,0,0])
-;; den1 = params.n0d1*(1 + den1)
+;; ;; den1 = params.n0d1*(1 + den1)
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    den1[*,*,it] = high_pass_filter(den1[*,*,it], $
 ;;                                    100, $
 ;;                                    dx=dx,dy=dy)
+@calc_den1fft_t
+@den1fft_t_images
 
 ;; @get_fluxx1_plane
-;; @get_fluxy1_plane
 ;; fluxx1 = shift(fluxx1,[nx/4,0,0])
+;; for iy=0,ny-1 do $ ;; HACK
+;;    fluxx1[512,iy,5] = 0.5*(fluxx1[511,iy,5]+fluxx1[513,iy,5])
+;; for it=0,n_elements(time.index)-1 do $
+;;    fluxx1[*,*,it] = high_pass_filter(fluxx1[*,*,it], $
+;;                                      100, $
+;;                                      dx=dx,dy=dy)
+;; @get_fluxy1_plane
 ;; fluxy1 = shift(fluxy1,[nx/4,0,0])
+;; for iy=0,ny-1 do $ ;; HACK
+;;    fluxy1[512,iy,5] = 0.5*(fluxy1[511,iy,5]+fluxy1[513,iy,5])
+;; for it=0,n_elements(time.index)-1 do $
+;;    fluxy1[*,*,it] = high_pass_filter(fluxy1[*,*,it], $
+;;                                      100, $
+;;                                      dx=dx,dy=dy)
 
 ;; @get_nvsqrx1_plane
-;; @get_nvsqry1_plane
 ;; nvsqrx1 = shift(nvsqrx1,[nx/4,0,0])
+;; for iy=0,ny-1 do $ ;; HACK
+;;    nvsqrx1[512,iy,*] = 0.5*(nvsqrx1[511,iy,*]+nvsqrx1[513,iy,*])
+;; ;; for it=0,n_elements(time.index)-1 do $
+;; ;;    nvsqrx1[*,*,it] = high_pass_filter(nvsqrx1[*,*,it], $
+;; ;;                                       100, $
+;; ;;                                       dx=dx,dy=dy)
+;; @get_nvsqry1_plane
 ;; nvsqry1 = shift(nvsqry1,[nx/4,0,0])
+;; for iy=0,ny-1 do $ ;; HACK
+;;    nvsqry1[512,iy,*] = 0.5*(nvsqry1[511,iy,*]+nvsqry1[513,iy,*])
+;; ;; for it=0,n_elements(time.index)-1 do $
+;; ;;    nvsqry1[*,*,it] = high_pass_filter(nvsqry1[*,*,it], $
+;; ;;                                       100, $
+;; ;;                                       dx=dx,dy=dy)
+;; nvsqr1 = nvsqrx1 + nvsqry1
+
+;; @calc_nvsqr1fft_t
+;; @nvsqr1fft_t_images
+
+;; @calc_nvsqr1fft_w
+;; lambda = [2.0,3.0,4.0,5.0,10.0,20.0]
+;; theta = [0,180]*!dtor
+;; @calc_nvsqr1ktw
+;; moments = read_moments(path=path)
+;; Cs_rms = rms(moments.Cs[nt_max/2:*])
+;; @nvsqr1ktw_images
 
 ;; @den1_images
 
@@ -143,7 +182,6 @@ den1 = shift(den1,[nx/4,0,0])
 
 ;; @calc_den1fft_t
 ;; @den1fft_t_images
-
 ;; @den1fft_t_movie
 
 ;; @calc_den1ktt
@@ -157,9 +195,19 @@ den1 = shift(den1,[nx/4,0,0])
 ;; @calc_den1fft_t
 ;; @calc_den1ktt
 
+;; @get_den1_plane
 ;; @calc_den1fft_w
 ;; lambda = [2.0,3.0,4.0,5.0,10.0,20.0]
+;; theta = [0,180]*!dtor
 ;; @calc_den1ktw
+;; moments = read_moments(path=path)
+;; Cs_rms = rms(moments.Cs[nt_max/2:*])
+;; ;; ;; restore, filename=efield_save_name,/verbose
+;; ;; ;; @load_plane_params
+;; ;; @get_efield_plane
+;; ;; @build_efield_components
+;; ;; nt = n_elements(time.index)
+;; ;; Vd_rms = rms(sqrt(((Ex+Ex0)^2 + (Ey+Ey0)^2)[*,*,nt/2:*]))/params.Bz
 ;; @den1ktw_images
 ;; @den1ktw_rms_plots
 
