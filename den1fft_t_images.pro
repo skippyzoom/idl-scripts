@@ -12,7 +12,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare file name(s)
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1fft_t'+ $
-           ;; '-self_norm'+ $
+           '-self_norm'+ $
            '-zoom'+ $
            '-'+time.index+ $
            '.'+get_extension(frame_type)
@@ -35,7 +35,9 @@ fdata = abs(fdata)
 fdata = shift(fdata,nkx/2,nky/2,0)
 
 ;;==Suppress lowest frequencies
-fdata[nkx/2-16:nkx/2+15,nky/2-4:nky/2+3,*] = min(fdata)
+dc = {x:16, y:4}
+fdata[nkx/2-dc.x:nkx/2+dc.x-1, $
+      nky/2-dc.y:nky/2+dc.y-1,*] = min(fdata)
 
 ;;==Covert to decibels
 fdata = 10*alog10(fdata^2)
@@ -43,8 +45,8 @@ fdata = 10*alog10(fdata^2)
 ;;==Set non-finite values to smallest finite value
 fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 
-;;==Normalize to 0 (i.e., logarithm of 1)
-fdata -= max(fdata)
+;;==Normalize to 0 = alog10(1)
+;; fdata -= max(fdata)
 ;; for it=0,nt-1 do $
 ;;    fdata[*,*,it] -= max(fdata[*,*,it])
 
@@ -59,7 +61,8 @@ frm = objarr(nt)
 
 ;;==Create image frames
 for it=0,nt-1 do $
-   frm[it] = image(fdata[*,*,it],kxdata,kydata, $
+   frm[it] = image(fdata[*,*,it]-max(fdata[*,*,it]), $
+                   kxdata,kydata, $
                    min_value = -30, $
                    max_value = 0, $
                    rgb_table = 39, $

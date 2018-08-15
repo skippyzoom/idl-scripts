@@ -95,7 +95,7 @@ time = time_strings(timesteps, $
 ;; @analyze_moments
 
 @get_den1_plane
-den1 = shift(den1,[nx/4,0,0])
+;; den1 = shift(den1,[nx/4,0,0])
 ;; ;; den1 = params.n0d1*(1 + den1)
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    den1[*,*,it] = high_pass_filter(den1[*,*,it], $
@@ -112,6 +112,7 @@ den1 = shift(den1,[nx/4,0,0])
 ;;    fluxx1[*,*,it] = high_pass_filter(fluxx1[*,*,it], $
 ;;                                      100, $
 ;;                                      dx=dx,dy=dy)
+;; @fluxx1_images
 ;; @get_fluxy1_plane
 ;; fluxy1 = shift(fluxy1,[nx/4,0,0])
 ;; for iy=0,ny-1 do $ ;; HACK
@@ -120,23 +121,26 @@ den1 = shift(den1,[nx/4,0,0])
 ;;    fluxy1[*,*,it] = high_pass_filter(fluxy1[*,*,it], $
 ;;                                      100, $
 ;;                                      dx=dx,dy=dy)
+;; @fluxy1_images
 
 ;; @get_nvsqrx1_plane
 ;; nvsqrx1 = shift(nvsqrx1,[nx/4,0,0])
 ;; for iy=0,ny-1 do $ ;; HACK
 ;;    nvsqrx1[512,iy,*] = 0.5*(nvsqrx1[511,iy,*]+nvsqrx1[513,iy,*])
-;; ;; for it=0,n_elements(time.index)-1 do $
-;; ;;    nvsqrx1[*,*,it] = high_pass_filter(nvsqrx1[*,*,it], $
-;; ;;                                       100, $
-;; ;;                                       dx=dx,dy=dy)
+;; for it=0,n_elements(time.index)-1 do $
+;;    nvsqrx1[*,*,it] = high_pass_filter(nvsqrx1[*,*,it], $
+;;                                       100, $
+;;                                       dx=dx,dy=dy)
+;; @nvsqrx1_images
 ;; @get_nvsqry1_plane
 ;; nvsqry1 = shift(nvsqry1,[nx/4,0,0])
 ;; for iy=0,ny-1 do $ ;; HACK
 ;;    nvsqry1[512,iy,*] = 0.5*(nvsqry1[511,iy,*]+nvsqry1[513,iy,*])
-;; ;; for it=0,n_elements(time.index)-1 do $
-;; ;;    nvsqry1[*,*,it] = high_pass_filter(nvsqry1[*,*,it], $
-;; ;;                                       100, $
-;; ;;                                       dx=dx,dy=dy)
+;; for it=0,n_elements(time.index)-1 do $
+;;    nvsqry1[*,*,it] = high_pass_filter(nvsqry1[*,*,it], $
+;;                                       100, $
+;;                                       dx=dx,dy=dy)
+;; @nvsqry1_images
 ;; nvsqr1 = nvsqrx1 + nvsqry1
 
 ;; @calc_nvsqr1fft_t

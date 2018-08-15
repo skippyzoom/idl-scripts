@@ -39,24 +39,24 @@
 ;; in place of Bz for more efficient parallelization, so the system is
 ;; rotated with respect to the 2-D runs.
 ;;-----------------------------------------------------------------------------
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h0-Ey0_050/'
-rotate = 3
-axes = 'yz'
-@fb_flow_angle_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h0-Ey0_050/'
+;; rotate = 1
+;; axes = 'yz'
+;; @fb_flow_angle_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050/'
-rotate = 3
-axes = 'yz'
-@fb_flow_angle_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050/'
+;; rotate = 1
+;; axes = 'yz'
+;; @fb_flow_angle_analysis
 
 @unload_defaults
 @unload_data
 path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h2-Ey0_050/'
-rotate = 3
+rotate = 1
 axes = 'yz'
 @fb_flow_angle_analysis
 
