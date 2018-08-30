@@ -21,7 +21,7 @@ vsqrz = calculate_vsqr(params.n0d1*(1+den1), $
 kb = 1.3806503e-23
 
 ;;==Create temp1
-temp1 = params.md1*(vsqrx+vsqry+vsqz)/kb
+temp1 = params.md1*(vsqrx+vsqry+vsqrz)/kb
 
 ;;==Get rid of singular dimensions
 temp1 = reform(temp1)
