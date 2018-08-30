@@ -11,6 +11,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare file name(s)
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'den1'+ $
+           '-'+axes+ $
            ;; '-right_256'+ $
            ;; '-full'+ $
            ;; '-shift'+ $
@@ -61,8 +62,8 @@ for it=0,nt-1 do $
                    xdata[x0:xf-1],ydata[y0:yf-1], $
                    ;; min_value = -max(abs(fdata[*,*,1:*])), $
                    ;; max_value = +max(abs(fdata[*,*,1:*])), $
-                   min_value = -0.1, $
-                   max_value = +0.1, $
+                   min_value = -0.2, $
+                   max_value = +0.2, $
                    ;; min_value = -float(strmid(path, $
                    ;;                           strpos(path,'amp_0')+4,4)), $
                    ;; max_value = +float(strmid(path, $
@@ -82,8 +83,8 @@ for it=0,nt-1 do $
                    ysubticklen = 0.5, $
                    xtickdir = 1, $
                    ytickdir = 1, $
-                   xtitle = 'Zonal [m]', $
-                   ytitle = 'Vertical [m]', $
+                   ;; xtitle = 'Zonal [m]', $
+                   ;; ytitle = 'Vertical [m]', $
                    xticklen = 0.02, $
                    yticklen = 0.02*data_aspect, $
                    ;; title = 't = '+time.stamp[it], $

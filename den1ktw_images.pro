@@ -22,6 +22,7 @@ filename = expand_path(path)+path_sep()+ $
            '-second_half'+ $
            ;; '-first_half'+ $
            '-norm_max'+ $
+           '-vph'+ $
            '.'+get_extension(frame_type)
 
 ;;==Get effective time step
@@ -44,17 +45,22 @@ trange = [0,180]
 ;; trange = [min(theta),max(theta)]/!dtor
 ;; trange = theta/!dtor
 ;; tdir = (theta[0] lt theta[1]) ? 1 : -1
+toffset = 90
 xmajor = 7
 xminor = 2
 xtickvalues = trange[0] + $
               (ceil(trange[1]-trange[0])/(xmajor-1))*indgen(xmajor)
+xtickname = (trange[1]-trange[0])*indgen(xmajor)/(xmajor-1) - toffset
+xtickname = plusminus_labels(xtickname,format='(i3)')
 xticklen = 0.02
 xy_scale = 1.0
 for il=0,nl-1 do $
    frm[il] = $
-   ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
+   ;; ktw_image_frame(reverse(den1ktw[lambda[il]].f_interp,1), $
+   ktw_image_frame(den1ktw[lambda[il]].f_interp, $
                    den1ktw[lambda[il]].t_interp/!dtor, $
-                   wdata, $
+                   ;; wdata, $
+                   wdata/(2*!pi/float(lambda[il])), $
                    /power, $
                    /log, $
                    /normalize, $
@@ -64,7 +70,7 @@ for il=0,nl-1 do $
                    rgb_table = 39, $
                    axis_style = 1, $
                    title = lambda[il]+' m', $
-                   xtitle = 'Angle [deg].', $
+                   xtitle = 'Zenith Angle [deg].', $
                    ytitle = '$V_{ph}$ [m/s]', $
                    xstyle = 1, $
                    ystyle = 1, $
@@ -73,12 +79,16 @@ for il=0,nl-1 do $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
                    xrange = trange, $
-                   yrange = [-1.2e3,+1.2e3], $
+                   ;; yrange = [-1.2e3,+1.2e3], $
+                   yrange = ([[-500,+500], $
+                              [-800,+800], $
+                              [-800,+800]])[*,il], $
                    xmajor = xmajor, $
                    xminor = xminor, $
                    ymajor = 5, $
-                   yminor = 4, $
+                   yminor = ([4,7,7])[il], $
                    xtickvalues = xtickvalues, $
+                   xtickname = xtickname, $
                    xshowtext = 1, $
                    yshowtext = 1, $
                    font_name = 'Times', $
@@ -106,17 +116,21 @@ if n_elements(Cs_rms) ne 0 then $
 if n_elements(Cs_rms) ne 0 then $
    for il=0,nl-1 do $
       !NULL = plot([frm[il].xrange[0],frm[il].xrange[1]], $
-                   [+(2*!pi/lambda[il])*Cs_rms, $
-                    +(2*!pi/lambda[il])*Cs_rms], $
+                   ;; [+(2*!pi/lambda[il])*Cs_rms, $
+                   ;;  +(2*!pi/lambda[il])*Cs_rms], $
+                   [+Cs_rms,+Cs_rms], $
                    linestyle = 1, $
+                   thick = 1.5, $
                    color = 'white', $
                    overplot = frm[il])
 if n_elements(Cs_rms) ne 0 then $
    for il=0,nl-1 do $
       !NULL = plot([frm[il].xrange[0],frm[il].xrange[1]], $
-                   [-(2*!pi/lambda[il])*Cs_rms, $
-                    -(2*!pi/lambda[il])*Cs_rms], $
+                   ;; [-(2*!pi/lambda[il])*Cs_rms, $
+                   ;;  -(2*!pi/lambda[il])*Cs_rms], $
+                   [-Cs_rms,-Cs_rms], $
                    linestyle = 1, $
+                   thick = 1.5, $
                    color = 'white', $
                    overplot = frm[il])
 

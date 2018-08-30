@@ -5,65 +5,6 @@
 ;------------------------------------------------------------------------------
 ;-
 
-;; ;;==Set graphics ranges
-;; x0 = nx/2-128
-;; xf = nx/2+128
-;; y0 = ny/2
-;; yf = ny/2+128
-
-;; ;;==Condition data for (kx,ky,t) images
-;; fdata = abs(denft1)
-;; fdata = shift(fdata,[nx/2,ny/2,0])
-;; dc_mask = 3
-;; fdata[nx/2-dc_mask:nx/2+dc_mask, $
-;;       ny/2-dc_mask:ny/2+dc_mask,*] = min(fdata)
-;; fdata /= max(fdata)
-;; fdata = 10*alog10(fdata^2)
-
-;; ;;==Set up kx and ky vectors for images
-;; xdata = 2*!pi*fftfreq(nx,dx)
-;; xdata = shift(xdata,nx/2)
-;; ydata = 2*!pi*fftfreq(ny,dy)
-;; ydata = shift(ydata,ny/2)
-
-;; ;;==Load frame defaults
-;; @raw_frames_defaults
-
-;; ;;==Load default graphics keywords
-;; @default_graphics_kw
-
-;; ;;==Declare specific graphics keywords
-;; dsize = size(denft1)
-;; nx = dsize[1]
-;; ny = dsize[2]
-;; data_aspect = float(yf-y0)/(xf-x0)
-;; image_kw['min_value'] = -60
-;; image_kw['max_value'] = 0
-;; image_kw['rgb_table'] = 39
-;; image_kw['xtitle'] = 'Zonal [m$^{-1}$]'
-;; image_kw['ytitle'] = 'Vertical [m$^{-1}$]'
-;; image_kw['xticklen'] = 0.02
-;; image_kw['yticklen'] = 0.02*data_aspect
-;; image_kw['dimensions'] = 3*[nx,ny]
-;; image_kw['xrange'] = [-!pi,+!pi]
-;; image_kw['yrange'] = [   0,+!pi]
-;; colorbar_kw['title'] = '$Power [dB]$'
-
-;; ;;==Create images
-;; filename = path+path_sep()+'frames'+ $
-;;            path_sep()+'denft1-'+time.index+ $
-;;            name_info+'.pdf'
-;; data_graphics, fdata[x0:xf-1,y0:yf-1,*], $
-;;                xdata[x0:xf-1],ydata[y0:yf-1], $
-;;                /make_frame, $
-;;                filename = filename, $
-;;                image_kw = image_kw, $
-;;                colorbar_kw = colorbar_kw
-
-
-
-
-
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
@@ -71,6 +12,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'denft1'+ $
            ;; '-self_norm'+ $
+           '-zoom'+ $
            '-'+time.index+ $
            '.'+get_extension(frame_type)
 
@@ -91,8 +33,6 @@ fdata = abs(fdata)
 ;;==Shift FFT
 fdata = shift(fdata,nkx/2,nky/2,0)
 
-;; ;;==Suppress lowest frequencies
-;; fdata[nkx/2-1:nkx/2+1,nky/2-1:nky/2+1,*] = min(fdata)
 ;;==Suppress lowest frequencies
 dc_width = {xn:0, xp:0, $
             yn:0, yp:0}
@@ -106,9 +46,9 @@ fdata = 10*alog10(fdata^2)
 fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 
 ;;==Normalize to 0 (i.e., logarithm of 1)
-fdata -= max(fdata)
-;; for it=0,nt-1 do $
-;;    fdata[*,*,it] -= max(fdata[*,*,it])
+;; fdata -= max(fdata)
+for it=0,nt-1 do $
+   fdata[*,*,it] -= max(fdata[*,*,it])
 
 ;;==Set up kx and ky vectors
 kxdata = 2*!pi*fftfreq(nkx,dx)
@@ -127,8 +67,8 @@ for it=0,nt-1 do $
                    rgb_table = 39, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $
-                   xrange = [0,+!pi], $
-                   yrange = [-!pi,+!pi], $
+                   xrange = [0,+!pi/2], $
+                   yrange = [-!pi/2,+!pi/2], $
                    xmajor = 5, $
                    xminor = 1, $
                    ymajor = 5, $
@@ -165,7 +105,8 @@ for it=0,nt-1 do $
                   hide = 0)
 
 ;;==Add radius and angle markers
-r_overlay = 2*!pi/(1+findgen(10))
+;; r_overlay = 2*!pi/(1+findgen(10))
+r_overlay = 2*!pi/(2+findgen(10))
 theta_overlay = 10*(findgen(19)-9)
 for it=0,nt-1 do $
    frm[it] = overlay_rtheta(frm[it], $
