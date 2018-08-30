@@ -1,6 +1,7 @@
 ;+
 ; Script for creating plots of mean Ex taken over y, where the axes
-; correspond to a given plane (See Ex_images.pro or Ey_images.pro).
+; correspond to a given plane (See Ex_images.pro or
+; Ey_images.pro). This version overplots multiple time steps.
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
@@ -12,6 +13,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Declare filename
 filename = expand_path(path+path_sep()+'frames')+ $
            path_sep()+'efield_x-y_mean-mp'+ $
+           '-TEST'+ $
            '.'+get_extension(frame_type)
 
 ;;==Declare data scale
@@ -23,8 +25,11 @@ nx = fsize[1]
 ny = fsize[2]
 nt = fsize[3]
 
+;;==Define a simulate instrument boom length, in pixels
+bl = floor(10.0/dx)
+
 ;;==Calculate the mean over y
-Ex_ymean = mean(Ex,dim=2)
+Ex_ymean = mean(Ex[*,ny/2-bl/2:ny/2+bl/2,*],dim=2)
 
 ;;==Create plot objects
 for it=0,nt-1 do $
@@ -40,7 +45,9 @@ for it=0,nt-1 do $
               font_name = 'Times', $
               font_size = 24.0, $
               name = time.stamp[it], $
-              linestyle = (it mod 5), $
+              ;; linestyle = (it mod 5), $
+              color = (['black','green','blue'])[it], $
+              thick = 0, $
               overplot = (it gt 0), $
               /buffer)
 
