@@ -1,5 +1,5 @@
 ;+
-; Script for interpolating denft1 FFT from (kx,ky,w) to (k,theta,w)
+; Script for interpolating denft1_w from (kx,ky,w) to (k,theta,w)
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
