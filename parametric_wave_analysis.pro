@@ -24,8 +24,8 @@ movie_type = '.mp4'
 
 efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
-                   ;; '-subsample_2'+ $
-                   '-second_half'+ $
+                   '-subsample_2'+ $
+                   ;; '-second_half'+ $
                    ;; '-initial_five_steps'+ $
                    '.sav'
 
@@ -34,10 +34,13 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; Equally spaced time steps at a subsample frequency given relative
 ;; to params.nout, in the range [t0,tf)
 ;;-----------------------------------------------------------------------------
-;; subsample = 1
 ;; t0 = params.nt_max/2
 ;; tf = params.nt_max
-;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+t0 = 0
+tf = params.nt_max
+subsample = 2
+;; subsample = nt_max/8
+timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
 ;;-----------------------------------------------------------------------------
 ;; First and last output time steps
@@ -59,12 +62,18 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: most batch runs
 ;;-----------------------------------------------------------------------------
-timesteps = [params.nout, $     ;One collision time
-             5*params.nout, $   ;Five collision times
-             10*params.nout, $  ;Ten collision times
-             2048, $            ;Growth of 10% runs
-             4096, $            ;Growth of 5% runs
-             24576]             ;Saturated
+;; timesteps = [params.nout, $     ;One collision time
+;;              5*params.nout, $   ;Five collision times
+;;              10*params.nout, $  ;Ten collision times
+;;              2048, $            ;Growth of 10% runs
+;;              4096, $            ;Growth of 5% runs
+;;              24576]             ;Saturated
+
+;;--Testing some simulated rocket scripts
+;; timesteps = [10048, $
+;;              10048+150*params.nout, $
+;;              10048+300*params.nout, $
+;;              10048+450*params.nout]
 
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: Ex_ymean_multiplot batch runs
@@ -94,37 +103,56 @@ time = time_strings(timesteps, $
 
 ;; @analyze_moments
 
-@get_den1_plane
-;; den1 = shift(den1,[nx/4,0,0])
+;; @get_den1_plane
+;; data_shift = [nx/4,0,0]
+;; den1 = shift(den1,data_shift)
 ;; ;; den1 = params.n0d1*(1 + den1)
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    den1[*,*,it] = high_pass_filter(den1[*,*,it], $
 ;;                                    100, $
 ;;                                    dx=dx,dy=dy)
-@calc_den1fft_t
-@den1fft_t_images
+
+;; @calc_den1fft_t
+;; @den1fft_t_images
+
+;; @get_phi_plane
+;; data_shift = [nx/4,0,0]
+;; phi = shift(phi,data_shift)
 
 ;; @get_fluxx1_plane
-;; fluxx1 = shift(fluxx1,[nx/4,0,0])
+;; data_shift = [nx/4,0,0]
+;; fluxx1 = shift(fluxx1,data_shift)
 ;; for iy=0,ny-1 do $ ;; HACK
-;;    fluxx1[512,iy,5] = 0.5*(fluxx1[511,iy,5]+fluxx1[513,iy,5])
+;;    fluxx1[512,iy,*] = 0.5*(fluxx1[511,iy,*]+fluxx1[513,iy,*])
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    fluxx1[*,*,it] = high_pass_filter(fluxx1[*,*,it], $
 ;;                                      100, $
 ;;                                      dx=dx,dy=dy)
 ;; @fluxx1_images
 ;; @get_fluxy1_plane
-;; fluxy1 = shift(fluxy1,[nx/4,0,0])
+;; data_shift = [nx/4,0,0]
+;; fluxy1 = shift(fluxy1,data_shift)
 ;; for iy=0,ny-1 do $ ;; HACK
-;;    fluxy1[512,iy,5] = 0.5*(fluxy1[511,iy,5]+fluxy1[513,iy,5])
+;;    fluxy1[512,iy,*] = 0.5*(fluxy1[511,iy,*]+fluxy1[513,iy,*])
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    fluxy1[*,*,it] = high_pass_filter(fluxy1[*,*,it], $
 ;;                                      100, $
 ;;                                      dx=dx,dy=dy)
-;; @fluxy1_images
+;; ;; @fluxy1_images
+;; @get_fluxz1_plane
+;; data_shift = [nx/4,0,0]
+;; fluxz1 = shift(fluxz1,data_shift)
+;; for iy=0,ny-1 do $ ;; HACK
+;;    fluxz1[512,iy,*] = 0.5*(fluxz1[511,iy,*]+fluxz1[513,iy,*])
+;; for it=0,n_elements(time.index)-1 do $
+;;    fluxz1[*,*,it] = high_pass_filter(fluxz1[*,*,it], $
+;;                                      100, $
+;;                                      dx=dx,dy=dy)
+;; ;; @fluxz1_images
 
 ;; @get_nvsqrx1_plane
-;; nvsqrx1 = shift(nvsqrx1,[nx/4,0,0])
+;; data_shift = [nx/4,0,0]
+;; nvsqrx1 = shift(nvsqrx1,data_shift)
 ;; for iy=0,ny-1 do $ ;; HACK
 ;;    nvsqrx1[512,iy,*] = 0.5*(nvsqrx1[511,iy,*]+nvsqrx1[513,iy,*])
 ;; for it=0,n_elements(time.index)-1 do $
@@ -133,15 +161,25 @@ time = time_strings(timesteps, $
 ;;                                       dx=dx,dy=dy)
 ;; @nvsqrx1_images
 ;; @get_nvsqry1_plane
-;; nvsqry1 = shift(nvsqry1,[nx/4,0,0])
+;; data_shift = [nx/4,0,0]
+;; nvsqry1 = shift(nvsqry1,data_shift)
 ;; for iy=0,ny-1 do $ ;; HACK
 ;;    nvsqry1[512,iy,*] = 0.5*(nvsqry1[511,iy,*]+nvsqry1[513,iy,*])
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    nvsqry1[*,*,it] = high_pass_filter(nvsqry1[*,*,it], $
 ;;                                       100, $
 ;;                                       dx=dx,dy=dy)
-;; @nvsqry1_images
-;; nvsqr1 = nvsqrx1 + nvsqry1
+;; ;; @nvsqry1_images
+;; @get_nvsqrz1_plane
+;; data_shift = [nx/4,0,0]
+;; nvsqrz1 = shift(nvsqrz1,data_shift)
+;; for iy=0,ny-1 do $ ;; HACK
+;;    nvsqrz1[512,iy,*] = 0.5*(nvsqrz1[511,iy,*]+nvsqrz1[513,iy,*])
+;; for it=0,n_elements(time.index)-1 do $
+;;    nvsqrz1[*,*,it] = high_pass_filter(nvsqrz1[*,*,it], $
+;;                                       100, $
+;;                                       dx=dx,dy=dy)
+;; ;; @nvsqrz1_images
 
 ;; @calc_nvsqr1fft_t
 ;; @nvsqr1fft_t_images
@@ -201,7 +239,7 @@ time = time_strings(timesteps, $
 
 ;; @get_den1_plane
 ;; @calc_den1fft_w
-;; lambda = [2.0,3.0,4.0,5.0,10.0,20.0]
+;; lambda = [3.0,5.0,10.0]
 ;; theta = [0,180]*!dtor
 ;; @calc_den1ktw
 ;; moments = read_moments(path=path)
@@ -213,7 +251,7 @@ time = time_strings(timesteps, $
 ;; ;; nt = n_elements(time.index)
 ;; ;; Vd_rms = rms(sqrt(((Ex+Ex0)^2 + (Ey+Ey0)^2)[*,*,nt/2:*]))/params.Bz
 ;; @den1ktw_images
-;; @den1ktw_rms_plots
+;; ;; @den1ktw_rms_plots
 
 ;; @den1_ktt_frames
 ;; @den1_ktt_movie
@@ -226,20 +264,22 @@ time = time_strings(timesteps, $
 
 ;; @get_efield_plane
 ;; @build_efield_components
-;; shifts = [nx/4,0,0]
-;; Ex = shift(Ex,shifts)
-;; Ey = shift(Ey,shifts)
-;; Er = shift(Er,shifts)
-;; Et = shift(Et,shifts)
+;; data_shift = [nx/4,0,0]
+;; Ex = shift(Ex,data_shift)
+;; Ey = shift(Ey,data_shift)
+;; Er = shift(Er,data_shift)
+;; Et = shift(Et,data_shift)
 
 ;; restore, filename=efield_save_name,/verbose
 ;; @load_plane_params
 ;; @build_efield_components
-;; shifts = [nx/4,0,0]
-;; Ex = shift(Ex,shifts)
-;; Ey = shift(Ey,shifts)
-;; Er = shift(Er,shifts)
-;; Et = shift(Et,shifts)
+;; data_shift = [nx/4,0,0]
+;; Ex = shift(Ex,data_shift)
+;; Ey = shift(Ey,data_shift)
+;; Er = shift(Er,data_shift)
+;; Et = shift(Et,data_shift)
+
+;; @EXB_angle_plot
 
 ;; @Ex_ymean_movie
 
@@ -293,6 +333,32 @@ time = time_strings(timesteps, $
 ;; @calc_Erktt
 ;; save, time,Erktt, $
 ;;       filename=expand_path(path)+path_sep()+Erktt_save_name
+
+@get_den1_plane
+@get_fluxx1_plane
+@get_fluxy1_plane
+@get_fluxz1_plane
+@get_nvsqrx1_plane
+@get_nvsqry1_plane
+@get_nvsqrz1_plane
+
+data_shift = [nx/4,0,0]
+den1 = shift(den1,data_shift)
+fluxx1 = shift(fluxx1,data_shift)
+fluxy1 = shift(fluxy1,data_shift)
+fluxz1 = shift(fluxz1,data_shift)
+nvsqrx1 = shift(nvsqrx1,data_shift)
+nvsqry1 = shift(nvsqry1,data_shift)
+nvsqrz1 = shift(nvsqrz1,data_shift)
+
+@fix_parametric_wave_defects
+@build_temp1_from_fluxes
+
+save, time,temp1, $
+      filename=expand_path(path)+path_sep()+'temp1.sav'
+
+;; @temp1_rms_plot
+;; @thermal_instability
 
 ;;==Print a new line at the very end
 print, ' '
