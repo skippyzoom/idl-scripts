@@ -26,7 +26,7 @@ pp = import_plane_params(path = info_path, $
                          axes = axes, $
                          ranges = ranges, $
                          rotate = rotate, $
-                         data_isft = data_isft)                     
+                         data_isft = 1B)
 
 ;;==Extract parameters
 nx = pp.nx
