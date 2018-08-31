@@ -34,13 +34,13 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; Equally spaced time steps at a subsample frequency given relative
 ;; to params.nout, in the range [t0,tf)
 ;;-----------------------------------------------------------------------------
-;; t0 = params.nt_max/2
+;; ;; t0 = params.nt_max/2
+;; ;; tf = params.nt_max
+;; t0 = 0
 ;; tf = params.nt_max
-t0 = 0
-tf = params.nt_max
-subsample = 2
-;; subsample = nt_max/8
-timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; subsample = 2
+;; ;; subsample = nt_max/8
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
 ;;-----------------------------------------------------------------------------
 ;; First and last output time steps
@@ -62,12 +62,12 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: most batch runs
 ;;-----------------------------------------------------------------------------
-;; timesteps = [params.nout, $     ;One collision time
-;;              5*params.nout, $   ;Five collision times
-;;              10*params.nout, $  ;Ten collision times
-;;              2048, $            ;Growth of 10% runs
-;;              4096, $            ;Growth of 5% runs
-;;              24576]             ;Saturated
+timesteps = [params.nout, $     ;One collision time
+             5*params.nout, $   ;Five collision times
+             10*params.nout, $  ;Ten collision times
+             2048, $            ;Growth of 10% runs
+             4096, $            ;Growth of 5% runs
+             24576]             ;Saturated
 
 ;;--Testing some simulated rocket scripts
 ;; timesteps = [10048, $
@@ -338,25 +338,24 @@ time = time_strings(timesteps, $
 @get_fluxx1_plane
 @get_fluxy1_plane
 @get_fluxz1_plane
-@get_nvsqrx1_plane
-@get_nvsqry1_plane
-@get_nvsqrz1_plane
+;; @get_nvsqrx1_plane
+;; @get_nvsqry1_plane
+;; @get_nvsqrz1_plane
 
 data_shift = [nx/4,0,0]
 den1 = shift(den1,data_shift)
 fluxx1 = shift(fluxx1,data_shift)
 fluxy1 = shift(fluxy1,data_shift)
 fluxz1 = shift(fluxz1,data_shift)
-nvsqrx1 = shift(nvsqrx1,data_shift)
-nvsqry1 = shift(nvsqry1,data_shift)
-nvsqrz1 = shift(nvsqrz1,data_shift)
+;; nvsqrx1 = shift(nvsqrx1,data_shift)
+;; nvsqry1 = shift(nvsqry1,data_shift)
+;; nvsqrz1 = shift(nvsqrz1,data_shift)
 
 @fix_parametric_wave_defects
-@build_temp1_from_fluxes
 
-save, time,temp1, $
-      filename=expand_path(path)+path_sep()+'temp1.sav'
-
+;; @build_temp1_from_fluxes
+;; save, time,temp1, $
+;;       filename=expand_path(path)+path_sep()+'temp1.sav'
 ;; @temp1_rms_plot
 ;; @thermal_instability
 

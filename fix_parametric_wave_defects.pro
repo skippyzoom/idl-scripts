@@ -17,20 +17,26 @@ if n_elements(data_shift) eq 0 then data_shift = [0,0,0]
 ix = data_shift[0]
 
 ;;==Fix fluxx1
-for iy=0,ny-1 do $
-   fluxx1[ix,iy,*] = 0.5*(fluxx1[ix-1,iy,*]+fluxx1[ix+1,iy,*])
+if n_elements(fluxx1) ne 0 then $
+   for iy=0,ny-1 do $
+      fluxx1[ix,iy,*] = 0.5*(fluxx1[ix-1,iy,*]+fluxx1[ix+1,iy,*])
 ;;==Fix fluxy1
-for iy=0,ny-1 do $
-   fluxy1[ix,iy,*] = 0.5*(fluxy1[ix-1,iy,*]+fluxy1[ix+1,iy,*])
+if n_elements(fluxy1) ne 0 then $
+   for iy=0,ny-1 do $
+      fluxy1[ix,iy,*] = 0.5*(fluxy1[ix-1,iy,*]+fluxy1[ix+1,iy,*])
 ;;==Fix fluxz1
-for iy=0,ny-1 do $
-   fluxz1[ix,iy,*] = 0.5*(fluxz1[ix-1,iy,*]+fluxz1[ix+1,iy,*])
+if n_elements(fluxz1) ne 0 then $
+   for iy=0,ny-1 do $
+      fluxz1[ix,iy,*] = 0.5*(fluxz1[ix-1,iy,*]+fluxz1[ix+1,iy,*])
 ;;==Fix nvsqrx1
-for iy=0,ny-1 do $
-   nvsqrx1[ix,iy,*] = 0.5*(nvsqrx1[ix-1,iy,*]+nvsqrx1[ix+1,iy,*])
+if n_elements(nvsqrx1) ne 0 then $
+   for iy=0,ny-1 do $
+      nvsqrx1[ix,iy,*] = 0.5*(nvsqrx1[ix-1,iy,*]+nvsqrx1[ix+1,iy,*])
 ;;==Fix nvsqry1
-for iy=0,ny-1 do $
-   nvsqry1[ix,iy,*] = 0.5*(nvsqry1[ix-1,iy,*]+nvsqry1[ix+1,iy,*])
+if n_elements(nvsqry1) ne 0 then $
+   for iy=0,ny-1 do $
+      nvsqry1[ix,iy,*] = 0.5*(nvsqry1[ix-1,iy,*]+nvsqry1[ix+1,iy,*])
 ;;==Fix nvsqrz1
-for iy=0,ny-1 do $
-   nvsqrz1[ix,iy,*] = 0.5*(nvsqrz1[ix-1,iy,*]+nvsqrz1[ix+1,iy,*])
+if n_elements(nvsqrz1) ne 0 then $
+   for iy=0,ny-1 do $
+      nvsqrz1[ix,iy,*] = 0.5*(nvsqrz1[ix-1,iy,*]+nvsqrz1[ix+1,iy,*])
