@@ -2,6 +2,9 @@
 ; Build distribution 1 temperature, using moments for v0. Assumes the
 ; user has already loaded the moments dictionary.
 ;
+; WARNING: Check inputs to calculate_vsqr before running. Some
+; projects may swap axes.
+;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
 ;-
