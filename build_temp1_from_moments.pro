@@ -20,11 +20,13 @@ vsqrz = calculate_vsqr(params.n0d1*(1+den1), $
                        +moments.dist1.vx_m1[timesteps], $
                        nvsqrx1)
 
+;;==Get rid of singular dimensions
+vsqrx = reform(vsqrx)
+vsqry = reform(vsqry)
+vsqrz = reform(vsqrz)
+
 ;;==Declare Boltzmann's constant
 kb = 1.3806503e-23
 
 ;;==Create temp1
 temp1 = params.md1*(vsqrx+vsqry+vsqrz)/kb
-
-;;==Get rid of singular dimensions
-temp1 = reform(temp1)
