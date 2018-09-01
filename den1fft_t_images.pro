@@ -45,11 +45,6 @@ fdata = 10*alog10(fdata^2)
 ;;==Set non-finite values to smallest finite value
 fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 
-;;==Normalize to 0 = alog10(1)
-;; fdata -= max(fdata)
-;; for it=0,nt-1 do $
-;;    fdata[*,*,it] -= max(fdata[*,*,it])
-
 ;;==Set up kx and ky vectors
 kxdata = 2*!pi*fftfreq(nkx,dx)
 kxdata = shift(kxdata,nkx/2)
