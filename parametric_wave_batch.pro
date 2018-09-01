@@ -81,66 +81,66 @@
 ;; axes = 'xy'
 ;; @parametric_wave_analysis
 
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+ $
+       'parametric_wave/nue_3.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
+rotate = 0
+axes = 'xy'
+@parametric_wave_analysis
+
 ;; @unload_defaults
 ;; @unload_data
 ;; path = get_base_dir()+path_sep()+ $
-;;        'parametric_wave/nue_3.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
+;;        'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
 ;; rotate = 0
 ;; axes = 'xy'
 ;; @parametric_wave_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_3.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+ $
+;;        'parametric_wave/nue_4.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
+;; rotate = 0
+;; axes = 'xy'
+;; @parametric_wave_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_4.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+ $
+;;        'parametric_wave/nue_4.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
+;; rotate = 0
+;; axes = 'xy'
+;; @parametric_wave_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_4.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+ $
+;;        'parametric_wave/nue_5.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
+;; rotate = 0
+;; axes = 'xy'
+;; @parametric_wave_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_5.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+ $
+;;        'parametric_wave/nue_5.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
+;; rotate = 0
+;; axes = 'xy'
+;; @parametric_wave_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_5.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+ $
+;;        'parametric_wave/nue_6.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
+;; rotate = 0
+;; axes = 'xy'
+;; @parametric_wave_analysis
 
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_6.0e4-amp_0.05-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
-
-@unload_defaults
-@unload_data
-path = get_base_dir()+path_sep()+ $
-       'parametric_wave/nue_6.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
-rotate = 0
-axes = 'xy'
-@parametric_wave_analysis
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+ $
+;;        'parametric_wave/nue_6.0e4-amp_0.10-E0_9.0-petsc_subcomm/'
+;; rotate = 0
+;; axes = 'xy'
+;; @parametric_wave_analysis

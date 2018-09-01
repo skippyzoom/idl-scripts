@@ -34,13 +34,13 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; Equally spaced time steps at a subsample frequency given relative
 ;; to params.nout, in the range [t0,tf)
 ;;-----------------------------------------------------------------------------
-;; t0 = params.nt_max/2
+;; ;; t0 = params.nt_max/2
+;; ;; tf = params.nt_max
+;; t0 = 0
 ;; tf = params.nt_max
-t0 = 0
-tf = params.nt_max
-subsample = 2
-;; subsample = nt_max/8
-timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; subsample = 2
+;; ;; subsample = nt_max/8
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
 ;;-----------------------------------------------------------------------------
 ;; First and last output time steps
@@ -62,12 +62,12 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: most batch runs
 ;;-----------------------------------------------------------------------------
-;; timesteps = [params.nout, $     ;One collision time
-;;              5*params.nout, $   ;Five collision times
-;;              10*params.nout, $  ;Ten collision times
-;;              2048, $            ;Growth of 10% runs
-;;              4096, $            ;Growth of 5% runs
-;;              24576]             ;Saturated
+timesteps = [params.nout, $     ;One collision time
+             5*params.nout, $   ;Five collision times
+             10*params.nout, $  ;Ten collision times
+             2048, $            ;Growth of 10% runs
+             4096, $            ;Growth of 5% runs
+             24576]             ;Saturated
 
 ;;--Testing some simulated rocket scripts
 ;; timesteps = [10048, $
@@ -352,14 +352,17 @@ if n_elements(nx) ne 0 then data_shift = [nx/4,0,0]
 ;; @fluxy1fft_t_images
 
 @build_temp1_from_fluxes
-save, time,temp1, $
-      filename=expand_path(path)+path_sep()+'temp1.sav'
+;; save, time,temp1, $
+;;       filename=expand_path(path)+path_sep()+'temp1.sav'
 ;; @temp1_rms_plot
 ;; @thermal_instability
 ;; restore, filename=expand_path(path)+path_sep()+'temp1.sav'
 
 ;; @calc_temp1fft_t
 ;; @temp1fft_t_images
+
+;; @vsqr_compare
+;; @n1_T1_compare
 
 ;;==Print a new line at the very end
 print, ' '
