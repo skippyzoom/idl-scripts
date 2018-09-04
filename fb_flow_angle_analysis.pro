@@ -65,9 +65,13 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;              20992, $                       ;3-D Transition stage end
 ;;              20992, $                       ;3-D Saturated stage start
 ;;              params.nout*(params.nt_max-1)] ;3-D Saturated stage end
+;; if params.ndim_space eq 2 then timesteps *= 8L
 
-;; timesteps = [8576, $            ;3-D Linear stage example
+;; ;; timesteps = [8576, $            ;3-D Linear stage example
+;; ;;              23040]             ;3-D Saturated stage example
+;; timesteps = [7168, $            ;3-D Linear stage example
 ;;              23040]             ;3-D Saturated stage example
+;; if params.ndim_space eq 2 then timesteps *= 8L
 
 ;; timesteps = 8L*[5504, $                        ;2-D Linear stage start
 ;;                 11776, $                       ;2-D Linear stage end
@@ -122,7 +126,7 @@ if (params.ndim_space eq 2 && strcmp(axes,'xy')) then $
 ;; den1 = arr_from_arrft(denft1)
 ;; @den1_images
 
-@denft1_movie
+;; @denft1_movie
 
 ;; rotate = 0
 ;; @get_denft1_plane

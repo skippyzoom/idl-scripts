@@ -7,15 +7,15 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/2D/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D/'
 
 ;;==Declare name of save file
-save_name = 'denft1ktt-001.0_005.0_m-all_k.sav'
+save_name = 'denft1ktt-001.0_005.0_m-all_theta.sav'
 
 ;;==Declare runs
-run = ['h0-Ey0_050-v2', $
-       'h1-Ey0_050-v2', $
-       'h2-Ey0_050-v2']
+run = ['h0-Ey0_050', $
+       'h1-Ey0_050', $
+       'h2-Ey0_050']
 nr = n_elements(run)
 
 ;;==Declare initial step
@@ -131,14 +131,15 @@ for ir=0,nr-1 do $
 yrange = frm[0].yrange
 
 ;;==Add time markers corresponding to images
-;; image_times = 1e3*[8576,23040]*params.dt
-;; nit = n_elements(image_times)
-;; for it=0,nit-1 do $
-;;    frm = plot([image_times[it],image_times[it]], $
-;;               [yrange[0],yrange[1]], $
-;;               color = 'black', $
-;;               linestyle = 2, $
-;;               /overplot)
+image_times = 1e3*[8576,23040]*params.dt
+if params.ndim_space eq 2 then image_times *= 8L
+nit = n_elements(image_times)
+for it=0,nit-1 do $
+   frm = plot([image_times[it],image_times[it]], $
+              [yrange[0],yrange[1]], $
+              color = 'black', $
+              linestyle = 2, $
+              /overplot)
 
 ;;==Add a path label
 txt = text(0.0,0.005, $

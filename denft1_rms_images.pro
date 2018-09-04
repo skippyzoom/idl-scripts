@@ -21,8 +21,11 @@ nt = n_elements(time.index)
 ;;    rms_time = [[5504/params.nout,11776/params.nout], $  ;2-D Linear stage
 ;;                [17536/params.nout,20992/params.nout], $ ;2-D Transition stage
 ;;                [20992/params.nout,nt-1]]                ;2-D Saturated stage
-rms_time = [[5504/params.nout,10240/params.nout], $     ;3-D Linear stage
-            [17536/params.nout,20992/params.nout], $    ;3-D Transition stage
+;; rms_time = [[5504/params.nout,10240/params.nout], $     ;3-D Linear stage
+;;             [17536/params.nout,20992/params.nout], $    ;3-D Transition stage
+;;             [20992/params.nout,nt-1]]                   ;3-D Saturated stage
+rms_time = [[5504/params.nout,8576/params.nout], $     ;3-D Linear stage
+            [11392/params.nout,20992/params.nout], $    ;3-D Transition stage
             [20992/params.nout,nt-1]]                   ;3-D Saturated stage
 ;; if params.ndim_space eq 2 then rms_time *= 8L           ;Scale for 2-D
 rms_time = transpose(rms_time)
