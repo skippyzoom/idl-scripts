@@ -7,10 +7,12 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/2D/'
 
 ;;==Declare name of save file
-save_name = 'denft1ktt-001.0_005.0_m-all_theta.sav'
+;; save_name = 'denft1ktt-001.0_005.0_m-all_theta.sav'
+;; save_name = 'denft1ktt-010.0_m-all_theta.sav'
+save_name = 'denft1ktt-001.0_010.0_m-all_theta.sav'
 
 ;;==Declare runs
 run = ['h0-Ey0_050', $
@@ -19,7 +21,7 @@ run = ['h0-Ey0_050', $
 nr = n_elements(run)
 
 ;;==Declare initial step
-it0 = 0
+it0 = 1
 
 ;;==Declare frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
@@ -28,10 +30,20 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
 ;;==Declare plot file name
+lambda = ['002.00','003.00','004.00']
 filename = expand_path(plot_path)+path_sep()+'frames'+ $
            path_sep()+ $
            'mr_'+ $
-           strip_extension(save_name)+ $
+           ;; strip_extension(save_name)+ $
+           'denft1ktt'+ $
+           '-'+ $
+           string(lambda[0],format='(f05.1)')+ $
+           '_'+ $
+           string(lambda[n_elements(lambda)-1], $
+                  format='(f05.1)')+ $
+           '_m'+ $
+           ;; '-002.00_004.00_m'+ $
+           '-all_theta'+ $
            '.'+get_extension(frame_type)
 
 ;;==Declare line colors
@@ -55,7 +67,7 @@ params = set_eppic_params(path=path)
 restore, expand_path(path)+path_sep()+save_name
 
 ;;==Get wavelengths
-lambda = denft1ktt.keys()
+if n_elements(lambda) eq 0 then lambda = denft1ktt.keys()
 lambda = lambda.sort()
 nl = denft1ktt.count()
 
@@ -110,7 +122,7 @@ for ir=0,nr-1 do $
               xtitle = 'Time [ms]', $
               ytitle = '$\langle P(\delta n)\rangle/P(n_I)$', $
               /ylog, $
-              ;; yrange = [1e0,1e4], $
+              yrange = [1e0,1e3], $
               ystyle = 0, $
               color = color[ir], $
               linestyle = linestyle[ir], $
