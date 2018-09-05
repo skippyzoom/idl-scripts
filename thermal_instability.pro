@@ -6,6 +6,9 @@
 ; some bug, so I used the spatially averaged velocities. Other runs
 ; may be able to use flux arrays to calculate full spatial
 ; distributions of mean velocity. 
+;
+; Created by Matt Young
+;------------------------------------------------------------------------------
 ;-
 
 ;;==Set default frame type
