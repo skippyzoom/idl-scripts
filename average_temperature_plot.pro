@@ -16,47 +16,72 @@ T_max = max([moments.dist0.Tx, $
              moments.dist1.Ty, $
              moments.dist1.Tz])
 full_time = findgen(params.nt_max)*params.dt*params.nout
+
+name = (params.ndim_space eq 2) ? '$T_{eH}$' : '$T_{e\parallel}$'
+color = (params.ndim_space eq 2) ? 'blue' : 'green'
 frm = plot(full_time*1e3, $
            moments.dist0.Tx, $
            ;; yrange = [T_min,T_max], $
-           ;; yrange = [200,800], $
-           yrange = [200,300], $
+           yrange = [200,800], $
+           ;; yrange = [200,300], $
            xstyle = 1, $
-           color = 'blue', $
+           color = color, $
            linestyle = 0, $
-           name = '$T_{ex}$', $
+           name = name, $
            /buffer)
+name = '$T_{eP}$'
+color = 'red'
 !NULL = plot(full_time*1e3, $
              moments.dist0.Ty, $
-             color = 'red', $
+             color = color, $
              linestyle = 0, $
-             name = '$T_{ey}$', $
+             name = name, $
              /overplot)
+name = (params.ndim_space eq 2) ? '$T_{e\parallel}$' : '$T_{eH}$'
+color = (params.ndim_space eq 2) ? 'green' : 'blue'
 !NULL = plot(full_time*1e3, $
              moments.dist0.Tz, $
-             color = 'green', $
+             color = color, $
              linestyle = 0, $
-             name = '$T_{ez}$', $
+             name = name, $
              /overplot)
+name = (params.ndim_space eq 2) ? '$T_{iH}$' : '$T_{i\parallel}$'
+color = (params.ndim_space eq 2) ? 'blue' : 'green'
 !NULL = plot(full_time*1e3, $
              moments.dist1.Tx, $
-             color = 'blue', $
+             color = color, $
              linestyle = 1, $
-             name = '$T_{ix}$', $
+             name = name, $
              /overplot)
+name = '$T_{iP}$'
+color = 'red'
 !NULL = plot(full_time*1e3, $
              moments.dist1.Ty, $
-             color = 'red', $
+             color = color, $
              linestyle = 1, $
-             name = '$T_{iy}$', $
+             name = name, $
              /overplot)
+name = (params.ndim_space eq 2) ? '$T_{i\parallel}$' : '$T_{iH}$'
+color = (params.ndim_space eq 2) ? 'green' : 'blue'
 !NULL = plot(full_time*1e3, $
              moments.dist1.Tz, $
-             color = 'green', $
+             color = color, $
              linestyle = 1, $
-             name = '$T_{iz}$', $
+             name = name, $
              /overplot)
-leg = legend()
+xrange = frm.xrange
+yrange = frm.yrange
+leg = legend(font_name = 'Times', $
+             font_size = 10, $
+             position = [0.5*(xrange[1]-xrange[0]), $
+                        yrange[1]+0.05*abs(yrange[1])], $
+             /data, $
+             orientation = 1, $
+             horizontal_alignment = 'center', $
+             vertical_alignment = 'bottom', $
+             sample_width = 0.05, $
+             /auto_text_color)
+
 txt = text(0.0,0.005, $
            path, $
            target = frm, $
