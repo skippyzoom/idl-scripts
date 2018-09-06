@@ -48,14 +48,14 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; t0 = 20992/params.nout
 ;; tf = params.nt_max
 ;;--Entire run
-;; t0 = 0
-;; tf = params.nt_max
+t0 = 0
+tf = params.nt_max
 
-;; ;; subsample = params.nt_max/params.nvsqr_out_subcycle1
-;; ;; subsample = params.nvsqr_out_subcycle1
-;; subsample = 1
-;; if params.ndim_space eq 2 then subsample *= 8L
-;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; subsample = params.nt_max/params.nvsqr_out_subcycle1
+;; subsample = params.nvsqr_out_subcycle1
+subsample = 1
+if params.ndim_space eq 2 then subsample *= 8L
+timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
 ;; timesteps = params.nout*[0,nt_max/4,nt_max/2,3*nt_max/4,nt_max-1]
 
@@ -67,9 +67,9 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;              params.nout*(params.nt_max-1)] ;3-D Saturated stage end
 ;; if params.ndim_space eq 2 then timesteps *= 8L
 
-timesteps = [8576, $            ;3-D Linear stage example
-             23040]             ;3-D Saturated stage example
-if params.ndim_space eq 2 then timesteps *= 8L
+;; timesteps = [8576, $            ;3-D Linear stage example
+;;              23040]             ;3-D Saturated stage example
+;; if params.ndim_space eq 2 then timesteps *= 8L
 
 ;; timesteps = 8L*[5504, $                        ;2-D Linear stage start
 ;;                 11776, $                       ;2-D Linear stage end
@@ -121,15 +121,15 @@ time = time_strings(timesteps, $
 ;;    for it=0,(size(denft1))[3]-1 do $
 ;;       denft1[*,ny/2:*,it] = rotate(denft1[*,0:ny/2-1,it],2)
 
-;; ;; @denft1_rms_images
+;; @denft1_rms_images
 
 ;; ;; den1 = arr_from_arrft(denft1)
 ;; ;; @den1_images
 
 ;; @denft1_movie
 
-rotate = 0
-@get_denft1_plane
+;; rotate = 0
+;; @get_denft1_plane
 ;; ;; for it=0,(size(denft1))[3]-1 do $
 ;; ;;    denft1[*,*,it] = rotate(denft1[*,*,it],3)
 ;; ;; for it=0,(size(denft1))[3]-1 do $
@@ -186,8 +186,17 @@ rotate = 0
 ;; @get_nvsqry1_plane
 ;; @get_nvsqrz1_plane
 
-;; ;; moments = read_moments(path=path)
-;; ;; @average_temperature_plot
+moments = read_moments(path=path)
+@average_temperature_plot
+
+;; @build_temp0_from_moments
+;; @build_temp1_from_moments
+
+;; save, time,temp0, $
+;;       filename=expand_path(path)+path_sep()+'temp0.sav'
+;; save, time,temp1, $
+;;       filename=expand_path(path)+path_sep()+'temp1.sav'
+
 
 ;; @thermal_instability
 
