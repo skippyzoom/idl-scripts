@@ -206,6 +206,29 @@ for it=0,n_rms-1 do $
               font_name = 'Courier', $
               font_size = 10.0)
 
+;;==Find location of max pixel in growth image
+imax2d = array_indices(fdata_rms[x0:xf-1,y0:yf-1,0], $
+                       where(fdata_rms[x0:xf-1,y0:yf-1,0] eq $
+                             max(fdata_rms[x0:xf-1,y0:yf-1,0])))
+ikx = x0+imax2d[0]
+iky = y0+imax2d[1]
+peak_lambda = 2*!pi/sqrt(kxdata[ikx]^2 + kydata[iky]^2)
+;; print, "Wavelength of peak growth = ",peak_lambda," m"
+peak_theta = atan(kydata[iky],kxdata[ikx])/!dtor
+;; print, "Flow angle of peak growth = ",peak_theta," deg"
+
+;;==Print wavelength and angle of max pixel on image frame
+txt = text(0.0,0.01, $
+           "Peak $\lambda$ = "+ $
+           strcompress(string(peak_lambda),/remove_all)+ $
+           " m       "+ $
+           "Peak $\theta$ = "+ $
+           strcompress(string(peak_theta),/remove_all)+ $
+           " deg", $
+           target = frm[0], $
+           font_name = 'Times', $
+           font_size = 10.0)
+
 ;;==Save individual images
 for it=0,n_rms-1 do $
    frame_save, frm[it],filename=filename[it]
