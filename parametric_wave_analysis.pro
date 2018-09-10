@@ -62,12 +62,12 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;-----------------------------------------------------------------------------
 ;; PETSc subcomm simulation runs: most batch runs
 ;;-----------------------------------------------------------------------------
-timesteps = [params.nout, $     ;One collision time
-             5*params.nout, $   ;Five collision times
-             10*params.nout, $  ;Ten collision times
-             2048, $            ;Growth of 10% runs
-             4096, $            ;Growth of 5% runs
-             24576]             ;Saturated
+;; timesteps = [params.nout, $     ;One collision time
+;;              5*params.nout, $   ;Five collision times
+;;              10*params.nout, $  ;Ten collision times
+;;              2048, $            ;Growth of 10% runs
+;;              4096, $            ;Growth of 5% runs
+;;              24576]             ;Saturated
 
 ;;--Testing some simulated rocket scripts
 ;; timesteps = [10048, $
@@ -92,8 +92,8 @@ timesteps = [params.nout, $     ;One collision time
 ;; An array of 'nt' time steps, equally spaced at the output frequency
 ;; of this EPPIC run
 ;;-----------------------------------------------------------------------------
-;; nt = 5
-;; timesteps = params.nout*lindgen(nt)
+nt = 5
+timesteps = params.nout*lindgen(nt)
 
 ;;==Create time struct
 time = time_strings(timesteps, $
