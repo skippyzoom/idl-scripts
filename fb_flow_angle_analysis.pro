@@ -53,7 +53,8 @@ tf = params.nt_max
 
 ;; subsample = params.nt_max/params.nvsqr_out_subcycle1
 ;; subsample = params.nvsqr_out_subcycle1
-subsample = 1
+;; subsample = 1
+subsample = params.full_array_nout/params.nout
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
@@ -86,8 +87,6 @@ time = time_strings(timesteps, $
                     scale = 1e3, $
                     precision = 2)
 
-;; @get_den1_plane
-
 ;; @analyze_moments
 
 ;; rotate = 0
@@ -110,21 +109,35 @@ time = time_strings(timesteps, $
 ;; @denft0_movie
 
 ;; rotate = 0
-;; @get_denft1_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(denft1))[3]-1 do $
-;;       denft1[*,*,it] = rotate(denft1[*,*,it],3)
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(denft1))[3]-1 do $
-;;       denft1[nx/2:*,*,it] = rotate(denft1[0:nx/2-1,*,it],2)
-;; if (params.ndim_space eq 2 && strcmp(axes,'xy')) then $
-;;    for it=0,(size(denft1))[3]-1 do $
-;;       denft1[*,ny/2:*,it] = rotate(denft1[*,0:ny/2-1,it],2)
+;; @get_den1_plane
+;; ;; for it=0,(size(den1))[3]-1 do $
+;; ;;    den1[*,*,it] = rotate(den1[*,*,it],3)
+;; den1_raw = den1
+;; nx_raw = nx
+;; ny_raw = ny
+;; delvar, den1,ranges,zero_point
+
+rotate = 0
+@get_denft1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(denft1))[3]-1 do $
+      denft1[*,*,it] = rotate(denft1[*,*,it],3)
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(denft1))[3]-1 do $
+      denft1[nx/2:*,*,it] = rotate(denft1[0:nx/2-1,*,it],2)
+if (params.ndim_space eq 2 && strcmp(axes,'xy')) then $
+   for it=0,(size(denft1))[3]-1 do $
+      denft1[*,ny/2:*,it] = rotate(denft1[*,0:ny/2-1,it],2)
 
 ;; @denft1_rms_images
 
-;; ;; den1 = arr_from_arrft(denft1)
-;; ;; @den1_images
+den1 = arr_from_arrft(denft1)
+;; @den1_images
+
+;; den1_ift = den1
+;; nx_ift = nx
+;; ny_ift = ny
+;; delvar, den1
 
 ;; @denft1_movie
 
@@ -186,8 +199,8 @@ time = time_strings(timesteps, $
 ;; @get_nvsqry1_plane
 ;; @get_nvsqrz1_plane
 
-moments = read_moments(path=path)
-@average_temperature_plot
+;; moments = read_moments(path=path)
+;; @average_temperature_plot
 
 ;; @build_temp0_from_moments
 ;; @build_temp1_from_moments

@@ -122,7 +122,30 @@ txt = text(0.0,0.02, $
            font_size = 10)
 frame_save, frm,filename=filename
 
-;;==Plot temperatures
+;;==Plot total electron density
+filename = plot_dir+path_sep()+ $
+           'electron_density'+ $
+           '-'+strlat+ $
+           '.'+get_extension(frame_type)
+ip = 0
+frm = plot(data['iri'].values[*,1], $
+           data['iri'].values[*,0], $
+           xrange = [1e8,1e13], $
+           /xlog, $
+           xtitle = '$n_e$ [$m^{-3}$]', $
+           ytitle = 'Height [km]', $
+           position = [0.2,0.2,0.8,0.8], $
+           font_name = 'Times', $
+           font_size = 14, $
+           /buffer)
+txt = text(0.0,0.02, $
+           data['iri'].path, $
+           target = frm, $
+           font_name = 'Courier', $
+           font_size = 10)
+frame_save, frm,filename=filename
+
+;;==Plot all temperatures
 filename = plot_dir+path_sep()+ $
            'temperatures'+ $
            '-'+strlat+ $
@@ -159,6 +182,28 @@ leg = legend(/auto_text_color, $
              vertical_alignment = 'bottom', $
              horizontal_alignment = 'center', $
              orientation = 1)
+txt = text([0.0,0.0],[0.01,0.04], $
+           [data['msis'].path,data['iri'].path], $
+           target = frm, $
+           font_name = 'Courier', $
+           font_size = 10)
+frame_save, frm,filename=filename
+
+;;==Plot only neutral temperature
+filename = plot_dir+path_sep()+ $
+           'neutral_temperature'+ $
+           '-'+strlat+ $
+           '.'+get_extension(frame_type)
+frm = plot(data['msis'].values[*,4], $
+           data['msis'].values[*,0], $
+           xrange = [1e2,2e3], $
+           /xlog, $
+           xtitle = '$T_n$ [K]', $
+           ytitle = 'Height [km]', $
+           position = [0.2,0.2,0.8,0.8], $
+           font_name = 'Times', $
+           font_size = 14, $
+           /buffer)
 txt = text([0.0,0.0],[0.01,0.04], $
            [data['msis'].path,data['iri'].path], $
            target = frm, $
