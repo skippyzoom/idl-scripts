@@ -11,7 +11,7 @@ if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 ;;==Declare file name
 filename = expand_path(path+path_sep()+'movies')+ $
            path_sep()+'den1'+ $
-           '-full_shift'+ $
+           ;; '-full_shift'+ $
            ;; '-from_denft1'+ $
            ;; '-reset_TEST'+ $
            '.'+get_extension(movie_type)
@@ -77,10 +77,10 @@ image_kw['ymajor'] = 5
 image_kw['yminor'] = 3
 image_kw['font_size'] = 18
 image_kw['font_name'] = 'Times'
-image_kw['dimensions'] = [1024,256]
-image_kw['image_dimensions'] = [1024,256]
-;; image_kw['dimensions'] = [512,512]
-;; image_kw['image_dimensions'] = [512,512]
+;; image_kw['dimensions'] = [1024,256]
+;; image_kw['image_dimensions'] = [1024,256]
+image_kw['dimensions'] = [512,512]
+image_kw['image_dimensions'] = [512,512]
 colorbar_kw['title'] = '$\delta n/n_0$'
 colorbar_kw['font_size'] = 18
 colorbar_kw['font_name'] = 'Times'

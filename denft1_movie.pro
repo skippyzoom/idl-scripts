@@ -3,10 +3,14 @@
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
+;                                   **NOTES**
+; -- Passing x and y vectors (e.g., xdata and ydata) to image() via
+;    data_graphics.pro appears to slow down image() to the point that
+;    making a movie of a long run can take prohibitively long.
 ;-
 
 ;;==Set default movie type
-if n_elements(movie_type) eq 0 then movie_type = '.pdf'
+if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 
 ;;==Declare file name(s)
 filename = expand_path(path+path_sep()+'movies')+ $
@@ -52,11 +56,6 @@ nfy = yf-y0
 
 ;;==Get the number of time steps
 nt = n_elements(time.index)
-
-;;==Get dimensions
-fsize = size(fdata)
-nkx = fsize[1]
-nky = fsize[2]
 
 ;;==Convert complex FFT to its magnitude
 fdata = abs(fdata)
