@@ -13,17 +13,18 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 nt = n_elements(time.index)
 
 ;;==Declare RMS time ranges (assuming all time steps are in memory)
-rms_time = [[5504/params.nout,8576/params.nout], $     ;3-D Linear stage
-            [11392/params.nout,20992/params.nout], $    ;3-D Transition stage
-            [20992/params.nout,nt-1]]                   ;3-D Saturated stage
+if params.ndim_space eq 2 then $
+   rms_time = [[22528/params.nout,62464/params.nout], $
+               [159744/params.nout,nt-1]]
+if params.ndim_space eq 3 then $
+   rms_time = [[5760/params.nout,10368/params.nout], $
+               [19968/params.nout,nt-1]]
+
 rms_time = transpose(rms_time)
 n_rms = (size(rms_time))[1]
 
 ;;==Declare file name(s)
-if params.ndim_space eq 3 then $
-   str_rms_time = string(rms_time*params.nout,format='(i06)')
-if params.ndim_space eq 2 then $
-   str_rms_time = string(8L*rms_time*params.nout,format='(i06)')
+str_rms_time = string(rms_time*params.nout,format='(i06)')
 filename = strarr(n_rms)
 for it=0,n_rms-1 do $
    filename[it] = expand_path(path+path_sep()+'frames')+ $
