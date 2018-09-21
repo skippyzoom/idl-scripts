@@ -116,7 +116,7 @@ time = time_strings(long(timesteps), $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
-time.subsample = subsample
+if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; if params.ndim_space eq 2 then time_2D = time
 ;; if params.ndim_space eq 3 then time_3D = time
 ;; @analyze_moments
@@ -150,13 +150,14 @@ time.subsample = subsample
 ;; lambda = 1.0/modes[1:nx/2]
 ;; theta = [0,!pi]
 ;; @calc_den1ktt
-;; den1ktt_save_name = 'den1ktt'+ $
-;;                       '-all_k'+ $
-;;                       '-all_theta'+ $
-;;                       '.sav'
+den1ktt_save_name = 'den1ktt'+ $
+                    '-all_k'+ $
+                    '-all_theta'+ $
+                    '-subsample_'+strcompress(subsample,/remove_all)+ $
+                    '.sav'
 ;; save, time,den1ktt, $
 ;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
-;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
+restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
 
 ;; rotate = 0
 ;; @get_den1_plane
