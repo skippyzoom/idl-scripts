@@ -1,5 +1,5 @@
 ;+
-; Script for making frames from a plane of EPPIC denft1 data after RMS
+; Script for making frames from a plane of EPPIC den0fft_t data after RMS
 ; over time.
 ;
 ; Created by Matt Young.
@@ -13,12 +13,13 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 nt = n_elements(time.index)
 
 ;;==Declare RMS time ranges (assuming all time steps are in memory)
+if n_elements(subsample) eq 0 then subsample eq 1
 if params.ndim_space eq 2 then $
    rms_time = [[22528/params.nout,62464/params.nout], $
-               [159744/params.nout,nt-1]]
+               [159744/params.nout,nt-1]]/subsample
 if params.ndim_space eq 3 then $
    rms_time = [[5760/params.nout,10368/params.nout], $
-               [19968/params.nout,nt-1]]
+               [19968/params.nout,nt-1]]/subsample
 
 rms_time = transpose(rms_time)
 n_rms = (size(rms_time))[1]
@@ -45,18 +46,18 @@ nkx = fsize[1]
 nky = fsize[2]
 
 ;;==Declare ranges to show
-x0 = nkx/2
+x0 = nkx/2-nkx/4
 xf = nkx/2+nkx/4
-y0 = nky/2-nky/4
+y0 = nky/2
 yf = nky/2+nky/4
-;; x0 = nkx/2-nkx/4
+;; x0 = nkx/2
 ;; xf = nkx/2+nkx/4
-;; y0 = nky/2
+;; y0 = nky/2-nky/4
 ;; yf = nky/2+nky/4
-;; x0 = nkx/2-nkx/8
-;; xf = nkx/2+nkx/8
-;; y0 = nky/2-nky/8
-;; yf = nky/2+nky/8
+;; x0 = nkx/2-nkx/2
+;; xf = nkx/2+nkx/2
+;; y0 = nky/2
+;; yf = nky/2+nky/16
 
 ;;==Convert complex FFT to its magnitude
 fdata = abs(fdata)
@@ -108,28 +109,30 @@ for it=0,n_rms-1 do $
                    rgb_table = 39, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $
-                   xrange = [0,+!pi], $
-                   xtickvalues = [0,+!pi/2,+!pi], $
-                   xmajor = 3, $
-                   xminor = 1, $
-                   yrange = [-!pi,+!pi], $
-                   ytickvalues = [-!pi,-!pi/2,0,+!pi/2,+!pi], $
-                   ymajor = 3, $
-                   yminor = 3, $
-                   ;; xrange = [-!pi,+!pi], $
-                   ;; xtickvalues = [-!pi,-!pi/2,0,+!pi/2,+!pi], $
-                   ;; xmajor = 3, $
-                   ;; xminor = 3, $
-                   ;; yrange = [0,+!pi], $
-                   ;; ytickvalues = [0,+!pi/2,+!pi], $
-                   ;; ymajor = 3, $
-                   ;; yminor = 1, $
-                   ;; xrange = [-!pi/16,+!pi/16], $
-                   ;; xtickvalues = [-!pi/16,0,+!pi/16], $
+                   ;; xrange = [0,+!pi], $
+                   ;; xtickvalues = [0,+!pi/2,+!pi], $
+                   ;; yrange = [-!pi,+!pi], $
+                   ;; ytickvalues = [-!pi,-!pi/2,0,+!pi/2,+!pi], $
                    ;; xmajor = 3, $
                    ;; xminor = 1, $
+                   ;; ymajor = 3, $
+                   ;; yminor = 3, $
+                   ;; xrange = [-!pi,+!pi], $
+                   ;; xtickvalues = [-!pi,-!pi/2,0,+!pi/2,+!pi], $
+                   ;; yrange = [0,+!pi], $
+                   ;; ytickvalues = [0,+!pi/2,+!pi], $
+                   xrange = [-!pi/4,+!pi/4], $
+                   yrange = [0,+2*!pi], $
+                   xmajor = 3, $
+                   xminor = 3, $
+                   ymajor = 3, $
+                   yminor = 3, $
+                   ;; xrange = [-!pi/16,+!pi/16], $
+                   ;; xtickvalues = [-!pi/16,0,+!pi/16], $
                    ;; yrange = [0,+2*!pi], $
                    ;; ytickvalues = [0,+!pi,+2*!pi], $
+                   ;; xmajor = 3, $
+                   ;; xminor = 1, $
                    ;; ymajor = 3, $
                    ;; yminor = 3, $
                    xstyle = 1, $
@@ -167,23 +170,21 @@ for it=0,n_rms-1 do $
                   font_name = 'Times', $
                   hide = 0)
 
-;;==Add radius and angle markers
-;; r_overlay = 2*!pi/(2+findgen(10))
-r_overlay = 2*!pi/(2+findgen(9))
-;; r_overlay = 2*!pi/[2.0,10.0]
-;; theta_overlay = 10*(findgen(19)-9)
-theta_overlay = 10*findgen(36)
-for it=0,n_rms-1 do $
-   frm[it] = overlay_rtheta(frm[it], $
-                            r_overlay, $
-                            theta_overlay, $
-                            /degrees, $
-                            r_color = 'white', $
-                            r_thick = 1, $
-                            r_linestyle = 'solid_line', $
-                            theta_color = 'white', $
-                            theta_thick = 1, $
-                            theta_linestyle = 'solid_line')
+;; ;;==Add radius and angle markers
+;; ;; r_overlay = 2*!pi/(2+findgen(9))
+;; r_overlay = 2*!pi/(1+findgen(10))
+;; theta_overlay = 10*findgen(36)
+;; for it=0,n_rms-1 do $
+;;    frm[it] = overlay_rtheta(frm[it], $
+;;                             r_overlay, $
+;;                             theta_overlay, $
+;;                             /degrees, $
+;;                             r_color = 'white', $
+;;                             r_thick = 1, $
+;;                             r_linestyle = 'solid_line', $
+;;                             theta_color = 'white', $
+;;                             theta_thick = 1, $
+;;                             theta_linestyle = 'solid_line')
 
 ;;==Add a path label
 for it=0,n_rms-1 do $
