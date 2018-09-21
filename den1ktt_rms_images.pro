@@ -33,7 +33,8 @@ rms_time = transpose(rms_time)
 n_rms = (size(rms_time))[1]
 
 ;;==Declare file name(s)
-str_rms_time = string(rms_time*params.nout,format='(i06)')
+str_rms_time = string(rms_time*params.nout*subsample, $
+                      format='(i06)')
 filename = strarr(n_rms)
 for it=0,n_rms-1 do $
    filename[it] = expand_path(path+path_sep()+'frames')+ $
@@ -44,22 +45,8 @@ for it=0,n_rms-1 do $
    '-self_norm'+ $
    '.'+get_extension(frame_type)
 
-;;==Extract wavelength keys
-keys = den1ktt.keys()
-
-;;==Extract number of wavelengths
-nl = den1ktt.count()
-
-;;==Find the largest array (always the smallest wavelength?)
-max_t = n_elements(den1ktt[keys[0]].t_interp)
-for il=1,nl-1 do $
-   max_t = max([max_t,n_elements(den1ktt[keys[il]].t_interp)])
-
-;;==Create the array of resized spectra
-fdata = fltarr(nl,max_t,nt)
-for it=0,nt-1 do $
-   for il=0,nl-1 do $
-      fdata[il,*,it] = congrid(den1ktt[lambda[il]].f_interp[*,it],max_t)
+;;==Preserve original
+fdata = cg_den1ktt
 
 ;;==Compute RMS values
 fdata_rms = fltarr(nl,max_t,n_rms)
@@ -68,15 +55,14 @@ for it=0,n_rms-1 do $
 
 ;;==Declare k and theta vectors
 k_vals = 2*!pi/lambda
-nk = n_elements(k_val)
-th_vals = den1ktt[lambda[nl-1]].t_interp/!dtor
-nth = n_elements(th_val)
+;; k_vals = k_vals[sort(k_vals)]
+th_vals = den1ktt[min(lambda)].t_interp/!dtor
 
 ;;==Declare image ranges
 ik0 = 0
 ikf = n_elements(k_vals)/4
 ith0 = 0
-ithf = n_elements(th_vals)/2
+ithf = n_elements(th_vals)
 
 ;;==Declare an array of image handles
 frm = objarr(n_rms)
@@ -85,8 +71,16 @@ frm = objarr(n_rms)
 for it=0,n_rms-1 do $
    frm[it] = image(fdata_rms[ik0:ikf-1,ith0:ithf-1,it], $
                    k_vals[ik0:ikf-1],th_vals[ith0:ithf-1], $
+                   axis_style = 2, $
                    rgb_table = 39, $
                    /buffer)
+
+;;==Fix aspect ratio
+aspect_scale = 1.0
+for it=0,n_rms-1 do $
+   frm[it].aspect_ratio = aspect_scale* $
+   (frm[it].xrange[1]-frm[it].xrange[0])/ $
+   (frm[it].yrange[1]-frm[it].yrange[0])
 
 ;;==Save individual images
 for it=0,n_rms-1 do $
