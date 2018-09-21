@@ -12,6 +12,9 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 ;;==Get the number of time steps
 nt = n_elements(time.index)
 
+;;==Get subsample frequency
+if time.haskey('subsample') then subsample = time.subsample
+
 ;;==Declare RMS time ranges (assuming all time steps are in memory)
 if n_elements(subsample) eq 0 then subsample eq 1
 if params.ndim_space eq 2 then $
