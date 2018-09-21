@@ -10,7 +10,8 @@
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Get the number of time steps
-nt = n_elements(time.index)
+if time.haskey('nt') then nt = time.nt $
+else nt = n_elements(time.index)
 
 ;;==Get subsample frequency
 if time.haskey('subsample') then subsample = time.subsample
