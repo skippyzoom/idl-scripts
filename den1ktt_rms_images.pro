@@ -17,7 +17,7 @@ else nt = n_elements(time.index)
 if time.haskey('subsample') then subsample = time.subsample
 
 ;;==Declare RMS time ranges (assuming all time steps are in memory)
-if n_elements(subsample) eq 0 then subsample eq 1
+if n_elements(subsample) eq 0 then subsample = 1
 if params.ndim_space eq 2 then $
    rms_time = [[22528/params.nout,62464/params.nout], $
                [159744/params.nout,nt-1]]/subsample
@@ -46,17 +46,20 @@ keys = den1ktt.keys()
 ;;==Extract number of wavelengths
 nl = den1ktt.count()
 
+print, "LINE 49"
 ;;==Find the largest array (always the smallest wavelength?)
 max_t = n_elements(den1ktt[keys[0]].t_interp)
 for il=1,nl-1 do $
    max_t = max([max_t,n_elements(den1ktt[keys[il]].t_interp)])
 
+print, "LINE 55"
 ;;==Create the array of resized spectra
 fdata = fltarr(nl,max_t,nt)
 for it=0,nt-1 do $
    for il=0,nl-1 do $
       fdata[il,*,it] = congrid(den1ktt[lambda[il]].f_interp[*,it],max_t)
 
+print, "LINE 62"
 ;;==Compute RMS values
 fdata_rms = fltarr(nl,max_t,n_rms)
 for it=0,n_rms-1 do $
@@ -77,6 +80,7 @@ ithf = n_elements(th_vals)/2
 ;;==Declare an array of image handles
 frm = objarr(n_rms)
 
+print, "LINE 83"
 ;;==Create image frames
 for it=0,n_rms-1 do $
    frm[it] = image(fdata_rms[ik0:ikf-1,ith0:ithf-1,it], $

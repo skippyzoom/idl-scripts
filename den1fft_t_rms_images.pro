@@ -17,7 +17,7 @@ else nt = n_elements(time.index)
 if time.haskey('subsample') then subsample = time.subsample
 
 ;;==Declare RMS time ranges (assuming all time steps are in memory)
-if n_elements(subsample) eq 0 then subsample eq 1
+if n_elements(subsample) eq 0 then subsample = 1
 if params.ndim_space eq 2 then $
    rms_time = [[22528/params.nout,62464/params.nout], $
                [159744/params.nout,nt-1]]/subsample
