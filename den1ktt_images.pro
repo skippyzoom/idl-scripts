@@ -9,29 +9,15 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-;; ;;==Declare file name(s)
-;; filename = expand_path(path+path_sep()+'frames')+ $
-;;            path_sep()+'den1ktt_image'+ $
-;;            '-'+axes+ $
-;;            '-'+time.index+ $
-;;            '.'+get_extension(frame_type)
-str_rms_time = string(rms_time*params.nout,format='(i06)')
-filename = strarr(n_rms)
-for it=0,n_rms-1 do $
-   filename[it] = expand_path(path+path_sep()+'frames')+ $
-   path_sep()+'den1ktt_image'+ $
-   '-'+axes+ $
-   '-'+str_rms_time[it]+ $
-   '-'+str_rms_time[it+n_rms]+ $
-   '-self_norm'+ $
-   '.'+get_extension(frame_type)
+;;==Declare file name(s)
+filename = expand_path(path+path_sep()+'frames')+ $
+           path_sep()+'den1ktt_image'+ $
+           '-'+axes+ $
+           '-'+time.index+ $
+           '.'+get_extension(frame_type)
 
 ;;==Get the number of time steps
-;; nt = n_elements(time.index)
-nt = n_rms
-
-;; ;;==Preserve den1ktt
-;; fdata = den1ktt
+nt = n_elements(time.index)
 
 ;;==Extract wavelength keys
 keys = den1ktt.keys()
@@ -45,10 +31,10 @@ for il=1,nl-1 do $
    max_t = max([max_t,n_elements(den1ktt[keys[il]].t_interp)])
 
 ;;==Create the array of resized spectra
-full_array = fltarr(nl,max_t,it)
+fdata = fltarr(nl,max_t,it)
 for it=0,nt-1 do $
    for il=0,nl-1 do $
-      full_array[il,*,it] = congrid(den1ktt[lambda[il]].f_interp[*,it],max_t)
+      fdata[il,*,it] = congrid(den1ktt[lambda[il]].f_interp[*,it],max_t)
 
 ;;==Declare k and theta vectors
 k_vals = 2*!pi/lambda
@@ -67,7 +53,7 @@ frm = objarr(nt)
 
 ;;==Create image frames
 for it=0,nt-1 do $
-   frm[it] = image(full_array[ik0:ikf-1,ith0:ithf-1,it], $
+   frm[it] = image(fdata[ik0:ikf-1,ith0:ithf-1,it], $
                    k_vals[ik0:ikf-1],th_vals[ith0:ithf-1], $
                    rgb_table = 39, $
                    /buffer)
