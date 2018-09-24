@@ -7,7 +7,7 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/2D/'
 
 ;;==Declare name of save file
 ;; save_name = 'den1ktt-001.0_005.0_m-all_theta.sav'
@@ -30,7 +30,7 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
 ;;==Declare plot file name
-lambda = ['002.00','003.00','004.00']
+lambda = [2.0,3.0,4.0]
 filename = expand_path(plot_path)+path_sep()+'frames'+ $
            path_sep()+ $
            'mr_'+ $
@@ -42,7 +42,6 @@ filename = expand_path(plot_path)+path_sep()+'frames'+ $
            string(lambda[n_elements(lambda)-1], $
                   format='(f05.1)')+ $
            '_m'+ $
-           ;; '-002.00_004.00_m'+ $
            '-all_theta'+ $
            '.'+get_extension(frame_type)
 
@@ -62,8 +61,6 @@ iph = 0
 ;;==Get common parameters from one directory
 path = expand_path(proj_path)+path_sep()+run[iph]
 params = set_eppic_params(path=path)
-;; s_obj = obj_new('IDL_Savefile',expand_path(path)+path_sep()+save_name)
-;; s_obj->restore, 'time'
 restore, expand_path(path)+path_sep()+save_name
 
 ;;==Get wavelengths
@@ -73,14 +70,6 @@ nl = den1ktt.count()
 
 ;;==Get number of time steps
 nt = n_elements(time.index)
-
-;; ;;==Set up RMS array
-;; f_rms = make_array(nr,nt,/float,value=0)
-
-;; ;;==Loop over all wavelengths
-;; for ir=0,nr-1 do $
-;;    for il=0,nl-1 do $
-;;       f_rms[ir,*] += rms(den1ktt[lambda[il]].f_interp,dim=1)
 
 ;;==Build the multi-run ktt hash
 mr_den1ktt = build_multirun_hash(proj_path, $
@@ -92,9 +81,6 @@ mr_den1ktt = build_multirun_hash(proj_path, $
 mr_kttrms = build_multirun_kttrms(mr_den1ktt, $
                                   'den1ktt', $
                                   lambda=lambda)
-
-;; ;;==Run graphics scripts
-;; @multirun_den1ktt_graphics
 
 ;;==Get number of time steps in each run
 mr_nt = lonarr(nr)
