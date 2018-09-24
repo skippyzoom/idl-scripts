@@ -21,6 +21,8 @@ nt_max = calc_timesteps(path=path)
 params['nt_max'] = nt_max
 frame_type = '.pdf'
 movie_type = '.mp4'
+perp_plane = (params.ndim_space eq 2 and strcmp(axes,'xy')) || $
+             (params.ndim_space eq 3 and strcmp(axes,'yz')) 
 
 efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
@@ -119,6 +121,7 @@ time = time_strings(long(timesteps), $
 if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; if params.ndim_space eq 2 then time_2D = time
 ;; if params.ndim_space eq 3 then time_3D = time
+
 ;; @analyze_moments
 
 ;; rotate = 0
@@ -133,31 +136,39 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; ;; @den0fft_t_movie
 ;; @den0fft_t_rms_images
 
-;; rotate = 0
-;; @get_den1_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(den1))[3]-1 do $
-;;       den1[*,*,it] = rotate(den1[*,*,it],1)
-;; ;; @den1_images
-;; ;; @den1_movie
+rotate = 0
+@get_den1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den1))[3]-1 do $
+      den1[*,*,it] = rotate(den1[*,*,it],1)
 ;; @calc_den1fft_t
-;; ;; @calc_den1fft_t_rms
-;; ;; ;; @den1fft_t_rms_images
-;; ;; @den1fft_t_movie
+;; den1fft_t_raw = den1fft_t
+;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
+;; @calc_den1fft_t
+;; @den1_spectral_filter
+;; @den1_images
+;; @den1_movie
+
+@calc_den1fft_t
+;; @calc_den1fft_t_rms
 ;; ;; @den1fft_t_rms_images
+;; @den1fft_t_movie
+@den1fft_t_rms_images
 
 ;; modes = fftfreq(nx,dx)
 ;; lambda = 1.0/modes[1:nx/2]
-;; theta = [0,!pi]
+;; theta = [0,2*!pi]
 ;; @calc_den1ktt
-den1ktt_save_name = 'den1ktt'+ $
-                    '-all_k'+ $
-                    '-all_theta'+ $
-                    '-subsample_'+strcompress(subsample,/remove_all)+ $
-                    '.sav'
+;; den1ktt_save_name = 'den1ktt'+ $
+;;                     '-all_k'+ $
+;;                     '-all_theta'+ $
+;;                     '-subsample_'+strcompress(subsample,/remove_all)+ $
+;;                     '.sav'
 ;; save, time,den1ktt, $
 ;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
-restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
+;; ;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
+;; ;; @calc_cg_den1ktt
+;; ;; @den1ktt_rms_images
 
 ;; rotate = 0
 ;; @get_den1_plane
