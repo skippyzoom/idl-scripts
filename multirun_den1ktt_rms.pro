@@ -7,7 +7,7 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/2D/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D/'
 
 ;;==Declare name of save file
 ;; save_name = 'den1ktt-001.0_005.0_m-all_theta.sav'
@@ -129,42 +129,42 @@ for ir=0,nr-1 do $
 ;;==Extract y-axis range
 yrange = frm[0].yrange
 
-;;==Add time markers corresponding to RMS growth range
-image_times = (params.ndim_space eq 2) ? $
-              [time.stamp[22],time.stamp[61]] : $
-              [time.stamp[45],time.stamp[81]]
-image_times = float(image_times)
-nit = n_elements(image_times)
-for it=0,nit-1 do $
-   frm = plot([image_times[it],image_times[it]], $
-              [yrange[0],yrange[1]], $
-              color = 'black', $
-              linestyle = 0, $
-              /overplot)
+;; ;;==Add time markers corresponding to RMS growth range
+;; image_times = (params.ndim_space eq 2) ? $
+;;               [time.stamp[22],time.stamp[61]] : $
+;;               [time.stamp[45],time.stamp[81]]
+;; image_times = float(image_times)
+;; nit = n_elements(image_times)
+;; for it=0,nit-1 do $
+;;    frm = plot([image_times[it],image_times[it]], $
+;;               [yrange[0],yrange[1]], $
+;;               color = 'black', $
+;;               linestyle = 0, $
+;;               /overplot)
 
-;;==Add time markers corresponding to RMS saturated range
-image_times = [time.stamp[156],time.stamp[max_nt-1]]
-image_times = float(image_times)
-nit = n_elements(image_times)
-for it=0,nit-1 do $
-   frm = plot([image_times[it],image_times[it]], $
-              [yrange[0],yrange[1]], $
-              color = 'black', $
-              linestyle = 0, $
-              /overplot)
+;; ;;==Add time markers corresponding to RMS saturated range
+;; image_times = [time.stamp[156],time.stamp[max_nt-1]]
+;; image_times = float(image_times)
+;; nit = n_elements(image_times)
+;; for it=0,nit-1 do $
+;;    frm = plot([image_times[it],image_times[it]], $
+;;               [yrange[0],yrange[1]], $
+;;               color = 'black', $
+;;               linestyle = 0, $
+;;               /overplot)
 
-;;==Add time markers corresponding to images
-image_times = (params.ndim_space eq 2) ? $
-              [time.stamp[45],time.stamp[180]] : $
-              [time.stamp[67],time.stamp[180]]
-image_times = float(image_times)
-nit = n_elements(image_times)
-for it=0,nit-1 do $
-   frm = plot([image_times[it],image_times[it]], $
-              [yrange[0],yrange[1]], $
-              color = 'black', $
-              linestyle = 2, $
-              /overplot)
+;; ;;==Add time markers corresponding to images
+;; image_times = (params.ndim_space eq 2) ? $
+;;               [time.stamp[45],time.stamp[180]] : $
+;;               [time.stamp[67],time.stamp[180]]
+;; image_times = float(image_times)
+;; nit = n_elements(image_times)
+;; for it=0,nit-1 do $
+;;    frm = plot([image_times[it],image_times[it]], $
+;;               [yrange[0],yrange[1]], $
+;;               color = 'black', $
+;;               linestyle = 2, $
+;;               /overplot)
 
 ;;==Add a path label
 txt = text(0.0,0.005, $

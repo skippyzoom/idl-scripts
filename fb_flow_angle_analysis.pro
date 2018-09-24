@@ -53,9 +53,9 @@ efield_save_name = expand_path(path)+path_sep()+ $
 t0 = 0
 tf = params.nt_max
 
-;; subsample = params.nt_max/params.nvsqr_out_subcycle1
+subsample = params.nt_max/params.nvsqr_out_subcycle1
 ;; subsample = params.nvsqr_out_subcycle1
-subsample = 1
+;; subsample = 1
 ;; subsample = params.full_array_nout/params.nout
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
@@ -136,24 +136,24 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; ;; @den0fft_t_movie
 ;; @den0fft_t_rms_images
 
-rotate = 0
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-;; @calc_den1fft_t
-;; den1fft_t_raw = den1fft_t
-;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
-;; @calc_den1fft_t
-;; @den1_spectral_filter
-;; @den1_images
-;; @den1_movie
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; ;; @calc_den1fft_t
+;; ;; den1fft_t_raw = den1fft_t
+;; ;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
+;; ;; @calc_den1fft_t
+;; ;; @den1_spectral_filter
+;; ;; @den1_images
+;; ;; @den1_movie
 
-@calc_den1fft_t
-;; @calc_den1fft_t_rms
-;; ;; @den1fft_t_rms_images
-;; @den1fft_t_movie
-@den1fft_t_rms_images
+;; @calc_den1fft_t
+;; ;; @calc_den1fft_t_rms
+;; ;; ;; @den1fft_t_rms_images
+;; ;; @den1fft_t_movie
+;; @den1fft_t_rms_images
 
 ;; modes = fftfreq(nx,dx)
 ;; lambda = 1.0/modes[1:nx/2]
@@ -203,39 +203,44 @@ if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;; @calc_denft1ktw
 ;; @denft1ktw_images
 
-;; @get_den0_plane
-
-;; @get_fluxx0_plane
-;; @get_fluxy0_plane
-;; @get_fluxz0_plane
-
-;; @get_nvsqrx0_plane
-;; @get_nvsqry0_plane
-;; @get_nvsqrz0_plane
-
-;; @get_den1_plane
-
-;; @get_fluxx1_plane
-;; @get_fluxy1_plane
-;; @get_fluxz1_plane
-
-;; @get_nvsqrx1_plane
-;; @get_nvsqry1_plane
-;; @get_nvsqrz1_plane
-
 ;; moments = read_moments(path=path)
 ;; @average_temperature_plot
 
-;; ;; @build_temp0_from_moments
-;; ;; @build_temp1_from_moments
-;; @build_temp0_from_flux
-;; @build_temp1_from_flux
+@get_den0_plane
 
-;; save, time,temp0, $
-;;       filename=expand_path(path)+path_sep()+'temp0.sav'
-;; save, time,temp1, $
-;;       filename=expand_path(path)+path_sep()+'temp1.sav'
+@get_fluxx0_plane
+@get_fluxy0_plane
+@get_fluxz0_plane
 
+@get_nvsqrx0_plane
+@get_nvsqry0_plane
+@get_nvsqrz0_plane
+
+;; @build_temp0_from_moments
+@build_temp0_from_fluxes
+
+save, time,temp0, $
+      filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
+
+;; @den0_T0_correlation
+
+@get_den1_plane
+
+@get_fluxx1_plane
+@get_fluxy1_plane
+@get_fluxz1_plane
+
+@get_nvsqrx1_plane
+@get_nvsqry1_plane
+@get_nvsqrz1_plane
+
+;; @build_temp1_from_moments
+@build_temp1_from_fluxes
+
+save, time,temp1, $
+      filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
+
+;; @den1_T1_correlation
 
 ;; @thermal_instability
 
