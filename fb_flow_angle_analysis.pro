@@ -28,34 +28,11 @@ efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
                    '.sav'
 
-;;--3-D "growth"
-;; t0 = 0
-;; tf = 11776/params.nout
-;;--3-D "post_growth"
-;; t0 = 11776/params.nout
-;; tf = params.nt_max
-;;--3-D "first_half"
-;; t0 = 0
-;; tf = params.nt_max/2
-;;--3-D "second_half"
-;; t0 = params.nt_max/2
-;; tf = params.nt_max
-;;--3-D "linear"
-;; t0 = 5504/params.nout
-;; tf = 11776/params.nout
-;;--3-D "transition"
-;; t0 = 17536/params.nout
-;; tf = 20992/params.nout
-;;--3-D "saturated"
-;; t0 = 20992/params.nout
-;; tf = params.nt_max
-;;--Entire run
+;;==All time steps from t0 to tf at subsample frequency.
 t0 = 0
 tf = params.nt_max
-
-subsample = params.nt_max/params.nvsqr_out_subcycle1
+subsample = 1
 ;; subsample = params.nvsqr_out_subcycle1
-;; subsample = 1
 ;; subsample = params.full_array_nout/params.nout
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
@@ -155,20 +132,26 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; ;; @den1fft_t_movie
 ;; @den1fft_t_rms_images
 
-;; modes = fftfreq(nx,dx)
-;; lambda = 1.0/modes[1:nx/2]
-;; theta = [0,2*!pi]
-;; @calc_den1ktt
-;; den1ktt_save_name = 'den1ktt'+ $
-;;                     '-all_k'+ $
-;;                     '-all_theta'+ $
-;;                     '-subsample_'+strcompress(subsample,/remove_all)+ $
-;;                     '.sav'
-;; save, time,den1ktt, $
-;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
-;; ;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
-;; ;; @calc_cg_den1ktt
-;; ;; @den1ktt_rms_images
+rotate = 0
+@get_den1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den1))[3]-1 do $
+      den1[*,*,it] = rotate(den1[*,*,it],1)
+@calc_den1fft_t
+modes = fftfreq(nx,dx)
+lambda = 1.0/modes[1:nx/2]
+theta = [0,2*!pi]
+@calc_den1ktt
+den1ktt_save_name = 'den1ktt'+ $
+                    '-all_k'+ $
+                    '-all_theta'+ $
+                    '-subsample_'+strcompress(subsample,/remove_all)+ $
+                    '.sav'
+save, time,den1ktt, $
+      filename=expand_path(path)+path_sep()+den1ktt_save_name
+;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
+;; @calc_cg_den1ktt
+;; @den1ktt_rms_images
 
 ;; rotate = 0
 ;; @get_den1_plane
@@ -206,43 +189,43 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; moments = read_moments(path=path)
 ;; @average_temperature_plot
 
-@get_den0_plane
+;; @get_den0_plane
 
-@get_fluxx0_plane
-@get_fluxy0_plane
-@get_fluxz0_plane
+;; @get_fluxx0_plane
+;; @get_fluxy0_plane
+;; @get_fluxz0_plane
 
-@get_nvsqrx0_plane
-@get_nvsqry0_plane
-@get_nvsqrz0_plane
+;; @get_nvsqrx0_plane
+;; @get_nvsqry0_plane
+;; @get_nvsqrz0_plane
 
-;; @build_temp0_from_moments
-@build_temp0_from_fluxes
+;; ;; @build_temp0_from_moments
+;; @build_temp0_from_fluxes
 
-save, time,temp0, $
-      filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
+;; save, time,temp0, $
+;;       filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 
-;; @den0_T0_correlation
+;; ;; @den0_T0_correlation
 
-@get_den1_plane
+;; @get_den1_plane
 
-@get_fluxx1_plane
-@get_fluxy1_plane
-@get_fluxz1_plane
+;; @get_fluxx1_plane
+;; @get_fluxy1_plane
+;; @get_fluxz1_plane
 
-@get_nvsqrx1_plane
-@get_nvsqry1_plane
-@get_nvsqrz1_plane
+;; @get_nvsqrx1_plane
+;; @get_nvsqry1_plane
+;; @get_nvsqrz1_plane
 
-;; @build_temp1_from_moments
-@build_temp1_from_fluxes
+;; ;; @build_temp1_from_moments
+;; @build_temp1_from_fluxes
 
-save, time,temp1, $
-      filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
+;; save, time,temp1, $
+;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 
-;; @den1_T1_correlation
+;; ;; @den1_T1_correlation
 
-;; @thermal_instability
+;; ;; @thermal_instability
 
 ;;==Print a new line at the very end
 print, ' '
