@@ -8,24 +8,25 @@
 ; Warning: This script is pretty hacky!
 ;-
 
-save_frames = 0B
+save_frames = 1B
 
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 nt = n_elements(time.index)
 T1 = temp1/mean(temp1) - 1
 
-;; x0 = 3*nx/4-128
-;; xf = 3*nx/4+128
-;; y0 = ny/2-128
-;; yf = ny/2+128
-x0 = 0
-xf = nx
-y0 = 0
-yf = ny
+x0 = nx/2-nx/8
+xf = nx/2+nx/8
+y0 = ny/2-ny/8
+yf = ny/2+ny/8
+;; x0 = 0
+;; xf = nx
+;; y0 = 0
+;; yf = ny
 
 den = den1[x0:xf-1,y0:yf-1,*]
 temp = T1[x0:xf-1,y0:yf-1,*]
+;; temp = temp1[x0:xf-1,y0:yf-1,*]
 
 fft_den = den*0.0
 for it=0,nt-1 do $

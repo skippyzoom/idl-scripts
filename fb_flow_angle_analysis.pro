@@ -28,24 +28,23 @@ efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
                    '.sav'
 
-;;==All time steps from t0 to tf at subsample frequency.
+;;==All time steps from t0 to tf at subsample frequency
 t0 = 0
 tf = params.nt_max
-subsample = 1
-;; subsample = params.nvsqr_out_subcycle1
+;; subsample = 1
+subsample = params.nvsqr_out_subcycle1
 ;; subsample = params.full_array_nout/params.nout
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
+;;==The zeroth time step, plus each quarter of the full run
 ;; timesteps = params.nout*[0, $
 ;;                          params.nt_max/4, $
 ;;                          params.nt_max/2, $
 ;;                          3*params.nt_max/4, $
 ;;                          params.nt_max-1]
 
-;---------------;
-; ORIGINAL RUNS ;
-;---------------;
+;;==3-D RMS ranges (original runs)
 ;; timesteps = [5504, $                        ;3-D Linear stage start
 ;;              11776, $                       ;3-D Linear stage end
 ;;              17536, $                       ;3-D Transition stage start
@@ -54,10 +53,12 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;              params.nout*(params.nt_max-1)] ;3-D Saturated stage end
 ;; if params.ndim_space eq 2 then timesteps *= 8L
 
+;;==3-D Snapshots (original runs)
 ;; timesteps = [8576, $            ;3-D Linear stage example
 ;;              23040]             ;3-D Saturated stage example
 ;; if params.ndim_space eq 2 then timesteps *= 8L
 
+;;==2-D RMS ranges (original runs)
 ;; timesteps = 8L*[5504, $                        ;2-D Linear stage start
 ;;                 11776, $                       ;2-D Linear stage end
 ;;                 17536, $                       ;2-D Transition stage start
@@ -65,13 +66,11 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;                 20992, $                       ;2-D Saturated stage start
 ;;                 params.nout*(params.nt_max-1)] ;2-D Saturated stage end
 
+;;==2-D Snapshots (original runs)
 ;; timesteps = 8L*[8576, $            ;2-D Linear stage example
 ;;                 23040]             ;2-D Saturated stage example
 
-;------------------;
-; FULL-OUTPUT RUNS ;
-;------------------;
-;; ;;==RMS ranges
+;;==RMS ranges (full-output runs)
 ;; if params.ndim_space eq 2 then $
 ;;    timesteps = [22528, $                       ;2-D Growth stage start
 ;;                 62464, $                       ;2-D Growth stage end
@@ -83,7 +82,7 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;                 19968, $                       ;3-D Saturated stage start
 ;;                 params.nout*(params.nt_max-1)] ;3-D Saturated stage end
 
-;;==Snapshots
+;;==Snapshots (full-output runs)
 ;; if params.ndim_space eq 2 then $
 ;; timesteps = [46080, $           ;2-D Growth stage example
 ;;              184320]            ;2-D Saturated stage example
@@ -91,6 +90,7 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;; timesteps = [8576, $            ;3-D Growth stage example
 ;;              23040]             ;3-D Saturated stage example
 
+;;==Build the time dictionary
 time = time_strings(long(timesteps), $
                     dt = params.dt, $
                     scale = 1e3, $
@@ -132,23 +132,23 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; ;; @den1fft_t_movie
 ;; @den1fft_t_rms_images
 
-rotate = 0
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-@calc_den1fft_t
-modes = fftfreq(nx,dx)
-lambda = 1.0/modes[1:nx/2]
-theta = [0,2*!pi]
-@calc_den1ktt
-den1ktt_save_name = 'den1ktt'+ $
-                    '-all_k'+ $
-                    '-all_theta'+ $
-                    '-subsample_'+strcompress(subsample,/remove_all)+ $
-                    '.sav'
-save, time,den1ktt, $
-      filename=expand_path(path)+path_sep()+den1ktt_save_name
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; modes = fftfreq(nx,dx)
+;; lambda = 1.0/modes[1:nx/2]
+;; theta = [0,2*!pi]
+;; @calc_den1ktt
+;; den1ktt_save_name = 'den1ktt'+ $
+;;                     '-all_k'+ $
+;;                     '-all_theta'+ $
+;;                     '-subsample_'+strcompress(subsample,/remove_all)+ $
+;;                     '.sav'
+;; save, time,den1ktt, $
+;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
 ;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
 ;; @calc_cg_den1ktt
 ;; @den1ktt_rms_images
@@ -207,18 +207,18 @@ save, time,den1ktt, $
 
 ;; ;; @den0_T0_correlation
 
-;; @get_den1_plane
+@get_den1_plane
 
-;; @get_fluxx1_plane
-;; @get_fluxy1_plane
-;; @get_fluxz1_plane
+@get_fluxx1_plane
+@get_fluxy1_plane
+@get_fluxz1_plane
 
-;; @get_nvsqrx1_plane
-;; @get_nvsqry1_plane
-;; @get_nvsqrz1_plane
+@get_nvsqrx1_plane
+@get_nvsqry1_plane
+@get_nvsqrz1_plane
 
-;; ;; @build_temp1_from_moments
-;; @build_temp1_from_fluxes
+;; @build_temp1_from_moments
+@build_temp1_from_fluxes
 
 ;; save, time,temp1, $
 ;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
