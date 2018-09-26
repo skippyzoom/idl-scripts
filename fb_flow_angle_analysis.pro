@@ -189,23 +189,23 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; moments = read_moments(path=path)
 ;; @average_temperature_plot
 
-;; @get_den0_plane
+@get_den0_plane
 
-;; @get_fluxx0_plane
-;; @get_fluxy0_plane
-;; @get_fluxz0_plane
+@get_fluxx0_plane
+@get_fluxy0_plane
+@get_fluxz0_plane
 
-;; @get_nvsqrx0_plane
-;; @get_nvsqry0_plane
-;; @get_nvsqrz0_plane
+@get_nvsqrx0_plane
+@get_nvsqry0_plane
+@get_nvsqrz0_plane
 
-;; ;; @build_temp0_from_moments
-;; @build_temp0_from_fluxes
+;; @build_temp0_from_moments
+@build_temp0_from_fluxes
 
 ;; save, time,temp0, $
 ;;       filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 
-;; ;; @den0_T0_correlation
+@nT0_phase_plot
 
 @get_den1_plane
 
@@ -223,9 +223,7 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; save, time,temp1, $
 ;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 
-;; ;; @den1_T1_correlation
-
-;; ;; @thermal_instability
+@nT1_phase_plot
 
 ;;==Print a new line at the very end
 print, ' '
