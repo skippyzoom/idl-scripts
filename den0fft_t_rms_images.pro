@@ -9,31 +9,18 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-;;==Get the number of time steps
-if time.haskey('nt') then nt = time.nt $
-else nt = n_elements(time.index)
-
-;;==Get subsample frequency
-if time.haskey('subsample') then subsample = time.subsample
-
-;;==Declare RMS time ranges (assuming all time steps are in memory)
-if n_elements(subsample) eq 0 then subsample = 1
-if params.ndim_space eq 2 then $
-   rms_time = [[22528/params.nout/subsample, $
-                62464/params.nout/subsample], $
-               [159744/params.nout/subsample, $
-                nt-1]]
-if params.ndim_space eq 3 then $
-   rms_time = [[5760/params.nout/subsample, $
-                10368/params.nout/subsample], $
-               [19968/params.nout/subsample, $
-                nt-1]]
-
+;;==Get RMS times from available time steps
+rms_time = get_rms_time(path,time)
 rms_time = transpose(rms_time)
 n_rms = (size(rms_time))[1]
 
+;;==Get subsample frequency
+if time.haskey('subsample') then subsample = time.subsample $
+else subsample = 1
+
 ;;==Declare file name(s)
-str_rms_time = string(rms_time*params.nout,format='(i06)')
+str_rms_time = string(rms_time*params.nout*subsample, $
+                      format='(i06)')
 filename = strarr(n_rms)
 for it=0,n_rms-1 do $
    filename[it] = expand_path(path+path_sep()+'frames')+ $
@@ -42,6 +29,8 @@ for it=0,n_rms-1 do $
    '-'+str_rms_time[it]+ $
    '-'+str_rms_time[it+n_rms]+ $
    '-self_norm'+ $
+   '-20dB'+ $
+   '-centroid'+ $
    '-zoom'+ $
    '.'+get_extension(frame_type)
 
@@ -54,18 +43,10 @@ nkx = fsize[1]
 nky = fsize[2]
 
 ;;==Declare ranges to show
-x0 = nkx/2-nkx/4
-xf = nkx/2+nkx/4
-y0 = nky/2
-yf = nky/2+nky/4
-;; x0 = nkx/2
-;; xf = nkx/2+nkx/4
-;; y0 = nky/2-nky/4
-;; yf = nky/2+nky/4
-;; x0 = nkx/2-nkx/2
-;; xf = nkx/2+nkx/2
-;; y0 = nky/2
-;; yf = nky/2+nky/16
+x0 = perp_plane ? nkx/2 : nkx/2-nkx/4
+xf = perp_plane ? nkx/2+nkx/4 : nkx/2+nkx/4
+y0 = perp_plane ? nky/2-nky/4 : nky/2
+yf = perp_plane ? nky/2+nky/4 : nky/2+nky/4
 
 ;;==Convert complex FFT to its magnitude
 fdata = abs(fdata)
@@ -84,10 +65,6 @@ dc_width = {xn:0, xp:0, $
 fdata_rms[nkx/2-dc_width.xn:nkx/2+dc_width.xp, $
           nky/2-dc_width.yn:nky/2+dc_width.yp,*] = min(fdata_rms)
 
-;;==Rotate image
-;; for it=0,n_rms-1 do $
-;;    fdata_rms[*,*,it] = rotate(fdata_rms[*,*,it],3)
-
 ;;==Covert to decibels
 fdata_rms = 10*alog10(fdata_rms^2)
 
@@ -105,6 +82,11 @@ kxdata = shift(kxdata,nkx/2)
 kydata = 2*!pi*fftfreq(nky,dy)
 kydata = shift(kydata,nky/2)
 
+;;==Set axes-specific keywords
+xrange = perp_plane ? [0,+!pi] : [-!pi/4,+!pi/4]
+yrange = perp_plane ? [-!pi,+!pi] : [0,+2*!pi]
+xminor = perp_plane ? 3 : 1
+
 ;;==Declare an array of image handles
 frm = objarr(n_rms)
 
@@ -112,49 +94,23 @@ frm = objarr(n_rms)
 for it=0,n_rms-1 do $
    frm[it] = image(fdata_rms[x0:xf-1,y0:yf-1,it], $
                    kxdata[x0:xf-1],kydata[y0:yf-1], $
-                   min_value = -30, $
+                   min_value = -20, $
                    max_value = 0, $
                    rgb_table = 39, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $
-                   ;; xrange = [0,+!pi], $
-                   ;; xtickvalues = [0,+!pi/2,+!pi], $
-                   ;; yrange = [-!pi,+!pi], $
-                   ;; ytickvalues = [-!pi,-!pi/2,0,+!pi/2,+!pi], $
-                   ;; xmajor = 3, $
-                   ;; xminor = 1, $
-                   ;; ymajor = 3, $
-                   ;; yminor = 3, $
-                   ;; xrange = [-!pi,+!pi], $
-                   ;; xtickvalues = [-!pi,-!pi/2,0,+!pi/2,+!pi], $
-                   ;; yrange = [0,+!pi], $
-                   ;; ytickvalues = [0,+!pi/2,+!pi], $
-                   xrange = [-!pi/4,+!pi/4], $
-                   yrange = [0,+2*!pi], $
+                   xrange = xrange, $
+                   yrange = yrange, $
                    xmajor = 3, $
-                   xminor = 3, $
+                   xminor = xminor, $
                    ymajor = 3, $
                    yminor = 3, $
-                   ;; xrange = [-!pi/16,+!pi/16], $
-                   ;; xtickvalues = [-!pi/16,0,+!pi/16], $
-                   ;; yrange = [0,+2*!pi], $
-                   ;; ytickvalues = [0,+!pi,+2*!pi], $
-                   ;; xmajor = 3, $
-                   ;; xminor = 1, $
-                   ;; ymajor = 3, $
-                   ;; yminor = 3, $
                    xstyle = 1, $
                    ystyle = 1, $
                    xsubticklen = 0.5, $
                    ysubticklen = 0.5, $
                    xtickdir = 1, $
                    ytickdir = 1, $
-                   ;; xtitle = 'Hall [m$^{-1}$]', $
-                   ;; ytitle = 'Pedersen [m$^{-1}$]', $
-                   ;; xtitle = 'Parallel [m$^{-1}$]', $
-                   ;; ytitle = 'Pedersen [m$^{-1}$]', $
-                   ;; xtitle = 'Parallel [m$^{-1}$]', $
-                   ;; ytitle = 'Hall [m$^{-1}$]', $
                    xticklen = 0.02, $
                    yticklen = 0.04, $
                    xshowtext = 1, $
@@ -169,7 +125,7 @@ for it=0,n_rms-1 do $
 for it=0,n_rms-1 do $
    clr = colorbar(target = frm[it], $
                   title = '$P(\delta n/n_I)$', $
-                  major = 7, $
+                  major = 1+(frm[it].max_value-frm[it].min_value)/5, $
                   minor = 3, $
                   orientation = 1, $
                   textpos = 1, $
@@ -178,28 +134,49 @@ for it=0,n_rms-1 do $
                   font_name = 'Times', $
                   hide = 0)
 
-;; ;;==Add radius and angle markers
-;; ;; r_overlay = 2*!pi/(2+findgen(9))
-;; r_overlay = 2*!pi/(1+findgen(10))
-;; theta_overlay = 10*findgen(36)
-;; for it=0,n_rms-1 do $
-;;    frm[it] = overlay_rtheta(frm[it], $
-;;                             r_overlay, $
-;;                             theta_overlay, $
-;;                             /degrees, $
-;;                             r_color = 'white', $
-;;                             r_thick = 1, $
-;;                             r_linestyle = 'solid_line', $
-;;                             theta_color = 'white', $
-;;                             theta_thick = 1, $
-;;                             theta_linestyle = 'solid_line')
+;;==Add radius and angle markers
+;; r_overlay = 2*!pi/(2+findgen(9))
+r_overlay = 2*!pi/(1+findgen(10))
+theta_overlay = 10*findgen(36)
+if perp_plane then $
+   for it=0,n_rms-1 do $
+      frm[it] = overlay_rtheta(frm[it], $
+                               r_overlay, $
+                               theta_overlay, $
+                               /degrees, $
+                               r_color = 'white', $
+                               r_thick = 1, $
+                               r_linestyle = 'dot', $
+                               theta_color = 'white', $
+                               theta_thick = 1, $
+                               theta_linestyle = 'dot')
 
-;;==Add a path label
+;;==Add radius and angle of centroid
+if n_elements(rcm_lambda) ne 0 && n_elements(rcm_theta) ne 0 then $
+   if perp_plane then $
+      for it=0,n_rms-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  ;; 2*!pi/rcm_lambda[it], $
+                                  2*!pi/sqrt(dx^2+dy^2), $
+                                  rcm_theta[it], $
+                                  r_color = 'white', $
+                                  r_thick = 2, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'white', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
+
+;;==Print wavelength and angle of centroid on image frame
 for it=0,n_rms-1 do $
-   txt = text(0.0,0.90, $
-              path, $
+   txt = text(0.0,0.01, $
+              "Centroid $\lambda$ = "+ $
+              strcompress(string(rcm_lambda[it]),/remove_all)+ $
+              " m       "+ $
+              "Centroid $\theta$ = "+ $
+              strcompress(string(rcm_theta[it]/!dtor),/remove_all)+ $
+              " deg", $
               target = frm[it], $
-              font_name = 'Courier', $
+              font_name = 'Times', $
               font_size = 10.0)
 
 ;;==Find location of max pixel in growth image
@@ -209,12 +186,10 @@ imax2d = array_indices(fdata_rms[x0:xf-1,y0:yf-1,0], $
 ikx = x0+imax2d[0]
 iky = y0+imax2d[1]
 peak_lambda = 2*!pi/sqrt(kxdata[ikx]^2 + kydata[iky]^2)
-;; print, "Wavelength of peak growth = ",peak_lambda," m"
 peak_theta = atan(kydata[iky],kxdata[ikx])/!dtor
-;; print, "Flow angle of peak growth = ",peak_theta," deg"
 
 ;;==Print wavelength and angle of max pixel on image frame
-txt = text(0.0,0.01, $
+txt = text(0.5,0.01, $
            "Peak $\lambda$ = "+ $
            strcompress(string(peak_lambda),/remove_all)+ $
            " m       "+ $
@@ -224,6 +199,14 @@ txt = text(0.0,0.01, $
            target = frm[0], $
            font_name = 'Times', $
            font_size = 10.0)
+
+;;==Add a path label
+for it=0,n_rms-1 do $
+   txt = text(0.0,0.90, $
+              path, $
+              target = frm[it], $
+              font_name = 'Courier', $
+              font_size = 10.0)
 
 ;;==Save individual images
 for it=0,n_rms-1 do $
