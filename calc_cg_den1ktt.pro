@@ -1,7 +1,8 @@
 ;+
-; Script to create and array of equally sized den1(k,theta,t)
+; Script to create an array of equally sized den1(k,theta,t)
 ; k (wavelength) subarrays by resizing each subarray's theta
-; dimension to match the maximum size.
+; dimension to match the maximum size. This script assumes that the
+; user has built den1ktt (e.g., via calc_den1ktt.pro)
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
