@@ -151,12 +151,11 @@ if perp_plane then $
                                theta_thick = 1, $
                                theta_linestyle = 'dot')
 
-;;==Add radius and angle of centroid
-if n_elements(rcm_lambda) ne 0 && n_elements(rcm_theta) ne 0 then $
+;;==Add angle of centroid
+if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
       for it=0,n_rms-1 do $
          frm[it] = overlay_rtheta(frm[it], $
-                                  ;; 2*!pi/rcm_lambda[it], $
                                   2*!pi/sqrt(dx^2+dy^2), $
                                   rcm_theta[it], $
                                   r_color = 'white', $
@@ -165,6 +164,33 @@ if n_elements(rcm_lambda) ne 0 && n_elements(rcm_theta) ne 0 then $
                                   theta_color = 'white', $
                                   theta_thick = 2, $
                                   theta_linestyle = 'solid_line')
+
+;;==Add lines at +/- one standard deviation of centroid
+if n_elements(rcm_theta) ne 0 then $
+   if perp_plane then $
+      for it=0,n_rms-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  2*!pi/sqrt(dx^2+dy^2), $
+                                  rcm_theta[it]+dev_rcm_theta[it], $
+                                  r_color = 'white', $
+                                  r_thick = 2, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'white', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
+if n_elements(rcm_theta) ne 0 then $
+   if perp_plane then $
+      for it=0,n_rms-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  2*!pi/sqrt(dx^2+dy^2), $
+                                  rcm_theta[it]-dev_rcm_theta[it], $
+                                  r_color = 'white', $
+                                  r_thick = 2, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'white', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
+
 
 ;;==Print wavelength and angle of centroid on image frame
 for it=0,n_rms-1 do $
