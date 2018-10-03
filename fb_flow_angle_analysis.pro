@@ -33,7 +33,6 @@ t0 = 0
 tf = params.nt_max
 subsample = 1
 ;; subsample = params.nvsqr_out_subcycle1
-;; subsample = params.full_array_nout/params.nout
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
@@ -101,6 +100,24 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 
 ;; @analyze_moments
 
+rotate = 0
+@get_den0_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den0))[3]-1 do $
+      den0[*,*,it] = rotate(den0[*,*,it],1)
+@calc_den0fft_t
+@calc_den0fft_t_moments
+@den0fft_t_rms_images
+
+rotate = 0
+@get_den1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den1))[3]-1 do $
+      den1[*,*,it] = rotate(den1[*,*,it],1)
+@calc_den1fft_t
+@calc_den1fft_t_moments
+@den1fft_t_rms_images
+
 ;; rotate = 0
 ;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -111,28 +128,30 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 ;; @calc_den0fft_t
 ;; ;; ;; ;; @den0fft_t_rms_images
 ;; ;; ;; @den0fft_t_movie
-;; @calc_den0fft_t_centroid
+;; ;; @calc_den0fft_t_centroid
+;; @calc_den0fft_t_moments
 ;; @den0fft_t_rms_images
 
-rotate = 0
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-@calc_den1fft_t
-;; ;; den1fft_t_raw = den1fft_t
-;; ;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
-;; ;; @calc_den1fft_t
-;; ;; @den1_spectral_filter
-;; ;; @den1_images
-;; ;; @den1_movie
-;; @calc_den1fft_t_centroid
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; ;; ;; den1fft_t_raw = den1fft_t
+;; ;; ;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
+;; ;; ;; @calc_den1fft_t
+;; ;; ;; @den1_spectral_filter
+;; ;; ;; @den1_images
+;; ;; ;; @den1_movie
+;; ;; @calc_den1fft_t_centroid
+;; @calc_den1fft_t_moments
 
-modes = fftfreq(nx,dx)
-lambda = 1.0/modes[1:nx/2]
-theta = [0,2*!pi]
-@calc_den1rmsktt
-@calc_cg_den1rmsktt
+;; modes = fftfreq(nx,dx)
+;; lambda = 1.0/modes[1:nx/2]
+;; theta = [0,2*!pi]
+;; @calc_den1rmsktt
+;; @calc_cg_den1rmsktt
 
 ;; @calc_den1fft_t
 ;; ;; @calc_den1fft_t_rms
