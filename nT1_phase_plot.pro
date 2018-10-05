@@ -16,14 +16,19 @@ filename = expand_path(path+path_sep()+'frames')+ $
            '-'+axes+ $
            '.'+get_extension(frame_type)
 
+;;==Convert temperature to relative perturbed temperature
+delT1 = (temp1-mean(temp1))/mean(temp1)
+
 ;;==Calculate the vector of phase differences
 pd = fltarr(time.nt)
 for it=0,time.nt-1 do $
-   pd[it] = phase_difference(den1[*,*,it],temp1[*,*,it])
+   pd[it] = phase_difference(den1[*,*,it],delT1[*,*,it])
 
 ;;==Create the plot frame
 frm = plot(float(time.stamp), $
            pd/!dtor, $
+           'ko', $
+           sym_filled = 1, $
            xstyle = 1, $
            xtitle = 'Time ['+time.unit+']', $
            ytitle = 'Phase Difference [deg.]', $
