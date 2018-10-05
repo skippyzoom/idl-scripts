@@ -78,33 +78,6 @@ for it=0,n_rms-1 do $
    rcm_theta[it] = atan(dky*rcm_ctr[1,it],dkx*rcm_ctr[0,it])
 
 ;;==Calculate error in centroid angle
-;; dev_f = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    dev_f[it] = mean(fdata_rms[x0:xf-1,y0:yf-1,it])
-;; total_mass = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    total_mass[it] = total(fdata_rms[x0:xf-1,y0:yf-1,it])
-;; cnx = abs(xf-x0)
-;; cny = abs(yf-y0)
-;; x = indgen(nkx)
-;; dev_x = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    dev_x[it] = (dev_f[it]/total_mass[it])*sqrt(cny*total((x-rcm_ctr[0,it])^2))
-;; y = indgen(nky)
-;; dev_y = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    dev_y[it] = (dev_f[it]/total_mass[it])*sqrt(cnx*total((y-rcm_ctr[1,it])^2))
-
-;; total_mass = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    total_mass[it] = total(fdata_rms[x0:xf-1,y0:yf-1,it])
-;; dev_x = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    dev_x[it] = sqrt(vcm[0,it]/total_mass[it])
-;; dev_y = fltarr(n_rms)
-;; for it=0,n_rms-1 do $
-;;    dev_y[it] = sqrt(vcm[1,it]/total_mass[it])
-
 fdata_rms_sub = fdata_rms[x0:xf-1,y0:yf-1,*]
 cnx = abs(xf-x0)
 cny = abs(yf-y0)

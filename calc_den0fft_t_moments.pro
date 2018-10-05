@@ -7,9 +7,9 @@
 ;------------------------------------------------------------------------------
 ;-
 
-;;==Declare shifted domain for centroid
+;;==Declare image domain over which to find centroid, relative to shift
 x0 = nkx/2
-xf = nkx
+xf = nkx/2+nkx/4
 y0 = nky/2-nky/4
 yf = nky/2+nky/4
 
@@ -64,20 +64,42 @@ rcm_ctr = fltarr(2,n_rms)
 for it=0,n_rms-1 do $
    rcm_ctr[*,it] = rcm[*,it] + [x0-nkx/2,y0-nky/2]
 
-;;==Shift centroid coordinates by half a pixel
+;;==Shift centroid coordinates to center of pixel
 rcm_ctr += 0.5
 
 ;;==Calculate wavelength and angle corresponding to centroid
 rcm_lambda = fltarr(n_rms)
+dkx = 2*!pi/(nkx*dx)
+dky = 2*!pi/(nky*dy)
 for it=0,n_rms-1 do $ 
-   rcm_lambda[it] = 2*!pi/sqrt((dx*rcm_ctr[0,it])^2+(dy*rcm_ctr[1,it])^2)
+   rcm_lambda[it] = 2*!pi/sqrt((dkx*rcm_ctr[0,it])^2+(dky*rcm_ctr[1,it])^2)
 rcm_theta = fltarr(n_rms)
 for it=0,n_rms-1 do $
-   rcm_theta[it] = atan(rcm_ctr[1,it],rcm_ctr[0,it])
+   rcm_theta[it] = atan(dky*rcm_ctr[1,it],dkx*rcm_ctr[0,it])
 
 ;;==Calculate error in centroid angle
-dev_x = 1
-dev_y = 1
+fdata_rms_sub = fdata_rms[x0:xf-1,y0:yf-1,*]
+cnx = abs(xf-x0)
+cny = abs(yf-y0)
+total_mass = fltarr(n_rms)
+for it=0,n_rms-1 do $
+   total_mass[it] = total(fdata_rms_sub[*,*,it])
+x = indgen(nkx)
+y = indgen(nky)
+dev_x = fltarr(n_rms)*0.0
+for it=0,n_rms-1 do $
+   for ix=0,cnx-1 do $
+      for iy=0,cny-1 do $
+         dev_x[it] += fdata_rms_sub[ix,iy,it]^2*(x[ix]-rcm_ctr[0,it])^2
+dev_x /= 2*total_mass^2
+dev_x = sqrt(dev_x)
+dev_y = fltarr(n_rms)*0.0
+for it=0,n_rms-1 do $
+   for ix=0,cnx-1 do $
+      for iy=0,cny-1 do $
+         dev_y[it] += fdata_rms_sub[ix,iy,it]^2*(y[iy]-rcm_ctr[1,it])^2
+dev_y /= 2*total_mass^2
+dev_y = sqrt(dev_y)
 dth_dx = fltarr(n_rms)
 for it=0,n_rms-1 do $
    dth_dx[it] = -rcm_ctr[1,it]/(rcm_ctr[0,it]^2 + rcm_ctr[1,it]^2)
@@ -86,5 +108,5 @@ for it=0,n_rms-1 do $
    dth_dy[it] = +rcm_ctr[0,it]/(rcm_ctr[0,it]^2 + rcm_ctr[1,it]^2)
 dev_rcm_theta = fltarr(n_rms)
 for it=0,n_rms-1 do $
-   dev_rcm_theta[it] = sqrt((dev_x*dth_dx[it])^2 + (dev_y*dth_dy[it])^2)
-   
+   dev_rcm_theta[it] = sqrt((dev_x[it]*dth_dx[it])^2 + $
+                            (dev_y[it]*dth_dy[it])^2)
