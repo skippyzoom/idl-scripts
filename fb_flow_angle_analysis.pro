@@ -21,45 +21,29 @@ nt_max = calc_timesteps(path=path)
 params['nt_max'] = nt_max
 frame_type = '.pdf'
 movie_type = '.mp4'
+perp_plane = (params.ndim_space eq 2 and strcmp(axes,'xy')) || $
+             (params.ndim_space eq 3 and strcmp(axes,'yz')) 
 
 efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
                    '.sav'
 
-;;--3-D "growth"
-;; t0 = 0
-;; tf = 11776/params.nout
-;;--3-D "post_growth"
-;; t0 = 11776/params.nout
-;; tf = params.nt_max
-;;--3-D "first_half"
-;; t0 = 0
-;; tf = params.nt_max/2
-;;--3-D "second_half"
-;; t0 = params.nt_max/2
-;; tf = params.nt_max
-;;--3-D "linear"
-;; t0 = 5504/params.nout
-;; tf = 11776/params.nout
-;;--3-D "transition"
-;; t0 = 17536/params.nout
-;; tf = 20992/params.nout
-;;--3-D "saturated"
-;; t0 = 20992/params.nout
-;; tf = params.nt_max
-;;--Entire run
+;;==All time steps from t0 to tf at subsample frequency
 t0 = 0
 tf = params.nt_max
-
-;; subsample = params.nt_max/params.nvsqr_out_subcycle1
+subsample = 1
 ;; subsample = params.nvsqr_out_subcycle1
-;; subsample = 1
-subsample = params.full_array_nout/params.nout
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
-;; timesteps = params.nout*[0,nt_max/4,nt_max/2,3*nt_max/4,nt_max-1]
+;;==The zeroth time step, plus each quarter of the full run
+;; timesteps = params.nout*[0, $
+;;                          params.nt_max/4, $
+;;                          params.nt_max/2, $
+;;                          3*params.nt_max/4, $
+;;                          params.nt_max-1]
 
+;;==3-D RMS ranges (original runs)
 ;; timesteps = [5504, $                        ;3-D Linear stage start
 ;;              11776, $                       ;3-D Linear stage end
 ;;              17536, $                       ;3-D Transition stage start
@@ -68,10 +52,12 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;              params.nout*(params.nt_max-1)] ;3-D Saturated stage end
 ;; if params.ndim_space eq 2 then timesteps *= 8L
 
+;;==3-D Snapshots (original runs)
 ;; timesteps = [8576, $            ;3-D Linear stage example
 ;;              23040]             ;3-D Saturated stage example
 ;; if params.ndim_space eq 2 then timesteps *= 8L
 
+;;==2-D RMS ranges (original runs)
 ;; timesteps = 8L*[5504, $                        ;2-D Linear stage start
 ;;                 11776, $                       ;2-D Linear stage end
 ;;                 17536, $                       ;2-D Transition stage start
@@ -79,87 +65,138 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;                 20992, $                       ;2-D Saturated stage start
 ;;                 params.nout*(params.nt_max-1)] ;2-D Saturated stage end
 
+;;==2-D Snapshots (original runs)
 ;; timesteps = 8L*[8576, $            ;2-D Linear stage example
 ;;                 23040]             ;2-D Saturated stage example
 
-time = time_strings(timesteps, $
+;;==RMS ranges (full-output runs)
+;; if params.ndim_space eq 2 then $
+;;    timesteps = [22528, $                       ;2-D Growth stage start
+;;                 62464, $                       ;2-D Growth stage end
+;;                 159744, $                      ;2-D Saturated stage start
+;;                 params.nout*(params.nt_max-1)] ;2-D Saturated stage end
+;; if params.ndim_space eq 3 then $
+;;    timesteps = [5760, $                        ;3-D Growth stage start
+;;                 10368, $                       ;3-D Growth stage end
+;;                 19968, $                       ;3-D Saturated stage start
+;;                 params.nout*(params.nt_max-1)] ;3-D Saturated stage end
+
+;;==Snapshots (full-output runs)
+;; if params.ndim_space eq 2 then $
+;; timesteps = [46080, $           ;2-D Growth stage example
+;;              184320]            ;2-D Saturated stage example
+;; if params.ndim_space eq 3 then $
+;; timesteps = [8576, $            ;3-D Growth stage example
+;;              23040]             ;3-D Saturated stage example
+
+;;==Build the time dictionary
+time = time_strings(long(timesteps), $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
+if n_elements(subsample) ne 0 then time.subsample = subsample
+;; if params.ndim_space eq 2 then time_2D = time
+;; if params.ndim_space eq 3 then time_3D = time
 
 ;; @analyze_moments
 
+rotate = 0
+@get_den0_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den0))[3]-1 do $
+      den0[*,*,it] = rotate(den0[*,*,it],1)
+@calc_den0fft_t
+@calc_den0fft_t_moments
+@den0fft_t_rms_images
+
+rotate = 0
+@get_den1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den1))[3]-1 do $
+      den1[*,*,it] = rotate(den1[*,*,it],1)
+@calc_den1fft_t
+@calc_den1fft_t_moments
+@den1fft_t_rms_images
+
 ;; rotate = 0
-;; @get_denft0_plane
+;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(denft0))[3]-1 do $
-;;       denft0[*,*,it] = rotate(denft0[*,*,it],3)
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(denft0))[3]-1 do $
-;;       denft0[nx/2:*,*,it] = rotate(denft0[0:nx/2-1,*,it],2)
-;; if (params.ndim_space eq 2 && strcmp(axes,'xy')) then $
-;;    for it=0,(size(denft0))[3]-1 do $
-;;       denft0[*,ny/2:*,it] = rotate(denft0[*,0:ny/2-1,it],2)
-
-;; ;; @denft0_rms_images
-
-;; ;; den0 = arr_from_arrft(denft0)
+;;    for it=0,(size(den0))[3]-1 do $
+;;       den0[*,*,it] = rotate(den0[*,*,it],1)
 ;; ;; @den0_images
-
-;; @denft0_movie
+;; ;; @den0_movie
+;; @calc_den0fft_t
+;; ;; ;; ;; @den0fft_t_rms_images
+;; ;; ;; @den0fft_t_movie
+;; ;; @calc_den0fft_t_centroid
+;; @calc_den0fft_t_moments
+;; @den0fft_t_rms_images
 
 ;; rotate = 0
 ;; @get_den1_plane
-;; ;; for it=0,(size(den1))[3]-1 do $
-;; ;;    den1[*,*,it] = rotate(den1[*,*,it],3)
-;; den1_raw = den1
-;; nx_raw = nx
-;; ny_raw = ny
-;; delvar, den1,ranges,zero_point
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; ;; ;; den1fft_t_raw = den1fft_t
+;; ;; ;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
+;; ;; ;; @calc_den1fft_t
+;; ;; ;; @den1_spectral_filter
+;; ;; ;; @den1_images
+;; ;; ;; @den1_movie
+;; ;; @calc_den1fft_t_centroid
+;; @calc_den1fft_t_moments
 
-rotate = 0
-@get_denft1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(denft1))[3]-1 do $
-      denft1[*,*,it] = rotate(denft1[*,*,it],3)
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(denft1))[3]-1 do $
-      denft1[nx/2:*,*,it] = rotate(denft1[0:nx/2-1,*,it],2)
-if (params.ndim_space eq 2 && strcmp(axes,'xy')) then $
-   for it=0,(size(denft1))[3]-1 do $
-      denft1[*,ny/2:*,it] = rotate(denft1[*,0:ny/2-1,it],2)
+;; modes = fftfreq(nx,dx)
+;; lambda = 1.0/modes[1:nx/2]
+;; theta = [0,2*!pi]
+;; @calc_den1rmsktt
+;; @calc_cg_den1rmsktt
 
-;; @denft1_rms_images
-
-den1 = arr_from_arrft(denft1)
-;; @den1_images
-
-;; den1_ift = den1
-;; nx_ift = nx
-;; ny_ift = ny
-;; delvar, den1
-
-;; @denft1_movie
+;; @calc_den1fft_t
+;; ;; @calc_den1fft_t_rms
+;; ;; ;; @den1fft_t_rms_images
+;; ;; @den1fft_t_movie
+;; @den1fft_t_rms_images
 
 ;; rotate = 0
-;; @get_denft1_plane
-;; ;; for it=0,(size(denft1))[3]-1 do $
-;; ;;    denft1[*,*,it] = rotate(denft1[*,*,it],3)
-;; ;; for it=0,(size(denft1))[3]-1 do $
-;; ;;    denft1[nx/2:*,*,it] = rotate(denft1[0:nx/2-1,*,it],2)
-;; ;; theta = [-90,+90]*!dtor
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; modes = fftfreq(nx,dx)
+;; lambda = 1.0/modes[1:nx/2]
+;; theta = [0,2*!pi]
+;; @calc_den1ktt
+;; den1ktt_save_name = 'den1ktt'+ $
+;;                     '-all_k'+ $
+;;                     '-all_theta'+ $
+;;                     '-subsample_'+strcompress(subsample,/remove_all)+ $
+;;                     '.sav'
+;; save, time,den1ktt, $
+;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
+;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
+;; @calc_cg_den1ktt
+;; @den1ktt_rms_images
+
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
 ;; theta = [0,360]*!dtor
 ;; ;; lambda = 1.0+findgen(5)
 ;; ;; lambda = 10.0
 ;; lambda = 1.0+findgen(10)
-;; denft1ktt_save_name = 'denft1ktt'+ $
+;; den1ktt_save_name = 'den1ktt'+ $
 ;;                       '-'+ $
 ;;                       string(lambda[0],format='(f05.1)')+ $
 ;;                       '_'+ $
 ;;                       string(lambda[n_elements(lambda)-1], $
 ;;                              format='(f05.1)')+ $
 ;;                       '_m'+ $
-;;                       ;; '-kx_gt_0'+ $
 ;;                       '-all_theta'+ $
 ;;                       ;; '-'+ $
 ;;                       ;; string(theta[0]/!dtor,format='(f05.1)')+ $
@@ -167,51 +204,55 @@ den1 = arr_from_arrft(denft1)
 ;;                       ;; string(theta[1]/!dtor,format='(f05.1)')+ $
 ;;                       ;; '_deg'+ $
 ;;                       '.sav'
-;; @calc_denft1ktt
-;; save, time,denft1ktt, $
-;;       filename=expand_path(path)+path_sep()+denft1ktt_save_name
-;; ;; @denft1ktt_rms
+;; @calc_den1ktt
+;; save, time,den1ktt, $
+;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
 
 ;; @calc_denft1_w
 ;; theta = [-90,+90]*!dtor
 ;; @calc_denft1ktw
 ;; @denft1ktw_images
 
-;; @denft1_ktt
+;; moments = read_moments(path=path)
+;; @average_temperature_plot
 
 ;; @get_den0_plane
 
-;; ;; @get_fluxx0_plane
-;; ;; @get_fluxy0_plane
-;; ;; @get_fluxz0_plane
+;; @get_fluxx0_plane
+;; @get_fluxy0_plane
+;; @get_fluxz0_plane
 
 ;; @get_nvsqrx0_plane
 ;; @get_nvsqry0_plane
 ;; @get_nvsqrz0_plane
 
+;; ;; @build_temp0_from_moments
+;; @build_temp0_from_fluxes
+
+;; save, time,temp0, $
+;;       filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
+;; restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
+
+;; @nT0_phase_plot
+
 ;; @get_den1_plane
 
-;; ;; @get_fluxx1_plane
-;; ;; @get_fluxy1_plane
-;; ;; @get_fluxz1_plane
+;; @get_fluxx1_plane
+;; @get_fluxy1_plane
+;; @get_fluxz1_plane
 
 ;; @get_nvsqrx1_plane
 ;; @get_nvsqry1_plane
 ;; @get_nvsqrz1_plane
 
-;; moments = read_moments(path=path)
-;; @average_temperature_plot
+;; ;; @build_temp1_from_moments
+;; @build_temp1_from_fluxes
 
-;; @build_temp0_from_moments
-;; @build_temp1_from_moments
-
-;; save, time,temp0, $
-;;       filename=expand_path(path)+path_sep()+'temp0.sav'
 ;; save, time,temp1, $
-;;       filename=expand_path(path)+path_sep()+'temp1.sav'
+;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
+;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 
-
-;; @thermal_instability
+;; @nT1_phase_plot
 
 ;;==Print a new line at the very end
 print, ' '

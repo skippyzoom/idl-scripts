@@ -2,7 +2,7 @@
 ; Can I determine the phase offset of density and temperature
 ; perturbations during linear growth?
 ;
-; This script assumes you've run fb_flow_angle_analysis to read
+; This script assumes you've run an analysis script to read
 ; den1 and build temp1
 ;
 ; Warning: This script is pretty hacky!
@@ -15,13 +15,18 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 nt = n_elements(time.index)
 T1 = temp1/mean(temp1) - 1
 
-x0 = 3*nx/4-128
-xf = 3*nx/4+128
-y0 = ny/2-128
-yf = ny/2+128
+x0 = nx/2-nx/8
+xf = nx/2+nx/8
+y0 = ny/2-ny/8
+yf = ny/2+ny/8
+;; x0 = 0
+;; xf = nx
+;; y0 = 0
+;; yf = ny
 
 den = den1[x0:xf-1,y0:yf-1,*]
 temp = T1[x0:xf-1,y0:yf-1,*]
+;; temp = temp1[x0:xf-1,y0:yf-1,*]
 
 fft_den = den*0.0
 for it=0,nt-1 do $
@@ -42,11 +47,33 @@ kxdata = shift(kxdata,nx/2)
 kydata = 2*!pi*fftfreq(ny,dy)
 kydata = shift(kydata,ny/2)
 
-den_cor = den*0.0
+fft_cor = den*0.0
 for it=0,nt-1 do $
-   den_cor[*,*,it] = convol_fft(den[*,*,it], $
+   fft_cor[*,*,it] = convol_fft(den[*,*,it], $
+                                temp[*,*,it], $
+                                /correlate)
+fft_cor_norm = fft_cor*0.0
+for it=0,nt-1 do $
+   fft_cor_norm[*,*,it] = fft_cor[*,*,it]/max(abs(fft_cor[*,*,it]))
+
+den_acf = den*0.0
+for it=0,nt-1 do $
+   den_acf[*,*,it] = convol_fft(den[*,*,it], $
+                                den[*,*,it], $
+                                /auto_correlation)
+den_acf_norm = den_acf*0.0
+for it=0,nt-1 do $
+   den_acf_norm[*,*,it] = den_acf[*,*,it]/max(abs(den_acf[*,*,it]))
+
+temp_acf = temp*0.0
+for it=0,nt-1 do $
+   temp_acf[*,*,it] = convol_fft(temp[*,*,it], $
                                  temp[*,*,it], $
-                                 /correlate)
+                                 /auto_correlation)
+temp_acf_norm = temp_acf*0.0
+for it=0,nt-1 do $
+   temp_acf_norm[*,*,it] = temp_acf[*,*,it]/max(abs(temp_acf[*,*,it]))
+
 
 position = multi_position([2,2], $
                           edges = [0.1,0.1,0.9,0.9], $
@@ -60,7 +87,7 @@ sw = [1/dx,1/dy]
 ;; kyf = ny/2+64
 
 ;; for it=0,nt-1 do $
-;;    frm[it] = image(smooth(den[*,*,it],sw,/edge_wrap), $
+;;    frm[it] = image(rotate(smooth(den[*,*,it],sw,/edge_wrap),1), $
 ;;                    ;; xdata,ydata, $
 ;;                    rgb_table = 5, $
 ;;                    ;; layout = [2,2,1], $
@@ -73,7 +100,7 @@ sw = [1/dx,1/dy]
 ;;                    title = '$n_i$ '+time.stamp[it], $
 ;;                    /buffer)
 ;; for it=0,nt-1 do $
-;;    !NULL = image(smooth(temp[*,*,it],sw,/edge_wrap), $
+;;    !NULL = image(rotate(smooth(temp[*,*,it],sw,/edge_wrap),1), $
 ;;                  ;; xdata,ydata, $
 ;;                  rgb_table = 5, $
 ;;                  ;; layout = [2,2,2], $
@@ -86,8 +113,7 @@ sw = [1/dx,1/dy]
 ;;                  title = '$T_i$ '+time.stamp[it], $
 ;;                  current = frm[it])
 ;; for it=0,nt-1 do $
-;;    ;; !NULL = image(fft_temp[kx0:kxf-1,ky0:kyf-1,it], $
-;;    !NULL = image(fft_temp[*,*,it], $
+;;    !NULL = image(rotate(fft_temp[*,*,it],1), $
 ;;                  ;; kxdata,kydata, $
 ;;                  rgb_table = 39, $
 ;;                  ;; layout = [2,2,3], $
@@ -100,7 +126,7 @@ sw = [1/dx,1/dy]
 ;;                  title = 'FFT($T_i$) '+time.stamp[it], $
 ;;                  current = frm[it])
 ;; for it=0,nt-1 do $
-;;    !NULL = image(den_cor[*,*,it], $
+;;    !NULL = image(rotate(fft_cor[*,*,it],1), $
 ;;                  rgb_table = 39, $
 ;;                  ;; layout = [2,2,4], $
 ;;                  position = position[*,3], $
@@ -131,27 +157,27 @@ cyf = cny/2+32
 
 max_cor = fltarr(nt)
 for it=0,nt-1 do $
-   max_cor[it] = max(den_cor[cx0:cxf-1,cy0:cyf-1,it])
+   max_cor[it] = max(fft_cor[cx0:cxf-1,cy0:cyf-1,it])
 
 imax_cor = lonarr(nt)
 for it=0,nt-1 do $
-   imax_cor[it] = where(den_cor[cx0:cxf-1,cy0:cyf-1,it] eq max_cor[it])
+   imax_cor[it] = where(fft_cor[cx0:cxf-1,cy0:cyf-1,it] eq max_cor[it])
 
 imax2d = lonarr(nt,2)
 for it=0,nt-1 do $
-   imax2d[it,*] = array_indices(den_cor[cx0:cxf-1,cy0:cyf-1,it],imax_cor[it])
+   imax2d[it,*] = array_indices(fft_cor[cx0:cxf-1,cy0:cyf-1,it],imax_cor[it])
 
 min_cor = fltarr(nt)
 for it=0,nt-1 do $
-   min_cor[it] = min(den_cor[cx0:cxf-1,cy0:cyf-1,it])
+   min_cor[it] = min(fft_cor[cx0:cxf-1,cy0:cyf-1,it])
 
 imin_cor = lonarr(nt)
 for it=0,nt-1 do $
-   imin_cor[it] = where(den_cor[cx0:cxf-1,cy0:cyf-1,it] eq min_cor[it])
+   imin_cor[it] = where(fft_cor[cx0:cxf-1,cy0:cyf-1,it] eq min_cor[it])
 
 imin2d = lonarr(nt,2)
 for it=0,nt-1 do $
-   imin2d[it,*] = array_indices(den_cor[cx0:cxf-1,cy0:cyf-1,it],imin_cor[it])
+   imin2d[it,*] = array_indices(fft_cor[cx0:cxf-1,cy0:cyf-1,it],imin_cor[it])
 
 offset = lonarr(nt,2)
 for it=0,nt-1 do $

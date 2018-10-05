@@ -36,7 +36,7 @@
 ;;-----------------------------------------------------------------------------
 ;; 2-D RUNS
 ;; These runs use a 2-D spatial grid perp to Bz with Ey0 = 50
-;; mV/m. These are twice as long as the previous 2-D runs and used less
+;; mV/m. These are twice as long as the original 2-D runs and used less
 ;; run-time spatial averaging.
 ;;-----------------------------------------------------------------------------
 ;; @unload_defaults
@@ -80,12 +80,110 @@
 ;; axes = 'yz'
 ;; @fb_flow_angle_analysis
 
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h2-Ey0_050/'
+;; ;; rotate = 0
+;; axes = 'yz'
+;; @fb_flow_angle_analysis
+
+;;-----------------------------------------------------------------------------
+;; 2-D RUNS WITH FULL OUTPUT
+;; These runs use a 2-D spatial grid perp to Bz with Ey0 = 50
+;; mV/m. These are twice as long as the original 2-D runs and used less
+;; run-time spatial averaging. These runs produced full spatial
+;; (non-FT) output.
+;;-----------------------------------------------------------------------------
 @unload_defaults
 @unload_data
-path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h2-Ey0_050/'
+path = get_base_dir()+path_sep()+'fb_flow_angle/2D/h0-Ey0_050-full_output/'
+;; rotate = 0
+axes = 'xy'
+@fb_flow_angle_analysis
+
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'fb_flow_angle/2D/h1-Ey0_050-full_output/'
+;; rotate = 0
+axes = 'xy'
+@fb_flow_angle_analysis
+
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'fb_flow_angle/2D/h2-Ey0_050-full_output/'
+;; rotate = 0
+axes = 'xy'
+@fb_flow_angle_analysis
+
+;;-----------------------------------------------------------------------------
+;; 3-D RUNS WITH FULL OUTPUT
+;; These runs use a 3-D spatial grid with Ey0 = 50 mV/m. They use Bx
+;; in place of Bz for more efficient parallelization, so the system is
+;; rotated with respect to the 2-D runs. These runs produced full spatial
+;; (non-FT) output.
+;;-----------------------------------------------------------------------------
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h0-Ey0_050-full_output/'
 ;; rotate = 0
 axes = 'yz'
 @fb_flow_angle_analysis
+
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050-full_output/'
+;; rotate = 0
+axes = 'yz'
+@fb_flow_angle_analysis
+
+@unload_defaults
+@unload_data
+path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h2-Ey0_050-full_output/'
+;; rotate = 0
+axes = 'yz'
+@fb_flow_angle_analysis
+
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h0-Ey0_050-full_output/'
+;; ;; rotate = 0
+;; axes = 'xy'
+;; @fb_flow_angle_analysis
+
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050-full_output/'
+;; ;; rotate = 0
+;; axes = 'xy'
+;; @fb_flow_angle_analysis
+
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h2-Ey0_050-full_output/'
+;; ;; rotate = 0
+;; axes = 'xy'
+;; @fb_flow_angle_analysis
+
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h0-Ey0_050-full_output/'
+;; ;; rotate = 0
+;; axes = 'xz'
+;; @fb_flow_angle_analysis
+
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h1-Ey0_050-full_output/'
+;; ;; rotate = 0
+;; axes = 'xz'
+;; @fb_flow_angle_analysis
+
+;; @unload_defaults
+;; @unload_data
+;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D/h2-Ey0_050-full_output/'
+;; ;; rotate = 0
+;; axes = 'xz'
+;; @fb_flow_angle_analysis
 
 ;;-----------------------------------------------------------------------------
 ;; SUB-THRESHOLD RUNS

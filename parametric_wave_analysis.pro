@@ -228,11 +228,6 @@ time = time_strings(timesteps, $
 
 ;; @calc_den1ktt
 ;; @den1ktt_movie
-;; @calc_den1ktt_rms
-;; save, time,den1ktt_rms, $
-;;       filename=expand_path(path)+path_sep()+ $
-;;       'den1ktt_rms-02to05_meter-044to046_deg.sav'
-;; @den1ktt_rms_plots
 
 ;; @calc_den1fft_t
 ;; @calc_den1ktt
