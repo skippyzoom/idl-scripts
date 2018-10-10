@@ -1,6 +1,6 @@
 ;+
-; Script for plotting $\Psi_0$ from multiple runs, within
-; multirun_moments.
+; Script for plotting $\Psi_0$ from multiple runs. This script assumes
+; that the user has run build_multirun_moments.
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------

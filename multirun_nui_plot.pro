@@ -1,6 +1,6 @@
 ;+
 ; Script for plotting $\nu_i$ (ion collision frequency) from multiple
-; runs, within multirun_moments.
+; runs. This script assumes that the user has called build_multirun_moments.
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
