@@ -83,5 +83,12 @@ for ir=0,nr-1 do $
               font_name = 'Courier', $
               font_size = 10.0)
 
+;;==Add a path label
+txt = text(0.0,0.005, $
+           proj_path, $
+           target = frm, $
+           font_name = 'Courier', $
+           font_size = 10.0)
+
 ;;==Save the plot
 frame_save, frm,filename=filename

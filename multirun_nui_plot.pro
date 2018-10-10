@@ -19,10 +19,13 @@ filename = expand_path(plot_path)+path_sep()+'frames'+ $
            '.'+get_extension(frame_type)
 
 ;;==Declare line colors
-color = ['magenta', $
-         'blue', $
+;; color = ['magenta', $
+;;          'blue', $
+;;          'green', $
+;;          'black', $
+;;          'red']
+color = ['blue', $
          'green', $
-         'black', $
          'red']
 
 ;;==Get number of time steps in each run
@@ -39,6 +42,14 @@ ydata = hash(run)
 for ir=0,nr-1 do $
    ydata[run[ir]] = mr_moments[run[ir]].dist1.nu
 
+;;==Find global min and max
+ymin = min(ydata[run[0],mr_nt[0]/4:*])
+for ir=1,nr-1 do $
+   ymin = min([ymin,min(ydata[run[ir],mr_nt[ir]/4:*])])
+ymax = max(ydata[run[0],mr_nt[0]/4:*])
+for ir=1,nr-1 do $
+   ymax = max([ymax,max(ydata[run[ir],mr_nt[ir]/4:*])])
+
 ;;==Loop over runs to create frame
 for ir=0,nr-1 do $
    frm = plot(xdata[run[ir]], $
@@ -47,9 +58,10 @@ for ir=0,nr-1 do $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$\nu_i$ [s$^{-1}$]', $
-              yrange = [2e3,6e3], $
-              ymajor = 5, $
-              yminor = 4, $
+              yrange = [300,1100], $
+              ;; yrange = [ymin,ymax], $
+              ;; ymajor = 5, $
+              ;; yminor = 4, $
               font_name = 'Times', $
               font_size = 16, $
               overplot = (ir gt 0), $
@@ -76,6 +88,13 @@ for ir=0,nr-1 do $
               color = color[ir], $
               font_name = 'Courier', $
               font_size = 10.0)
+
+;;==Add a path label
+txt = text(0.0,0.005, $
+           proj_path, $
+           target = frm, $
+           font_name = 'Courier', $
+           font_size = 10.0)
 
 ;;==Save the plot
 frame_save, frm,filename=filename

@@ -34,6 +34,9 @@ run = ['h0-Ey0_010', $
 nr = n_elements(run)
 path = get_base_dir()+path_sep()+project+path_sep()+run
 
+;;==Declare note to append to file names
+filename_note = strmid(run[0],3)
+
 ;;==Set up the hash to contain all moments files
 mr_moments = hash(run)
 
