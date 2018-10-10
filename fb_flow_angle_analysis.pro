@@ -95,28 +95,28 @@ time = time_strings(long(timesteps), $
                     scale = 1e3, $
                     precision = 2)
 if n_elements(subsample) ne 0 then time.subsample = subsample
-;; if params.ndim_space eq 2 then time_2D = time
-;; if params.ndim_space eq 3 then time_3D = time
+if params.ndim_space eq 2 then time_2D = time
+if params.ndim_space eq 3 then time_3D = time
 
 ;; @analyze_moments
 
-rotate = 0
-@get_den0_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den0))[3]-1 do $
-      den0[*,*,it] = rotate(den0[*,*,it],1)
-@calc_den0fft_t
-@calc_den0fft_t_moments
-@den0fft_t_rms_images
+;; rotate = 0
+;; @get_den0_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den0))[3]-1 do $
+;;       den0[*,*,it] = rotate(den0[*,*,it],1)
+;; @calc_den0fft_t
+;; @calc_den0fft_t_moments
+;; @den0fft_t_rms_images
 
-rotate = 0
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-@calc_den1fft_t
-@calc_den1fft_t_moments
-@den1fft_t_rms_images
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; @calc_den1fft_t_moments
+;; @den1fft_t_rms_images
 
 ;; rotate = 0
 ;; @get_den0_plane
@@ -217,42 +217,34 @@ if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;; @average_temperature_plot
 
 ;; @get_den0_plane
-
 ;; @get_fluxx0_plane
 ;; @get_fluxy0_plane
 ;; @get_fluxz0_plane
-
 ;; @get_nvsqrx0_plane
 ;; @get_nvsqry0_plane
 ;; @get_nvsqrz0_plane
-
-;; ;; @build_temp0_from_moments
 ;; @build_temp0_from_fluxes
-
 ;; save, time,temp0, $
 ;;       filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
-;; restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 
-;; @nT0_phase_plot
+restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
+@get_den0_plane
+@nT0_phase_plot
 
 ;; @get_den1_plane
-
 ;; @get_fluxx1_plane
 ;; @get_fluxy1_plane
 ;; @get_fluxz1_plane
-
 ;; @get_nvsqrx1_plane
 ;; @get_nvsqry1_plane
 ;; @get_nvsqrz1_plane
-
-;; ;; @build_temp1_from_moments
 ;; @build_temp1_from_fluxes
-
 ;; save, time,temp1, $
 ;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
-;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 
-;; @nT1_phase_plot
+restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
+@get_den1_plane
+@nT1_phase_plot
 
 ;;==Print a new line at the very end
 print, ' '

@@ -22,7 +22,7 @@ timesteps = float(time.stamp)
 max_nt = n_elements(timesteps)
 
 ;;==Declare initial step
-it0 = 0
+it0 = params.ndim_space eq 2 ? 4 : 16
 
 ;;==Declare plot path
 plot_path = expand_path(proj_path)+path_sep()+'common'
@@ -34,7 +34,7 @@ filename = expand_path(plot_path)+path_sep()+'frames'+ $
            'den1ktt'+ $
            '-meter_and_decameter'+ $
            '-all_theta'+ $
-           '-it0_00'+ $
+           '-it0_10'+ $
            '.pdf'
 
 ;;==Find maximum initial value across all sets and runs
@@ -51,7 +51,9 @@ for is=0,ns-1 do $
 
 ;;==Preset some graphical parameters
 xmajor = 5
-xtickvalues = timesteps[max_nt-1]*findgen(xmajor)/(xmajor-1)
+;; xtickvalues = timesteps[max_nt-1]*findgen(xmajor)/(xmajor-1)
+xtickvalues = 100*findgen(xmajor)/(xmajor-1)
+if params.ndim_space eq 2 then xtickvalues *= 4
 xtickname = string(xtickvalues,format='(f6.2)')
 xtickname = strcompress(xtickname,/remove_all)
 
@@ -69,14 +71,14 @@ for is=0,ns-1 do $
                  xtitle = 'Time [ms]', $
                  ytitle = '$\langle P(\delta n)\rangle/P(n_I)$', $
                  /ylog, $
-                 ;; yrange = [1e0,1e2], $
+                 yrange = [1e0,1e3], $
                  ystyle = 0, $
                  color = color[ir], $
                  ;; linestyle = linestyle[ir], $
                  linestyle = is, $
-                 ;; xmajor = xmajor, $
-                 ;; xminor = 3, $
-                 ;; xtickvalues = xtickvalues, $
+                 xmajor = xmajor, $
+                 xminor = 4, $
+                 xtickvalues = xtickvalues, $
                  ;; xtickname = xtickname, $
                  xtickfont_size = 16.0, $
                  ytickfont_size = 16.0, $

@@ -32,6 +32,7 @@ frm = plot(float(time.stamp), $
            xstyle = 1, $
            xtitle = 'Time ['+time.unit+']', $
            ytitle = 'Phase Difference [deg.]', $
+           yrange = [0,180], $
            font_name = 'Times', $
            font_size = 10.0, $
            /buffer)
