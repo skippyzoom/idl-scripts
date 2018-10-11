@@ -229,7 +229,8 @@ if params.ndim_space eq 3 then time_3D = time
 
 restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 @get_den0_plane
-@nT0_phase_plot
+;; @nT0_phase_plot
+@nT0_gen_phase_plot
 
 ;; @get_den1_plane
 ;; @get_fluxx1_plane
@@ -244,7 +245,8 @@ restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 
 restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 @get_den1_plane
-@nT1_phase_plot
+;; @nT1_phase_plot
+@nT1_gen_phase_plot
 
 ;;==Print a new line at the very end
 print, ' '
