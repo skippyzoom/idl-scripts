@@ -14,9 +14,9 @@ y0 = nky/2-nky/4
 yf = nky/2+nky/4
 
 ;;==Get RMS times from available time steps
-rms_time = get_rms_time(path,time)
-rms_time = transpose(rms_time)
-n_rms = (size(rms_time))[1]
+rms_ind = get_rms_indices(path,time)
+rms_ind = transpose(rms_ind)
+n_rms = (size(rms_ind))[1]
 
 ;;==Preserve raw FFT
 fdata = den0fft_t
@@ -27,7 +27,7 @@ fdata = abs(fdata)
 ;;==Compute RMS values
 fdata_rms = fltarr(nkx,nky,n_rms)
 for it=0,n_rms-1 do $
-   fdata_rms[*,*,it] = rms(fdata[*,*,rms_time[it,0]:rms_time[it,1]],dim=3)
+   fdata_rms[*,*,it] = rms(fdata[*,*,rms_ind[it,0]:rms_ind[it,1]],dim=3)
 
 ;;==Shift FFT
 fdata_rms = shift(fdata_rms,nkx/2,nky/2,0)
@@ -68,38 +68,51 @@ for it=0,n_rms-1 do $
 rcm_ctr += 0.5
 
 ;;==Calculate wavelength and angle corresponding to centroid
-rcm_lambda = fltarr(n_rms)
 dkx = 2*!pi/(nkx*dx)
 dky = 2*!pi/(nky*dy)
-for it=0,n_rms-1 do $ 
-   rcm_lambda[it] = 2*!pi/sqrt((dkx*rcm_ctr[0,it])^2+(dky*rcm_ctr[1,it])^2)
-rcm_theta = fltarr(n_rms)
+;; rcm_lambda = fltarr(n_rms)
+;; for it=0,n_rms-1 do $ 
+;;    rcm_lambda[it] = 2*!pi/sqrt((dkx*rcm_ctr[0,it])^2+(dky*rcm_ctr[1,it])^2)
+;; rcm_theta = fltarr(n_rms)
+;; for it=0,n_rms-1 do $
+;;    rcm_theta[it] = atan(dky*rcm_ctr[1,it],dkx*rcm_ctr[0,it])
+rcm_lambda = 2*!pi/sqrt((dkx*rcm_ctr[0,*])^2+(dky*rcm_ctr[1,*])^2)
+rcm_theta = atan(dky*rcm_ctr[1,*],dkx*rcm_ctr[0,*])
+
+;;==Estimate error in centroid coordinates
+;; fdata_rms_sub = fdata_rms[x0:xf-1,y0:yf-1,*]
+;; cnx = abs(xf-x0)
+;; cny = abs(yf-y0)
+;; total_mass = fltarr(n_rms)
+;; for it=0,n_rms-1 do $
+;;    total_mass[it] = total(fdata_rms_sub[*,*,it])
+;; x = indgen(nkx)
+;; y = indgen(nky)
+;; dev_x = fltarr(n_rms)*0.0
+;; for it=0,n_rms-1 do $
+;;    for ix=0,cnx-1 do $
+;;       for iy=0,cny-1 do $
+;;          dev_x[it] += fdata_rms_sub[ix,iy,it]^2*(x[ix]-rcm_ctr[0,it])^2
+;; dev_x /= total_mass^2
+;; dev_x = sqrt(dev_x)
+;; dev_y = fltarr(n_rms)*0.0
+;; for it=0,n_rms-1 do $
+;;    for ix=0,cnx-1 do $
+;;       for iy=0,cny-1 do $
+;;          dev_y[it] += fdata_rms_sub[ix,iy,it]^2*(y[iy]-rcm_ctr[1,it])^2
+;; dev_y /= total_mass^2
+;; dev_y = sqrt(dev_y)
+;; ;; dev_x = make_array(n_rms,value=1.0)
+;; ;; dev_y = make_array(n_rms,value=1.0)
+dev_xy = fltarr(2,n_rms)
 for it=0,n_rms-1 do $
-   rcm_theta[it] = atan(dky*rcm_ctr[1,it],dkx*rcm_ctr[0,it])
+   dev_xy[*,it] = centroid_error(fdata_rms[x0:xf-1,y0:yf-1,it], $
+                                 rcm_ctr[0,it],rcm_ctr[1,it], $
+                                 /prop_to_f)
+dev_x = dev_xy[0,*]
+dev_y = dev_xy[1,*]
 
 ;;==Calculate error in centroid angle
-fdata_rms_sub = fdata_rms[x0:xf-1,y0:yf-1,*]
-cnx = abs(xf-x0)
-cny = abs(yf-y0)
-total_mass = fltarr(n_rms)
-for it=0,n_rms-1 do $
-   total_mass[it] = total(fdata_rms_sub[*,*,it])
-x = indgen(nkx)
-y = indgen(nky)
-dev_x = fltarr(n_rms)*0.0
-for it=0,n_rms-1 do $
-   for ix=0,cnx-1 do $
-      for iy=0,cny-1 do $
-         dev_x[it] += fdata_rms_sub[ix,iy,it]^2*(x[ix]-rcm_ctr[0,it])^2
-dev_x /= 2*total_mass^2
-dev_x = sqrt(dev_x)
-dev_y = fltarr(n_rms)*0.0
-for it=0,n_rms-1 do $
-   for ix=0,cnx-1 do $
-      for iy=0,cny-1 do $
-         dev_y[it] += fdata_rms_sub[ix,iy,it]^2*(y[iy]-rcm_ctr[1,it])^2
-dev_y /= 2*total_mass^2
-dev_y = sqrt(dev_y)
 dth_dx = fltarr(n_rms)
 for it=0,n_rms-1 do $
    dth_dx[it] = -rcm_ctr[1,it]/(rcm_ctr[0,it]^2 + rcm_ctr[1,it]^2)
