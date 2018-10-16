@@ -23,10 +23,19 @@ lam_lo = list(1.0,10.0)
 lam_hi = list(4.0,!NULL)
 
 ;;==Declare runs
-run = ['h0-Ey0_050-full_output', $
-       'h1-Ey0_050-full_output', $
-       'h2-Ey0_050-full_output']
+;; run = ['h0-Ey0_030-full_output', $
+;;        'h1-Ey0_030-full_output', $
+;;        'h2-Ey0_030-full_output']
+;; run = ['h0-Ey0_050-full_output', $
+;;        'h1-Ey0_050-full_output', $
+;;        'h2-Ey0_050-full_output']
+run = ['h0-Ey0_070-full_output', $
+       'h1-Ey0_070-full_output', $
+       'h2-Ey0_070-full_output']
 nr = n_elements(run)
+
+;;==Declare note to append to filenames
+filename_note = strmid(run[0],3,7)
 
 ;;==Declare index of parameter hash
 iph = 0

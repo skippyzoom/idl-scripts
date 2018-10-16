@@ -22,7 +22,9 @@ color = (params.ndim_space eq 2) ? 'blue' : 'green'
 frm = plot(full_time*1e3, $
            moments.dist0.Tx, $
            ;; yrange = [T_min,T_max], $
-           yrange = [200,800], $
+           ;; yrange = [300,1200], $
+           ;; yrange = [200,800], $
+           yrange = [300,1300], $
            ;; yrange = [200,300], $
            xstyle = 1, $
            color = color, $

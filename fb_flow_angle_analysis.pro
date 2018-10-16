@@ -98,8 +98,38 @@ if n_elements(subsample) ne 0 then time.subsample = subsample
 if params.ndim_space eq 2 then time_2D = time
 if params.ndim_space eq 3 then time_3D = time
 
+;+
+; Analyze moment files (domain000/moments*.out)
+;-
 ;; @analyze_moments
 
+;+
+; Make movies of den0 and den0fft_t
+;-
+;; rotate = 0
+;; @get_den0_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den0))[3]-1 do $
+;;       den0[*,*,it] = rotate(den0[*,*,it],1)
+;; @den0_movie
+;; @calc_den0fft_t
+;; @den0fft_t_movie
+
+;+
+; Make movies of den1 and den1fft_t
+;-
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @den1_movie
+;; @calc_den1fft_t
+;; @den1fft_t_movie
+
+;+
+; Make images of den0 with centroid
+;-
 ;; rotate = 0
 ;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -109,6 +139,9 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @calc_den0fft_t_moments
 ;; @den0fft_t_rms_images
 
+;+
+; Make images of den1 with centroid
+;-
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -117,35 +150,6 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @calc_den1fft_t
 ;; @calc_den1fft_t_moments
 ;; @den1fft_t_rms_images
-
-;; rotate = 0
-;; @get_den0_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(den0))[3]-1 do $
-;;       den0[*,*,it] = rotate(den0[*,*,it],1)
-;; ;; @den0_images
-;; ;; @den0_movie
-;; @calc_den0fft_t
-;; ;; ;; ;; @den0fft_t_rms_images
-;; ;; ;; @den0fft_t_movie
-;; ;; @calc_den0fft_t_centroid
-;; @calc_den0fft_t_moments
-;; @den0fft_t_rms_images
-
-;; rotate = 0
-;; @get_den1_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(den1))[3]-1 do $
-;;       den1[*,*,it] = rotate(den1[*,*,it],1)
-;; @calc_den1fft_t
-;; ;; ;; den1fft_t_raw = den1fft_t
-;; ;; ;; den1 = spectral_filter(den1,threshold=5e-2,/relative)
-;; ;; ;; @calc_den1fft_t
-;; ;; ;; @den1_spectral_filter
-;; ;; ;; @den1_images
-;; ;; ;; @den1_movie
-;; ;; @calc_den1fft_t_centroid
-;; @calc_den1fft_t_moments
 
 ;; modes = fftfreq(nx,dx)
 ;; lambda = 1.0/modes[1:nx/2]
@@ -159,6 +163,9 @@ if params.ndim_space eq 3 then time_3D = time
 ;; ;; @den1fft_t_movie
 ;; @den1fft_t_rms_images
 
+;+
+; Build den1ktt and save it
+;-
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -176,46 +183,22 @@ if params.ndim_space eq 3 then time_3D = time
 ;;                     '.sav'
 ;; save, time,den1ktt, $
 ;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
+
 ;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
 ;; @calc_cg_den1ktt
 ;; @den1ktt_rms_images
-
-;; rotate = 0
-;; @get_den1_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(den1))[3]-1 do $
-;;       den1[*,*,it] = rotate(den1[*,*,it],1)
-;; @calc_den1fft_t
-;; theta = [0,360]*!dtor
-;; ;; lambda = 1.0+findgen(5)
-;; ;; lambda = 10.0
-;; lambda = 1.0+findgen(10)
-;; den1ktt_save_name = 'den1ktt'+ $
-;;                       '-'+ $
-;;                       string(lambda[0],format='(f05.1)')+ $
-;;                       '_'+ $
-;;                       string(lambda[n_elements(lambda)-1], $
-;;                              format='(f05.1)')+ $
-;;                       '_m'+ $
-;;                       '-all_theta'+ $
-;;                       ;; '-'+ $
-;;                       ;; string(theta[0]/!dtor,format='(f05.1)')+ $
-;;                       ;; '_'+ $
-;;                       ;; string(theta[1]/!dtor,format='(f05.1)')+ $
-;;                       ;; '_deg'+ $
-;;                       '.sav'
-;; @calc_den1ktt
-;; save, time,den1ktt, $
-;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
 
 ;; @calc_denft1_w
 ;; theta = [-90,+90]*!dtor
 ;; @calc_denft1ktw
 ;; @denft1ktw_images
 
-;; moments = read_moments(path=path)
-;; @average_temperature_plot
+moments = read_moments(path=path)
+@average_temperature_plot
 
+;+
+; Build temp0 and save it
+;-
 ;; @get_den0_plane
 ;; @get_fluxx0_plane
 ;; @get_fluxy0_plane
@@ -227,11 +210,20 @@ if params.ndim_space eq 3 then time_3D = time
 ;; save, time,temp0, $
 ;;       filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 
-restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
-@get_den0_plane
-;; @nT0_phase_plot
-@nT0_gen_phase_plot
+;+
+; Restore temp0 and den0
+; Calling get_den0_plane after restoring the save file ensures that
+; get_den0_plane uses the appropriate time dictionary
+;-
+;; restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav', $
+;;          /verbose
+;; @get_den0_plane
+;; ;; @nT0_phase_plot
+;; @nT0_gen_phase_plot
 
+;+
+; Build temp1 and save it
+;-
 ;; @get_den1_plane
 ;; @get_fluxx1_plane
 ;; @get_fluxy1_plane
@@ -243,10 +235,16 @@ restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 ;; save, time,temp1, $
 ;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 
-restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
-@get_den1_plane
-;; @nT1_phase_plot
-@nT1_gen_phase_plot
+;+
+; Restore temp1 and den1
+; Calling get_den1_plane after restoring the save file ensures that
+; get_den1_plane uses the appropriate time dictionary
+;-
+;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
+;;          /verbose
+;; @get_den1_plane
+;; ;; @nT1_phase_plot
+;; @nT1_gen_phase_plot
 
 ;;==Print a new line at the very end
 print, ' '

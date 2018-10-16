@@ -27,15 +27,32 @@ it0 = params.ndim_space eq 2 ? 4 : 16
 ;;==Declare plot path
 plot_path = expand_path(proj_path)+path_sep()+'common'
 
+;;==Prefix existing file-name note with dash
+;; if n_elements(filename_note) ne 0 then $
+;;    if ~strcmp(strmid(filename_note,0,1),'-') then $
+;;       filename_note = '-'+filename_note
+
+;;==Set default file-name note
+if n_elements(filename_note) eq 0 then $
+   filename_note = ''
+
 ;;==Declare plot file name
-filename = expand_path(plot_path)+path_sep()+'frames'+ $
-           path_sep()+ $
-           'mr_'+ $
-           'den1ktt'+ $
-           '-meter_and_decameter'+ $
-           '-all_theta'+ $
-           '-it0_10'+ $
-           '.pdf'
+;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
+;;            path_sep()+ $
+;;            'mr_'+ $
+;;            'den1ktt'+ $
+;;            '-meter_and_decameter'+ $
+;;            '-all_theta'+ $
+;;            '-it0_10'+ $
+;;            filename_note+ $
+;;            '.pdf'
+filepath = expand_path(plot_path)+path_sep()+'frames'
+filename = build_filename('mr_den1ktt','pdf', $
+                          path = filepath, $
+                          additions = ['meter_and_decameter', $
+                                       'all_theta', $
+                                       'it0_10', $
+                                       filename_note])
 
 ;;==Find maximum initial value across all sets and runs
 max_it0 = 0.0
@@ -72,6 +89,7 @@ for is=0,ns-1 do $
                  ytitle = '$\langle P(\delta n)\rangle/P(n_I)$', $
                  /ylog, $
                  yrange = [1e0,1e3], $
+                 ;; yrange = [1e0,1e1], $
                  ystyle = 0, $
                  color = color[ir], $
                  ;; linestyle = linestyle[ir], $

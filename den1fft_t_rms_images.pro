@@ -10,24 +10,24 @@
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Get RMS times from available time steps
-rms_time = get_rms_time(path,time)
-rms_time = transpose(rms_time)
-n_rms = (size(rms_time))[1]
+rms_ind = get_rms_indices(path,time)
+rms_ind = transpose(rms_ind)
+n_rms = (size(rms_ind))[1]
 
 ;;==Get subsample frequency
 if time.haskey('subsample') then subsample = time.subsample $
 else subsample = 1
 
 ;;==Declare file name(s)
-str_rms_time = string(rms_time*params.nout*subsample, $
-                      format='(i06)')
+str_rms_ind = string(rms_ind*params.nout*subsample, $
+                     format='(i06)')
 filename = strarr(n_rms)
 for it=0,n_rms-1 do $
    filename[it] = expand_path(path+path_sep()+'frames')+ $
    path_sep()+'den1fft_t_rms'+ $
    '-'+axes+ $
-   '-'+str_rms_time[it]+ $
-   '-'+str_rms_time[it+n_rms]+ $
+   '-'+str_rms_ind[it]+ $
+   '-'+str_rms_ind[it+n_rms]+ $
    '-self_norm'+ $
    '-20dB'+ $
    '-centroid'+ $
@@ -54,7 +54,7 @@ fdata = abs(fdata)
 ;;==Compute RMS values
 fdata_rms = fltarr(nx,ny,n_rms)
 for it=0,n_rms-1 do $
-   fdata_rms[*,*,it] = rms(fdata[*,*,rms_time[it,0]:rms_time[it,1]],dim=3)
+   fdata_rms[*,*,it] = rms(fdata[*,*,rms_ind[it,0]:rms_ind[it,1]],dim=3)
 
 ;;==Shift FFT
 fdata_rms = shift(fdata_rms,nkx/2,nky/2,0)

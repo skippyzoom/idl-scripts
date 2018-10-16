@@ -12,7 +12,7 @@ if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 filename = expand_path(path+path_sep()+'movies')+ $
            path_sep()+'den1'+ $
            '-'+axes+ $
-           '-filtered'+ $
+           ;; '-filtered'+ $
            ;; '-full_shift'+ $
            ;; '-from_denft1'+ $
            ;; '-reset_TEST'+ $
@@ -89,6 +89,10 @@ colorbar_kw['title'] = '$\delta n/n_0$'
 colorbar_kw['font_size'] = 18
 colorbar_kw['font_name'] = 'Times'
 colorbar_kw['major'] = 5
+;; text_string = path
+;; text_xyz = [0.0,0.995]
+;; text_kw = dictionary('font_name', 'Courier', $
+;;                      'font_size', 10)
 
 ;;==Create movie
 data_graphics, fdata[x0:xf-1,y0:yf-1,*], $
@@ -96,4 +100,7 @@ data_graphics, fdata[x0:xf-1,y0:yf-1,*], $
                /make_movie, $
                filename = filename, $
                image_kw = image_kw, $
-               colorbar_kw = colorbar_kw
+               colorbar_kw = colorbar_kw, $
+               text_string = text_string, $
+               text_xyz = text_xyz, $
+               text_kw = text_kw

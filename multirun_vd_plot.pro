@@ -36,9 +36,9 @@ for ir=0,nr-1 do $
    1e3*mr_params[run[ir]].dt*mr_params[run[ir]].nout*findgen(mr_nt[ir])
 
 ;;==Prefix existing file-name note with dash
-if n_elements(filename_note) ne 0 then $
-   if ~strcmp(strmid(filename_note,0,1),'-') then $
-      filename_note = '-'+filename_note
+;; if n_elements(filename_note) ne 0 then $
+;;    if ~strcmp(strmid(filename_note,0,1),'-') then $
+;;       filename_note = '-'+filename_note
 
 ;;==Set default file-name note
 if n_elements(filename_note) eq 0 then $
@@ -85,11 +85,15 @@ txt = text(0.0,0.005, $
            font_size = 10.0)
 
 ;;==Declare file name
-filename = expand_path(plot_path)+path_sep()+'frames'+ $
-           path_sep()+ $
-           'mr_vdr'+ $
-           filename_note+ $
-           '.'+get_extension(frame_type)
+;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
+;;            path_sep()+ $
+;;            'mr_vdr'+ $
+;;            filename_note+ $
+;;            '.'+get_extension(frame_type)
+filepath = expand_path(plot_path)+path_sep()+'frames'
+filename = build_filename('mr_vdr','pdf', $
+                          path = filepath, $
+                          additions = filename_note)
 
 ;;==Save the plot
 frame_save, frm,filename=filename
@@ -135,11 +139,15 @@ txt = text(0.0,0.005, $
            font_size = 10.0)
 
 ;;==Declare file name
-filename = expand_path(plot_path)+path_sep()+'frames'+ $
-           path_sep()+ $
-           'mr_vdt'+ $
-           filename_note+ $
-           '.'+get_extension(frame_type)
+;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
+;;            path_sep()+ $
+;;            'mr_vdt'+ $
+;;            filename_note+ $
+;;            '.'+get_extension(frame_type)
+filepath = expand_path(plot_path)+path_sep()+'frames'
+filename = build_filename('mr_vdt','pdf', $
+                          path = filepath, $
+                          additions = filename_note)
 
 ;;==Save the plot
 frame_save, frm,filename=filename
@@ -185,11 +193,15 @@ txt = text(0.0,0.005, $
            font_size = 10.0)
 
 ;;==Declare file name
-filename = expand_path(plot_path)+path_sep()+'frames'+ $
-           path_sep()+ $
-           'mr_vdp'+ $
-           filename_note+ $
-           '.'+get_extension(frame_type)
+;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
+;;            path_sep()+ $
+;;            'mr_vdp'+ $
+;;            filename_note+ $
+;;            '.'+get_extension(frame_type)
+filepath = expand_path(plot_path)+path_sep()+'frames'
+filename = build_filename('mr_vdp','pdf', $
+                          path = filepath, $
+                          additions = filename_note)
 
 ;;==Save the plot
 frame_save, frm,filename=filename
