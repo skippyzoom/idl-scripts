@@ -11,10 +11,10 @@
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Declare file name(s)
-filename = expand_path(path+path_sep()+'frames')+ $
-           path_sep()+'den1_temp1_phase'+ $
-           '-'+axes+ $
-           '.'+get_extension(frame_type)
+filepath = expand_path(path)+path_sep()+'frames'
+filename = build_filename('den1_temp1_phase',frame_type, $
+                          path = filepath, $
+                          additions = axes)
 
 ;;==Convert temperature to relative perturbed temperature
 delT1 = (temp1-mean(temp1))/mean(temp1)
