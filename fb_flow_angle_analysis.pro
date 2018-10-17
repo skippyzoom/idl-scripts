@@ -193,8 +193,11 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @calc_denft1ktw
 ;; @denft1ktw_images
 
-moments = read_moments(path=path)
-@average_temperature_plot
+;+
+; Plot averaged temperatures (independent of axes)
+;-
+;; moments = read_moments(path=path)
+;; @average_temperature_plot
 
 ;+
 ; Build temp0 and save it
@@ -211,15 +214,22 @@ moments = read_moments(path=path)
 ;;       filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav'
 
 ;+
-; Restore temp0 and den0
+; Restore and rotate temp0 and den0
 ; Calling get_den0_plane after restoring the save file ensures that
 ; get_den0_plane uses the appropriate time dictionary
 ;-
 ;; restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav', $
 ;;          /verbose
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(temp0))[3]-1 do $
+;;       temp0[*,*,it] = rotate(temp0[*,*,it],1)
 ;; @get_den0_plane
-;; ;; @nT0_phase_plot
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den0))[3]-1 do $
+;;       den0[*,*,it] = rotate(den0[*,*,it],1)
+;; @nT0_phase_plot
 ;; @nT0_gen_phase_plot
+;; @nT0_ratio_phase
 
 ;+
 ; Build temp1 and save it
@@ -236,15 +246,22 @@ moments = read_moments(path=path)
 ;;       filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav'
 
 ;+
-; Restore temp1 and den1
+; Restore and rotate temp1 and den1
 ; Calling get_den1_plane after restoring the save file ensures that
 ; get_den1_plane uses the appropriate time dictionary
 ;-
 ;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
 ;;          /verbose
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(temp1))[3]-1 do $
+;;       temp1[*,*,it] = rotate(temp1[*,*,it],1)
 ;; @get_den1_plane
-;; ;; @nT1_phase_plot
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @nT1_phase_plot
 ;; @nT1_gen_phase_plot
+;; @nT1_ratio_phase
 
 ;;==Print a new line at the very end
 print, ' '

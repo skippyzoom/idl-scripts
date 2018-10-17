@@ -83,7 +83,7 @@ kydata = 2*!pi*fftfreq(nky,dy)
 kydata = shift(kydata,nky/2)
 
 ;;==Set axes-specific keywords
-xrange = perp_plane ? [0,+!pi] : [-!pi/4,+!pi/4]
+xrange = perp_plane ? [0,+2*!pi] : [-!pi/4,+!pi/4]
 yrange = perp_plane ? [-!pi,+!pi] : [0,+2*!pi]
 xminor = perp_plane ? 3 : 1
 
@@ -112,7 +112,7 @@ for it=0,n_rms-1 do $
                    xtickdir = 1, $
                    ytickdir = 1, $
                    xticklen = 0.02, $
-                   yticklen = 0.04, $
+                   yticklen = 0.02, $
                    xshowtext = 1, $
                    yshowtext = 1, $
                    xtickfont_size = 12.0, $
