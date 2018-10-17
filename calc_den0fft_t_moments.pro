@@ -10,8 +10,8 @@
 ;;==Declare image domain over which to find centroid, relative to shift
 x0 = nkx/2
 xf = nkx/2+nkx/4
-y0 = nky/2-nky/4
-yf = nky/2+nky/4
+y0 = nky/2-nky/8
+yf = nky/2+nky/8
 
 ;;==Get RMS times from available time steps
 rms_ind = get_rms_indices(path,time)
