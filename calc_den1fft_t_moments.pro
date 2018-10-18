@@ -64,6 +64,11 @@ rcm_ctr = fltarr(2,n_rms)
 for it=0,n_rms-1 do $
    rcm_ctr[*,it] = rcm[*,it] + [x0-nkx/2,y0-nky/2]
 
+;;==Compute absolute coordinates
+rcm_abs = fltarr(2,n_rms)
+for it=0,n_rms-1 do $
+   rcm_abs[*,it] = rcm[*,it] + [x0,y0]
+
 ;;==Shift centroid coordinates to center of pixel
 rcm_ctr += 0.5
 
