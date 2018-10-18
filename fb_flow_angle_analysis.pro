@@ -263,5 +263,20 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @nT1_gen_phase_plot
 ;; @nT1_ratio_phase
 
+
+rotate = 0
+restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
+         /verbose
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(temp1))[3]-1 do $
+      temp1[*,*,it] = rotate(temp1[*,*,it],1)
+@get_den1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den1))[3]-1 do $
+      den1[*,*,it] = rotate(den1[*,*,it],1)
+@calc_den1fft_t
+@calc_den1fft_t_moments
+@calc_nT1_ratio_phase
+
 ;;==Print a new line at the very end
 print, ' '
