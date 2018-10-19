@@ -136,19 +136,19 @@ if params.ndim_space eq 3 then time_3D = time
 ;;    for it=0,(size(den0))[3]-1 do $
 ;;       den0[*,*,it] = rotate(den0[*,*,it],1)
 ;; @calc_den0fft_t
-;; @calc_den0fft_t_moments
+;; @calc_den0fft_t_rms_moments
 ;; @den0fft_t_rms_images
 
 ;+
 ; Make images of den1 with centroid
 ;-
-;; rotate = 0
-;; @get_den1_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(den1))[3]-1 do $
-;;       den1[*,*,it] = rotate(den1[*,*,it],1)
-;; @calc_den1fft_t
-;; @calc_den1fft_t_moments
+rotate = 0
+@get_den1_plane
+if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+   for it=0,(size(den1))[3]-1 do $
+      den1[*,*,it] = rotate(den1[*,*,it],1)
+@calc_den1fft_t
+;; @calc_den1fft_t_rms_moments
 ;; @den1fft_t_rms_images
 
 ;; modes = fftfreq(nx,dx)
@@ -227,9 +227,11 @@ if params.ndim_space eq 3 then time_3D = time
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;;    for it=0,(size(den0))[3]-1 do $
 ;;       den0[*,*,it] = rotate(den0[*,*,it],1)
-;; @nT0_phase_plot
-;; @nT0_gen_phase_plot
-;; @nT0_ratio_phase
+;; ;; @nT0_phase_plot
+;; ;; @nT0_gen_phase_plot
+;; @calc_nT0_phase_quantities
+;; @nT0_rat_phase_survey
+;; ;; @nT0_dif_phase_survey
 
 ;+
 ; Build temp1 and save it
@@ -259,24 +261,25 @@ if params.ndim_space eq 3 then time_3D = time
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;;    for it=0,(size(den1))[3]-1 do $
 ;;       den1[*,*,it] = rotate(den1[*,*,it],1)
-;; @nT1_phase_plot
-;; @nT1_gen_phase_plot
-;; @nT1_ratio_phase
+;; ;; @nT1_phase_plot
+;; ;; @nT1_gen_phase_plot
+;; @calc_nT1_phase_quantities
+;; @nT1_rat_phase_survey
+;; ;; @nT1_dif_phase_survey
 
-
-rotate = 0
-restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
-         /verbose
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(temp1))[3]-1 do $
-      temp1[*,*,it] = rotate(temp1[*,*,it],1)
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-@calc_den1fft_t
-@calc_den1fft_t_moments
-@calc_nT1_ratio_phase
+;; rotate = 0
+;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
+;;          /verbose
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(temp1))[3]-1 do $
+;;       temp1[*,*,it] = rotate(temp1[*,*,it],1)
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; @calc_den1fft_t_rms_moments
+;; @calc_nT1_ratio_phase
 
 ;;==Print a new line at the very end
 print, ' '

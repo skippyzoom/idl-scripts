@@ -6,17 +6,13 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/2D/'
 
 ;;==Declare name of save file
-den1ktt_save_name = 'den1ktt'+ $
-                    '-all_k'+ $
-                    '-all_theta'+ $
-                    '-subsample_1'+ $
-                    '.sav'
-;; den1ktt_save_name = 'den1ktt-001.0_005.0_m-all_theta.sav'
-;; den1ktt_save_name = 'den1ktt-010.0_m-all_theta.sav'
-;; den1ktt_save_name = 'den1ktt-001.0_010.0_m-all_theta.sav'
+den1ktt_save_name = build_filename('den1ktt','sav', $
+                                   additions = ['all_k', $
+                                                'all_theta', $
+                                                'subsample_8'])
 
 ;;==Declare target wavelength ranges
 lam_lo = list(1.0,10.0)

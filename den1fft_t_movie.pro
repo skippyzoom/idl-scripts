@@ -14,14 +14,12 @@
 if n_elements(movie_type) eq 0 then movie_type = '.mp4'
 
 ;;==Declare file name
-filename = expand_path(path+path_sep()+'movies')+ $
-           path_sep()+'den1fft_t'+ $
-           '-'+axes+ $
-           ;; '-filtered'+ $
-           '-self_norm'+ $
-           ;; '-max_norm'+ $
-           '-zoom'+ $
-           '.'+get_extension(movie_type)
+filepath = expand_path(path)+path_sep()+'movies'
+filename = build_filename('den1fft_t',movie_type, $
+                          path = filepath, $
+                          additions = [axes, $
+                                       'self_norm', $
+                                       'zoom'])
 
 ;;==Preserve raw FFT
 fdata = den1fft_t
@@ -32,10 +30,16 @@ nkx = fsize[1]
 nky = fsize[2]
 
 ;;==Declare ranges to show
-x0 = perp_plane ? nkx/2 : nkx/2-nkx/4
-xf = perp_plane ? nkx/2+nkx/4 : nkx/2+nkx/4
-y0 = perp_plane ? nky/2-nky/4 : nky/2
-yf = perp_plane ? nky/2+nky/4 : nky/2+nky/4
+xw = params.ndim_space eq 2 ? nkx/8 : nkx/4
+yw = params.ndim_space eq 2 ? nky/8 : nky/4
+;; x0 = perp_plane ? nkx/2 : nkx/2-nkx/4
+;; xf = perp_plane ? nkx/2+nkx/4 : nkx/2+nkx/4
+;; y0 = perp_plane ? nky/2-nky/4 : nky/2
+;; yf = perp_plane ? nky/2+nky/4 : nky/2+nky/4
+x0 = perp_plane ?    nkx/2 : nkx/2-xw
+xf = perp_plane ? nkx/2+xw : nkx/2+xw
+y0 = perp_plane ? nky/2-yw : nky/2
+yf = perp_plane ? nky/2+yw : nky/2+yw
 
 ;;==Convert complex FFT to its magnitude
 fdata = abs(fdata)

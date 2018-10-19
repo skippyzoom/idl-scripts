@@ -1,7 +1,7 @@
 ;+
-; Calculate the centroid of a section of den1fft_t array. This script
-; assumes that the user has called calc_den1fft_t.pro after loading
-; den1 into memory (e.g., via get_den1_plane.pro)
+; Calculate the centroid of a section of RMS den1fft_t array. This
+; script assumes that the user has called calc_den1fft_t.pro after
+; loading den1 into memory (e.g., via get_den1_plane.pro)
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------

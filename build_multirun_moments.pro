@@ -28,15 +28,18 @@ proj_path = get_base_dir()+path_sep()+project
 ;; run = ['h0-Ey0_010', $
 ;;        'h1-Ey0_010', $
 ;;        'h2-Ey0_010']
+run = ['h0-Ex0_0.1', $
+       'h1-Ex0_0.1', $
+       'h2-Ex0_0.1']
 ;; run = ['h0-Ey0_030-full_output', $
 ;;        'h1-Ey0_030-full_output', $
 ;;        'h2-Ey0_030-full_output']
 ;; run = ['h0-Ey0_050-full_output', $
 ;;        'h1-Ey0_050-full_output', $
 ;;        'h2-Ey0_050-full_output']
-run = ['h0-Ey0_070-full_output', $
-       'h1-Ey0_070-full_output', $
-       'h2-Ey0_070-full_output']
+;; run = ['h0-Ey0_070-full_output', $
+;;        'h1-Ey0_070-full_output', $
+;;        'h2-Ey0_070-full_output']
 nr = n_elements(run)
 path = get_base_dir()+path_sep()+project+path_sep()+run
 
@@ -60,3 +63,5 @@ for ir=0,nr-1 do $
 ;;==Plot multi-run parameters
 ;; @multirun_psi_plot
 ;; @multirun_nui_plot
+;; @multirun_nue_plot
+;; @multirun_vd_plot

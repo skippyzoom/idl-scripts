@@ -22,17 +22,17 @@ else subsample = 1
 str_rms_ind = string(rms_ind*params.nout*subsample, $
                      format='(i06)')
 filename = strarr(n_rms)
+filepath = expand_path(path)+path_sep()+'frames'
 for it=0,n_rms-1 do $
-   filename[it] = expand_path(path+path_sep()+'frames')+ $
-   path_sep()+'den0fft_t_rms'+ $
-   '-'+axes+ $
-   '-'+str_rms_ind[it]+ $
-   '-'+str_rms_ind[it+n_rms]+ $
-   '-self_norm'+ $
-   '-20dB'+ $
-   '-centroid'+ $
-   '-zoom'+ $
-   '.'+get_extension(frame_type)
+   filename[it] = build_filename('den0fft_t_rms',frame_type, $
+                                 path = filepath, $
+                                 additions = [axes, $
+                                              str_rms_ind[it], $
+                                              str_rms_ind[it+n_rms], $
+                                              'self_norm', $
+                                              '20dB', $
+                                              'centroid', $
+                                              'zoom'])
 
 ;;==Preserve raw FFT
 fdata = den0fft_t
@@ -135,7 +135,6 @@ for it=0,n_rms-1 do $
                   hide = 0)
 
 ;;==Add radius and angle markers
-;; r_overlay = 2*!pi/(2+findgen(9))
 r_overlay = 2*!pi/(1+findgen(10))
 theta_overlay = 10*findgen(36)
 if perp_plane then $
@@ -156,7 +155,7 @@ if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
       for it=0,n_rms-1 do $
          frm[it] = overlay_rtheta(frm[it], $
-                                  2*!pi/sqrt(dx^2+dy^2), $
+                                  r_overlay[0], $
                                   rcm_theta[it], $
                                   r_color = 'white', $
                                   r_thick = 2, $
@@ -170,7 +169,7 @@ if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
       for it=0,n_rms-1 do $
          frm[it] = overlay_rtheta(frm[it], $
-                                  2*!pi/sqrt(dx^2+dy^2), $
+                                  r_overlay[0], $
                                   rcm_theta[it]+dev_rcm_theta[it], $
                                   r_color = 'white', $
                                   r_thick = 2, $
@@ -182,7 +181,7 @@ if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
       for it=0,n_rms-1 do $
          frm[it] = overlay_rtheta(frm[it], $
-                                  2*!pi/sqrt(dx^2+dy^2), $
+                                  r_overlay[0], $
                                   rcm_theta[it]-dev_rcm_theta[it], $
                                   r_color = 'white', $
                                   r_thick = 2, $
@@ -191,6 +190,18 @@ if n_elements(rcm_theta) ne 0 then $
                                   theta_thick = 2, $
                                   theta_linestyle = 'solid_line')
 
+;;==Add angle of drift velocity
+if perp_plane then $
+   for it=0,n_rms-1 do $
+      frm[it] = overlay_rtheta(frm[it], $
+                               r_overlay[0], $
+                               fbfa_vd_angle(path), $
+                               r_color = 'magenta', $
+                               r_thick = 2, $
+                               r_linestyle = 'none', $
+                               theta_color = 'magenta', $
+                               theta_thick = 2, $
+                               theta_linestyle = 'dot')
 
 ;;==Print wavelength and angle of centroid on image frame
 for it=0,n_rms-1 do $
