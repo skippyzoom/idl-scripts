@@ -35,11 +35,6 @@ for ir=0,nr-1 do $
    xdata[run[ir]] = $
    1e3*mr_params[run[ir]].dt*mr_params[run[ir]].nout*findgen(mr_nt[ir])
 
-;;==Prefix existing file-name note with dash
-;; if n_elements(filename_note) ne 0 then $
-;;    if ~strcmp(strmid(filename_note,0,1),'-') then $
-;;       filename_note = '-'+filename_note
-
 ;;==Set default file-name note
 if n_elements(filename_note) eq 0 then $
    filename_note = ''
@@ -66,11 +61,9 @@ for ir=0,nr-1 do $
    frm = plot(xdata[run[ir]], $
               mr_vd[run[ir]].r, $
               color = color[ir], $
-              ;; linestyle = linestyle[ir], $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$|V_d|$', $
-              ;; yrange = [0,300], $
               yrange = [ymin,ymax], $
               font_name = 'Times', $
               font_size = 16, $
@@ -85,11 +78,6 @@ txt = text(0.0,0.005, $
            font_size = 10.0)
 
 ;;==Declare file name
-;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
-;;            path_sep()+ $
-;;            'mr_vdr'+ $
-;;            filename_note+ $
-;;            '.'+get_extension(frame_type)
 filepath = expand_path(plot_path)+path_sep()+'frames'
 filename = build_filename('mr_vdr','pdf', $
                           path = filepath, $
@@ -120,11 +108,9 @@ for ir=0,nr-1 do $
    frm = plot(xdata[run[ir]], $
               mr_vd[run[ir]].t/!dtor, $
               color = color[ir], $
-              ;; linestyle = linestyle[ir], $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$\theta(V_d)$', $
-              ;; yrange = [-30,0], $
               yrange = [ymin,ymax], $
               font_name = 'Times', $
               font_size = 16, $
@@ -139,11 +125,6 @@ txt = text(0.0,0.005, $
            font_size = 10.0)
 
 ;;==Declare file name
-;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
-;;            path_sep()+ $
-;;            'mr_vdt'+ $
-;;            filename_note+ $
-;;            '.'+get_extension(frame_type)
 filepath = expand_path(plot_path)+path_sep()+'frames'
 filename = build_filename('mr_vdt','pdf', $
                           path = filepath, $
@@ -174,11 +155,9 @@ for ir=0,nr-1 do $
    frm = plot(xdata[run[ir]], $
               mr_vd[run[ir]].p/!dtor, $
               color = color[ir], $
-              ;; linestyle = linestyle[ir], $
               xstyle = 1, $
               xtitle = 'Time [ms]', $
               ytitle = '$\phi(V_d)$', $
-              ;; yrange = [-1,1], $
               yrange = [ymin,ymax], $
               font_name = 'Times', $
               font_size = 16, $
@@ -193,11 +172,6 @@ txt = text(0.0,0.005, $
            font_size = 10.0)
 
 ;;==Declare file name
-;; filename = expand_path(plot_path)+path_sep()+'frames'+ $
-;;            path_sep()+ $
-;;            'mr_vdp'+ $
-;;            filename_note+ $
-;;            '.'+get_extension(frame_type)
 filepath = expand_path(plot_path)+path_sep()+'frames'
 filename = build_filename('mr_vdp','pdf', $
                           path = filepath, $

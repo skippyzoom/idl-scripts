@@ -1,3 +1,11 @@
+;+
+; Script for plotting average Hall, Pedersen, and parallel
+; temperatures for electrons and ions, from a given EPPIC run. Assumes
+; the user has read the moments dictionary into memory.
+;
+; Created by Matt Young.
+;------------------------------------------------------------------------------
+;-
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 filename = expand_path(path+path_sep()+'frames')+ $
@@ -23,8 +31,8 @@ frm = plot(full_time*1e3, $
            moments.dist0.Tx, $
            ;; yrange = [T_min,T_max], $
            ;; yrange = [300,1200], $
-           ;; yrange = [200,800], $
-           yrange = [300,1300], $
+           yrange = [200,800], $
+           ;; yrange = [300,1300], $
            ;; yrange = [200,300], $
            xstyle = 1, $
            color = color, $

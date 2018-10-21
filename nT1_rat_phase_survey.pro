@@ -12,7 +12,8 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 filepath = expand_path(path)+path_sep()+'frames'
 filename = build_filename('den1_temp1_rat_phase',frame_type, $
                           path = filepath, $
-                          additions = axes)
+                          additions = [axes, $
+                                       'survey'])
 
 ;;==Get sizes of den1 FFT
 fsize = size(fden1)
