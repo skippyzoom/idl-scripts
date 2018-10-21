@@ -78,16 +78,16 @@ dky = 2*!pi/(nky*dy)
 rcm_lambda = 2*!pi/sqrt((dkx*rcm_ctr[0,*])^2+(dky*rcm_ctr[1,*])^2)
 rcm_theta = atan(dky*rcm_ctr[1,*],dkx*rcm_ctr[0,*])
 
-;;==Estimate error in centroid coordinates
+;;==Estimate uncertainty in centroid coordinates
 dev_xy = fltarr(2,n_rms)
 for it=0,n_rms-1 do $
-   dev_xy[*,it] = centroid_error(fdata_rms[x0:xf-1,y0:yf-1,it], $
-                                 rcm_ctr[0,it],rcm_ctr[1,it], $
-                                 /prop_to_f)
+   dev_xy[*,it] = centroid_uncertainty(fdata_rms[x0:xf-1,y0:yf-1,it], $
+                                       rcm_ctr[0,it],rcm_ctr[1,it], $
+                                       /prop_to_f)
 dev_x = dev_xy[0,*]
 dev_y = dev_xy[1,*]
 
-;;==Calculate error in centroid angle
+;;==Calculate uncertainty in centroid angle
 dth_dx = fltarr(n_rms)
 for it=0,n_rms-1 do $
    dth_dx[it] = -rcm_ctr[1,it]/(rcm_ctr[0,it]^2 + rcm_ctr[1,it]^2)
