@@ -15,7 +15,7 @@ filename = build_filename('den0_temp0_rat_phase',frame_type, $
                           additions = [axes, $
                                        'survey'])
 
-;;==Get sizes of den0 FFT
+;;==Get dimensions
 fsize = size(fden0)
 nkx = fsize[1]
 nky = fsize[2]

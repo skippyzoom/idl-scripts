@@ -15,7 +15,7 @@ filename = build_filename('den1_temp1_rat_phase',frame_type, $
                           additions = [axes, $
                                        'survey'])
 
-;;==Get sizes of den1 FFT
+;;==Get dimensions
 fsize = size(fden1)
 nkx = fsize[1]
 nky = fsize[2]

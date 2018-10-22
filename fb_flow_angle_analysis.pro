@@ -43,58 +43,14 @@ timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 ;;                          3*params.nt_max/4, $
 ;;                          params.nt_max-1]
 
-;;==3-D RMS ranges (original runs)
-;; timesteps = [5504, $                        ;3-D Linear stage start
-;;              11776, $                       ;3-D Linear stage end
-;;              17536, $                       ;3-D Transition stage start
-;;              20992, $                       ;3-D Transition stage end
-;;              20992, $                       ;3-D Saturated stage start
-;;              params.nout*(params.nt_max-1)] ;3-D Saturated stage end
-;; if params.ndim_space eq 2 then timesteps *= 8L
-
-;;==3-D Snapshots (original runs)
-;; timesteps = [8576, $            ;3-D Linear stage example
-;;              23040]             ;3-D Saturated stage example
-;; if params.ndim_space eq 2 then timesteps *= 8L
-
-;;==2-D RMS ranges (original runs)
-;; timesteps = 8L*[5504, $                        ;2-D Linear stage start
-;;                 11776, $                       ;2-D Linear stage end
-;;                 17536, $                       ;2-D Transition stage start
-;;                 20992, $                       ;2-D Transition stage end
-;;                 20992, $                       ;2-D Saturated stage start
-;;                 params.nout*(params.nt_max-1)] ;2-D Saturated stage end
-
-;;==2-D Snapshots (original runs)
-;; timesteps = 8L*[8576, $            ;2-D Linear stage example
-;;                 23040]             ;2-D Saturated stage example
-
-;;==RMS ranges (full-output runs)
-;; if params.ndim_space eq 2 then $
-;;    timesteps = [22528, $                       ;2-D Growth stage start
-;;                 62464, $                       ;2-D Growth stage end
-;;                 159744, $                      ;2-D Saturated stage start
-;;                 params.nout*(params.nt_max-1)] ;2-D Saturated stage end
-;; if params.ndim_space eq 3 then $
-;;    timesteps = [5760, $                        ;3-D Growth stage start
-;;                 10368, $                       ;3-D Growth stage end
-;;                 19968, $                       ;3-D Saturated stage start
-;;                 params.nout*(params.nt_max-1)] ;3-D Saturated stage end
-
-;;==Snapshots (full-output runs)
-;; if params.ndim_space eq 2 then $
-;; timesteps = [46080, $           ;2-D Growth stage example
-;;              184320]            ;2-D Saturated stage example
-;; if params.ndim_space eq 3 then $
-;; timesteps = [8576, $            ;3-D Growth stage example
-;;              23040]             ;3-D Saturated stage example
-
 ;;==Build the time dictionary
 time = time_strings(long(timesteps), $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
 if n_elements(subsample) ne 0 then time.subsample = subsample
+
+;;==Compare 2-D to 3-D (debugging)
 if params.ndim_space eq 2 then time_2D = time
 if params.ndim_space eq 3 then time_3D = time
 
@@ -128,6 +84,30 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @den1fft_t_movie
 
 ;+
+; Make single images of den0fft_t
+;-
+;; rotate = 0
+;; @get_den0_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den0))[3]-1 do $
+;;       den0[*,*,it] = rotate(den0[*,*,it],1)
+;; @calc_den0fft_t
+;; @calc_den0fft_t_moments
+;; @den0fft_t_images
+
+;+
+; Make single images of den1fft_t
+;-
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; @calc_den1fft_t_moments
+;; @den1fft_t_images
+
+;+
 ; Make survey images of den0fft_t
 ;-
 ;; rotate = 0
@@ -137,6 +117,17 @@ if params.ndim_space eq 3 then time_3D = time
 ;;       den0[*,*,it] = rotate(den0[*,*,it],1)
 ;; @calc_den0fft_t
 ;; @den0fft_t_survey
+
+;+
+; Make survey images of den1fft_t
+;-
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @calc_den1fft_t
+;; @den1fft_t_survey
 
 ;+
 ; Make images of den0fft_t with centroid
@@ -151,17 +142,6 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @den0fft_t_rms_images
 ;; ;; @calc_den0fft_t_moments
 ;; ;; @den0fft_t_rcm_theta_plot
-
-;+
-; Make survey images of den1fft_t
-;-
-;; rotate = 0
-;; @get_den1_plane
-;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-;;    for it=0,(size(den1))[3]-1 do $
-;;       den1[*,*,it] = rotate(den1[*,*,it],1)
-;; @calc_den1fft_t
-;; @den1fft_t_survey
 
 ;+
 ; Make images of den1fft_t with centroid
@@ -253,11 +233,13 @@ if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
    for it=0,(size(den0))[3]-1 do $
       den0[*,*,it] = rotate(den0[*,*,it],1)
-@nT0_phase_plot
+@den0_images
+;; @nT0_phase_plot
 ;; @nT0_gen_phase_plot
-;; @calc_nT0_phase_quantities
+@calc_nT0_phase_quantities
 ;; @nT0_rat_phase_survey
 ;; @nT0_dif_phase_survey
+@nT0_rat_phase_images
 
 ;+
 ; Build temp1 and save it
@@ -287,11 +269,13 @@ if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
    for it=0,(size(den1))[3]-1 do $
       den1[*,*,it] = rotate(den1[*,*,it],1)
-@nT1_phase_plot
+@den1_images
+;; @nT1_phase_plot
 ;; @nT1_gen_phase_plot
-;; @calc_nT1_phase_quantities
+@calc_nT1_phase_quantities
 ;; @nT1_rat_phase_survey
 ;; @nT1_dif_phase_survey
+@nT1_rat_phase_images
 
 ;; rotate = 0
 ;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $

@@ -18,8 +18,19 @@ filename = build_filename('den0fft_t',frame_type, $
                                        'zoom', $
                                        'survey'])
 
+;;==Declare index mask
+nc = 4
+nr = 4
+n_frm = nc*nr
+ind_mask = (time.nt/n_frm)*(1+indgen(n_frm))
+
+;;==Set up position array for subframes
+position = multi_position(nc*nr, $
+                          edges = [0.1,0.1,0.9,0.9], $
+                          buffer = [-0.15,0.01])
+
 ;;==Preserve raw FFT
-fdata = den0fft_t
+fdata = den0fft_t[*,*,ind_mask]
 
 ;;==Get dimensions
 fsize = size(fdata)
@@ -54,17 +65,6 @@ fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 ;; fdata -= max(fdata)
 for it=0,time.nt-1 do $
    fdata[*,*,it] -= max(fdata[*,*,it])
-
-;;==Declare index mask
-nc = 4
-nr = 4
-n_frm = nc*nr
-ind_mask = (time.nt/n_frm)*(1+indgen(n_frm))
-
-;;==Set up position array for subframes
-position = multi_position(nc*nr, $
-                          edges = [0.1,0.1,0.9,0.9], $
-                          buffer = [-0.15,0.01])
 
 ;;==Set up kx and ky vectors
 kxdata = 2*!pi*fftfreq(nkx,dx)
