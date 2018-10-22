@@ -13,11 +13,6 @@ xf = nkx/2+nkx/8
 y0 = nky/2-nky/8
 yf = nky/2+nky/8
 
-;;==Get RMS times from available time steps
-rms_ind = get_rms_indices(path,time)
-rms_ind = transpose(rms_ind)
-n_rms = (size(rms_ind))[1]
-
 ;;==Preserve raw FFT
 fdata = den0fft_t
 
@@ -36,21 +31,34 @@ fdata[nkx/2-dc_width.xn:nkx/2+dc_width.xp, $
 ;;==Set non-finite values to smallest finite value
 fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 
+;;==Optionally sum bins to improve variance
+;;  XBW and YBW are the bin widths. Setting either to 1 has the effect
+;;  of skipping the sum in that dimension. Setting both to 1 causes
+;;  bin_sum to return fdata untouched.
+xbw = 4
+ybw = 4
+x0b = x0/xbw
+xfb = xf/xbw
+nkxb = nkx/xbw
+y0b = y0/ybw
+yfb = yf/ybw
+nkyb = nky/ybw
+fdata_b = fltarr(nkxb,nkyb,time.nt)
+for it=0,time.nt-1 do $
+   fdata_b[*,*,it] = bin_sum(fdata[*,*,it],ybw,xbw)
+
 ;;==Find centroid and variance of each image
 im = list()
 for it=0,time.nt-1 do $
-   im.add, find_image_moments(fdata[x0:xf-1,y0:yf-1,it], $
+   im.add, find_image_moments(fdata_b[x0b:xfb-1,y0b:yfb-1,it], $
                               mask_threshold = 1e-1, $
                               mask_value = 0.0, $
                               mask_type = 'relative_max')
 
-;;==Extract centroids
+;;==Extract centroids and correct for binning
 rcm = fltarr(2,time.nt)
 for it=0,time.nt-1 do $
-   rcm[*,it] = im[it].centroid
-
-;;==Shift centroid coordinates to center of pixel
-rcm += 0.5
+   rcm[*,it] = im[it].centroid*[xbw,ybw]+[xbw/2,ybw/2]
 
 ;;==Extract variance
 vcm = fltarr(2,time.nt)
@@ -62,7 +70,17 @@ rcm_ctr = fltarr(2,time.nt)
 for it=0,time.nt-1 do $
    rcm_ctr[*,it] = rcm[*,it] + [x0-nkx/2,y0-nky/2]
 
-;;==Compute absolute coordinates
+;;==Estimate uncertainty in centroid coordinates
+dev_xy = fltarr(2,time.nt)
+for it=0,time.nt-1 do $
+   dev_xy[*,it] = centroid_uncertainty(fdata_b[x0b:xfb-1,y0b:yfb-1,it], $
+                                       rcm_ctr[0,it]/xbw, $
+                                       rcm_ctr[1,it]/ybw, $
+                                       /prop_to_f)
+dev_x = dev_xy[0,*]/sqrt(xbw)
+dev_y = dev_xy[1,*]/sqrt(ybw)
+
+;;==Compute absolute coordinates, for reference
 rcm_abs = fltarr(2,time.nt)
 for it=0,time.nt-1 do $
    rcm_abs[*,it] = rcm[*,it] + [x0,y0]
@@ -72,15 +90,6 @@ dkx = 2*!pi/(nkx*dx)
 dky = 2*!pi/(nky*dy)
 rcm_lambda = 2*!pi/sqrt((dkx*rcm_ctr[0,*])^2+(dky*rcm_ctr[1,*])^2)
 rcm_theta = atan(dky*rcm_ctr[1,*],dkx*rcm_ctr[0,*])
-
-;;==Estimate uncertainty in centroid coordinates
-dev_xy = fltarr(2,time.nt)
-for it=0,time.nt-1 do $
-   dev_xy[*,it] = centroid_uncertainty(fdata[x0:xf-1,y0:yf-1,it], $
-                                       rcm_ctr[0,it],rcm_ctr[1,it], $
-                                       /prop_to_f)
-dev_x = dev_xy[0,*]
-dev_y = dev_xy[1,*]
 
 ;;==Calculate uncertainty in centroid angle
 dth_dx = fltarr(time.nt)
