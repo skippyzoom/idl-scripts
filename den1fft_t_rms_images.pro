@@ -10,6 +10,7 @@
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Get RMS times from available time steps
+;; rms_ind = get_rms_indices(path,time,/from_frm_indices,delta=4)
 rms_ind = get_rms_indices(path,time)
 rms_ind = transpose(rms_ind)
 n_rms = (size(rms_ind))[1]
@@ -31,8 +32,15 @@ for it=0,n_rms-1 do $
                                               str_rms_ind[it+n_rms], $
                                               'self_norm', $
                                               '20dB', $
-                                              'centroid', $
+                                              ;; 'centroid', $
+                                              'ctd_vd_chi', $
                                               'zoom'])
+
+;;==Calculate theoretical angles (comment to suppress plotting)
+;;  To suppress overlaying these angles on the FFT images, comment
+;;  them out or set them to !NULL after using them.
+vd_angle = fbfa_vd_angle(path)
+theta_opt = fbfa_chi_opt(path)+vd_angle
 
 ;;==Preserve raw FFT
 fdata = den1fft_t
@@ -191,30 +199,46 @@ if n_elements(rcm_theta) ne 0 then $
                                   theta_linestyle = 'solid_line')
 
 ;;==Add angle of drift velocity
-if perp_plane then $
-   for it=0,n_rms-1 do $
-      frm[it] = overlay_rtheta(frm[it], $
-                               r_overlay[0], $
-                               fbfa_vd_angle(path), $
-                               r_color = 'magenta', $
-                               r_thick = 2, $
-                               r_linestyle = 'none', $
-                               theta_color = 'magenta', $
-                               theta_thick = 2, $
-                               theta_linestyle = 'dot')
+if n_elements(vd_angle) ne 0 then $
+   if perp_plane then $
+      for it=0,n_rms-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  r_overlay[0], $
+                                  vd_angle, $
+                                  r_color = 'white', $
+                                  r_thick = 1, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'magenta', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
+
+;;==Add optimal flow angle
+if n_elements(theta_opt) ne 0 then $
+   if perp_plane then $
+      for it=0,n_rms-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  r_overlay[0], $
+                                  theta_opt, $
+                                  r_color = 'white', $
+                                  r_thick = 1, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'cyan', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
 
 ;;==Print wavelength and angle of centroid on image frame
-for it=0,n_rms-1 do $
-   txt = text(0.0,0.01, $
-              "Centroid $\lambda$ = "+ $
-              strcompress(string(rcm_lambda[it]),/remove_all)+ $
-              " m       "+ $
-              "Centroid $\theta$ = "+ $
-              strcompress(string(rcm_theta[it]/!dtor),/remove_all)+ $
-              " deg", $
-              target = frm[it], $
-              font_name = 'Times', $
-              font_size = 10.0)
+if n_elements(rcm_theta) ne 0 then $
+   for it=0,n_rms-1 do $
+      txt = text(0.0,0.01, $
+                 "Centroid $\lambda$ = "+ $
+                 strcompress(string(rcm_lambda[it]),/remove_all)+ $
+                 " m       "+ $
+                 "Centroid $\theta$ = "+ $
+                 strcompress(string(rcm_theta[it]/!dtor),/remove_all)+ $
+                 " deg", $
+                 target = frm[it], $
+                 font_name = 'Times', $
+                 font_size = 10.0)
 
 ;;==Find location of max pixel in growth image
 imax2d = array_indices(fdata_rms[x0:xf-1,y0:yf-1,0], $
@@ -248,6 +272,3 @@ for it=0,n_rms-1 do $
 ;;==Save individual images
 for it=0,n_rms-1 do $
    frame_save, frm[it],filename=filename[it]
-
-;;==Clear fdata
-;; fdata = !NULL

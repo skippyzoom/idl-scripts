@@ -35,8 +35,8 @@ fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 ;;  XBW and YBW are the bin widths. Setting either to 1 has the effect
 ;;  of skipping the sum in that dimension. Setting both to 1 causes
 ;;  bin_sum to return fdata untouched.
-xbw = 4
-ybw = 4
+xbw = 1
+ybw = 1
 x0b = x0/xbw
 xfb = xf/xbw
 nkxb = nkx/xbw

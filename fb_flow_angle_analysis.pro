@@ -28,40 +28,60 @@ efield_save_name = expand_path(path)+path_sep()+ $
                    'efield_'+axes+ $
                    '.sav'
 
-;;==All time steps from t0 to tf at subsample frequency
+;+
+; Build a reference time dictionary.
+; This can be useful for debugging or for using a lookup hash to build
+; a new time dictionary out of a subset of all available time
+; steps. There are a few options shown below, but the essential part
+; is an array of time steps to pass to time_strings.
+;-
+;;==Evenly spaced steps from T0 to TF at frequency SUBSAMPLE
 t0 = 0
 tf = params.nt_max
-;; subsample = 1
-subsample = params.nvsqr_out_subcycle1
+subsample = 1
+;; subsample = params.nvsqr_out_subcycle1
 if params.ndim_space eq 2 then subsample *= 8L
 timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
-
-;;==The zeroth time step, plus each quarter of the full run
+;;==Specific steps
 ;; timesteps = params.nout*[0, $
 ;;                          params.nt_max/4, $
 ;;                          params.nt_max/2, $
 ;;                          3*params.nt_max/4, $
 ;;                          params.nt_max-1]
-
-;;==Build the time dictionary
+;;==Construct dictionary
 time = time_strings(long(timesteps), $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
-if n_elements(subsample) ne 0 then time.subsample = subsample
+if n_elements(subsample) ne 0 then time.subsample = subsample $
+else time.subsample = 1
 
-;;==Compare 2-D to 3-D (debugging)
-if params.ndim_space eq 2 then time_2D = time
-if params.ndim_space eq 3 then time_3D = time
+;;==Preserve reference dictionary
+time_ref = time[*]
+if params.ndim_space eq 2 then time_2D = time_ref
+if params.ndim_space eq 3 then time_3D = time_ref
 
 ;+
-; Analyze moment files (domain000/moments*.out)
+; Analyze moment files (domain000/moments*.out).
+; This does not require a time dictionary because it always reads all
+; available steps.
 ;-
 ;; @analyze_moments
 
 ;+
 ; Make movies of den0 and den0fft_t
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = 1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -74,6 +94,17 @@ if params.ndim_space eq 3 then time_3D = time
 ;+
 ; Make movies of den1 and den1fft_t
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = 1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -84,32 +115,53 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @den1fft_t_movie
 
 ;+
-; Make single images of den0fft_t
+; Make single images of den0fft_t with centroid
 ;-
+;; timesteps = time_ref.subsample*params.nout*get_frm_indices(path,time_ref)
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
 ;; rotate = 0
 ;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;;    for it=0,(size(den0))[3]-1 do $
 ;;       den0[*,*,it] = rotate(den0[*,*,it],1)
 ;; @calc_den0fft_t
-;; @calc_den0fft_t_moments
+;; ;; @calc_den0fft_t_moments
 ;; @den0fft_t_images
 
 ;+
-; Make single images of den1fft_t
+; Make single images of den1fft_t with centroid
 ;-
+;; timesteps = time_ref.subsample*params.nout*get_frm_indices(path,time_ref)
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;;    for it=0,(size(den1))[3]-1 do $
 ;;       den1[*,*,it] = rotate(den1[*,*,it],1)
 ;; @calc_den1fft_t
-;; @calc_den1fft_t_moments
+;; ;; @calc_den1fft_t_moments
 ;; @den1fft_t_images
 
 ;+
 ; Make survey images of den0fft_t
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = params.nvsqr_out_subcycle1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -121,6 +173,17 @@ if params.ndim_space eq 3 then time_3D = time
 ;+
 ; Make survey images of den1fft_t
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = params.nvsqr_out_subcycle1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -130,32 +193,54 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @den1fft_t_survey
 
 ;+
-; Make images of den0fft_t with centroid
+; Make images and plots of RMS or full-time den0fft_t with centroid
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = 1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den0_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;;    for it=0,(size(den0))[3]-1 do $
 ;;       den0[*,*,it] = rotate(den0[*,*,it],1)
 ;; @calc_den0fft_t
-;; @calc_den0fft_t_rms_moments
-;; @den0fft_t_rms_images
 ;; ;; @calc_den0fft_t_moments
 ;; ;; @den0fft_t_rcm_theta_plot
+;; @calc_den0fft_t_rms_moments
+;; @den0fft_t_rms_images
 
 ;+
-; Make images of den1fft_t with centroid
+; Make images and plots of RMS or full-time den1fft_t with centroid
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = 1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ;;    for it=0,(size(den1))[3]-1 do $
 ;;       den1[*,*,it] = rotate(den1[*,*,it],1)
 ;; @calc_den1fft_t
-;; ;; @calc_den1fft_t_rms_moments
-;; ;; @den1fft_t_rms_images
-;; @calc_den1fft_t_moments
-;; @den1fft_t_rcm_theta_plot
+;; ;; @calc_den1fft_t_moments
+;; ;; @den1fft_t_rcm_theta_plot
+;; @calc_den1fft_t_rms_moments
+;; @den1fft_t_rms_images
 
 ;; modes = fftfreq(nx,dx)
 ;; lambda = 1.0/modes[1:nx/2]
@@ -163,6 +248,9 @@ if params.ndim_space eq 3 then time_3D = time
 ;; @calc_den1rmsktt
 ;; @calc_cg_den1rmsktt
 
+;+
+; ????????
+;-
 ;; @calc_den1fft_t
 ;; ;; @calc_den1fft_t_rms
 ;; ;; ;; @den1fft_t_rms_images
@@ -172,6 +260,17 @@ if params.ndim_space eq 3 then time_3D = time
 ;+
 ; Build den1ktt and save it
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = 1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; rotate = 0
 ;; @get_den1_plane
 ;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
@@ -190,10 +289,16 @@ if params.ndim_space eq 3 then time_3D = time
 ;; save, time,den1ktt, $
 ;;       filename=expand_path(path)+path_sep()+den1ktt_save_name
 
+;+
+; Restore den1ktt and make an image
+;-
 ;; restore, filename=expand_path(path)+path_sep()+den1ktt_save_name,/verbose
 ;; @calc_cg_den1ktt
 ;; @den1ktt_rms_images
 
+;+
+; ????????
+;-
 ;; @calc_denft1_w
 ;; theta = [-90,+90]*!dtor
 ;; @calc_denft1ktw
@@ -201,6 +306,7 @@ if params.ndim_space eq 3 then time_3D = time
 
 ;+
 ; Plot averaged temperatures (independent of axes)
+; These do not require a time dictionary.
 ;-
 ;; moments = read_moments(path=path)
 ;; @average_temperature_plot
@@ -208,6 +314,17 @@ if params.ndim_space eq 3 then time_3D = time
 ;+
 ; Build temp0 and save it
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = params.nvsqr_out_subcycle1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; @get_den0_plane
 ;; @get_fluxx0_plane
 ;; @get_fluxy0_plane
@@ -224,26 +341,37 @@ if params.ndim_space eq 3 then time_3D = time
 ; Calling get_den0_plane after restoring the save file ensures that
 ; get_den0_plane uses the appropriate time dictionary
 ;-
-restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav', $
-         /verbose
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(temp0))[3]-1 do $
-      temp0[*,*,it] = rotate(temp0[*,*,it],1)
-@get_den0_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den0))[3]-1 do $
-      den0[*,*,it] = rotate(den0[*,*,it],1)
-@den0_images
-;; @nT0_phase_plot
-;; @nT0_gen_phase_plot
-@calc_nT0_phase_quantities
-;; @nT0_rat_phase_survey
-;; @nT0_dif_phase_survey
-@nT0_rat_phase_images
+;; restore, filename=expand_path(path)+path_sep()+'temp0-'+axes+'.sav', $
+;;          /verbose
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(temp0))[3]-1 do $
+;;       temp0[*,*,it] = rotate(temp0[*,*,it],1)
+;; @get_den0_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den0))[3]-1 do $
+;;       den0[*,*,it] = rotate(den0[*,*,it],1)
+;; @den0_images
+;; ;; @nT0_phase_plot
+;; ;; @nT0_gen_phase_plot
+;; @calc_nT0_phase_quantities
+;; ;; @nT0_rat_phase_survey
+;; ;; @nT0_dif_phase_survey
+;; @nT0_rat_phase_images
 
 ;+
 ; Build temp1 and save it
 ;-
+;; t0 = 0
+;; tf = params.nt_max
+;; subsample = params.nvsqr_out_subcycle1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
 ;; @get_den1_plane
 ;; @get_fluxx1_plane
 ;; @get_fluxy1_plane
@@ -260,22 +388,22 @@ if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
 ; Calling get_den1_plane after restoring the save file ensures that
 ; get_den1_plane uses the appropriate time dictionary
 ;-
-restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
-         /verbose
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(temp1))[3]-1 do $
-      temp1[*,*,it] = rotate(temp1[*,*,it],1)
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-@den1_images
-;; @nT1_phase_plot
-;; @nT1_gen_phase_plot
-@calc_nT1_phase_quantities
-;; @nT1_rat_phase_survey
-;; @nT1_dif_phase_survey
-@nT1_rat_phase_images
+;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $
+;;          /verbose
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(temp1))[3]-1 do $
+;;       temp1[*,*,it] = rotate(temp1[*,*,it],1)
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @den1_images
+;; ;; @nT1_phase_plot
+;; ;; @nT1_gen_phase_plot
+;; @calc_nT1_phase_quantities
+;; ;; @nT1_rat_phase_survey
+;; ;; @nT1_dif_phase_survey
+;; @nT1_rat_phase_images
 
 ;; rotate = 0
 ;; restore, filename=expand_path(path)+path_sep()+'temp1-'+axes+'.sav', $

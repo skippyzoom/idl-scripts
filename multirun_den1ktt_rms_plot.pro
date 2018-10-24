@@ -64,7 +64,9 @@ xtickname = strcompress(xtickname,/remove_all)
 for is=0,ns-1 do $
    for ir=0,nr-1 do $
       frm = plot(timesteps[0:mr_nt[ir]-1], $
-                 (mr_kttrms[is])[run[ir],it0:*]/ $
+                 ;; (mr_kttrms[is])[run[ir],it0:*]/ $
+                 ;; (mr_kttrms[is])[run[ir],it0], $
+                 (mr_kttrms[is])[run[ir]]/ $
                  (mr_kttrms[is])[run[ir],it0], $
                  ;; (mr_kttrms[is])[run[ir],it0:*]/max_it0, $
                  ;; (mr_kttrms[is])[run[ir],it0:*]/max_val[is,ir], $
@@ -74,16 +76,18 @@ for is=0,ns-1 do $
                  xtitle = 'Time [ms]', $
                  ytitle = '$\langle P(\delta n)\rangle/P(n_I)$', $
                  /ylog, $
-                 yrange = [1e0,1e3], $
-                 ;; yrange = [1e0,1e1], $
+                 ;; yrange = [1e0,1e3], $
+                 yrange = [1e0,1e1], $
                  ystyle = 0, $
                  color = color[ir], $
                  ;; linestyle = linestyle[ir], $
                  linestyle = is, $
-                 xmajor = xmajor, $
-                 xminor = 4, $
-                 xtickvalues = xtickvalues, $
+                 ;; xmajor = xmajor, $
+                 ;; xtickvalues = xtickvalues, $
                  ;; xtickname = xtickname, $
+                 xmajor = 6, $
+                 xminor = 3, $
+                 xtickvalues = [20,40,60,80,100], $
                  xtickfont_size = 16.0, $
                  ytickfont_size = 16.0, $
                  xticklen = 0.04, $

@@ -9,28 +9,30 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-;;==Get frame indices
-frm_ind = get_frm_indices(path,time)
-
-;;==Get the number of time steps
-n_frm = n_elements(frm_ind)
-
 ;;==Declare file name(s)
 filepath = expand_path(path)+path_sep()+'frames'
-str_step = strcompress(time.index[frm_ind])
-filename = strarr(n_frm)
-for it=0,n_frm-1 do $
+str_step = strcompress(time.index)
+filename = strarr(time.nt)
+for it=0,time.nt-1 do $
    filename[it] = build_filename('den0fft_t',frame_type, $
                                  path = filepath, $
                                  additions = [axes, $
                                               str_step[it], $
                                               'self_norm', $
                                               '20dB', $
-                                              'centroid', $
+                                              ;; 'centroid', $
+                                              ;; 'no_cntrd', $
+                                              'DO2004_angles', $
                                               'zoom'])
 
-;;==Preserve raw FFT
-fdata = den0fft_t[*,*,frm_ind]
+;;==Calculate theoretical angles (comment to suppress plotting)
+;;  To suppress overlaying these angles on the FFT images, comment
+;;  them out or set them to !NULL after using them.
+vd_angle = fbfa_vd_angle(path)
+theta_opt = fbfa_chi_opt(path)+vd_angle
+
+;;==Preserve raw data
+fdata = den0fft_t
 
 ;;==Get dimensions
 fsize = size(fdata)
@@ -63,7 +65,7 @@ fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
 
 ;;==Normalize to 0 (i.e., logarithm of 1)
 ;; fdata -= max(fdata)
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    fdata[*,*,it] -= max(fdata[*,*,it])
 
 ;;==Set up kx and ky vectors
@@ -78,10 +80,10 @@ yrange = perp_plane ? [-!pi,+!pi] : [0,+2*!pi]
 xminor = perp_plane ? 3 : 1
 
 ;;==Declare an array of image handles
-frm = objarr(n_frm)
+frm = objarr(time.nt)
 
 ;;==Create image frames
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    frm[it] = image(fdata[x0:xf-1,y0:yf-1,it], $
                    kxdata[x0:xf-1],kydata[y0:yf-1], $
                    min_value = -20, $
@@ -112,7 +114,7 @@ for it=0,n_frm-1 do $
                    /buffer)
 
 ;;==Add a colorbar to each image
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    clr = colorbar(target = frm[it], $
                   title = '$P(\delta n/n_I)$', $
                   major = 5, $
@@ -128,7 +130,7 @@ for it=0,n_frm-1 do $
 r_overlay = 2*!pi/(1+findgen(10))
 theta_overlay = 10*findgen(36)
 if perp_plane then $
-   for it=0,n_frm-1 do $
+   for it=0,time.nt-1 do $
       frm[it] = overlay_rtheta(frm[it], $
                                r_overlay, $
                                theta_overlay, $
@@ -143,10 +145,10 @@ if perp_plane then $
 ;;==Add angle of centroid
 if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
-      for it=0,n_frm-1 do $
+      for it=0,time.nt-1 do $
          frm[it] = overlay_rtheta(frm[it], $
                                   r_overlay[0], $
-                                  rcm_theta[frm_ind[it]], $
+                                  rcm_theta[it], $
                                   r_color = 'white', $
                                   r_thick = 2, $
                                   r_linestyle = 'none', $
@@ -157,11 +159,11 @@ if n_elements(rcm_theta) ne 0 then $
 ;;==Add lines at +/- one standard deviation of centroid
 if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
-      for it=0,n_frm-1 do $
+      for it=0,time.nt-1 do $
          frm[it] = overlay_rtheta(frm[it], $
                                   r_overlay[0], $
-                                  rcm_theta[frm_ind[it]]+ $
-                                  dev_rcm_theta[frm_ind[it]], $
+                                  rcm_theta[it]+ $
+                                  dev_rcm_theta[it], $
                                   r_color = 'white', $
                                   r_thick = 2, $
                                   r_linestyle = 'none', $
@@ -170,11 +172,11 @@ if n_elements(rcm_theta) ne 0 then $
                                   theta_linestyle = 'solid_line')
 if n_elements(rcm_theta) ne 0 then $
    if perp_plane then $
-      for it=0,n_frm-1 do $
+      for it=0,time.nt-1 do $
          frm[it] = overlay_rtheta(frm[it], $
                                   r_overlay[0], $
-                                  rcm_theta[frm_ind[it]]- $
-                                  dev_rcm_theta[frm_ind[it]], $
+                                  rcm_theta[it]- $
+                                  dev_rcm_theta[it], $
                                   r_color = 'white', $
                                   r_thick = 2, $
                                   r_linestyle = 'none', $
@@ -183,33 +185,49 @@ if n_elements(rcm_theta) ne 0 then $
                                   theta_linestyle = 'solid_line')
 
 ;;==Add angle of drift velocity
-if perp_plane then $
-   for it=0,n_frm-1 do $
-      frm[it] = overlay_rtheta(frm[it], $
-                               r_overlay[0], $
-                               fbfa_vd_angle(path), $
-                               r_color = 'magenta', $
-                               r_thick = 2, $
-                               r_linestyle = 'none', $
-                               theta_color = 'magenta', $
-                               theta_thick = 2, $
-                               theta_linestyle = 'dot')
+if n_elements(vd_angle) ne 0 then $
+   if perp_plane then $
+      for it=0,time.nt-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  r_overlay[0], $
+                                  vd_angle, $
+                                  r_color = 'white', $
+                                  r_thick = 1, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'magenta', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
+
+;;==Add optimal flow angle
+if n_elements(theta_opt) ne 0 then $
+   if perp_plane then $
+      for it=0,time.nt-1 do $
+         frm[it] = overlay_rtheta(frm[it], $
+                                  r_overlay[0], $
+                                  theta_opt, $
+                                  r_color = 'white', $
+                                  r_thick = 1, $
+                                  r_linestyle = 'none', $
+                                  theta_color = 'cyan', $
+                                  theta_thick = 2, $
+                                  theta_linestyle = 'solid_line')
 
 ;;==Print wavelength and angle of centroid on image frame
-for it=0,n_frm-1 do $
-   txt = text(0.0,0.01, $
-              "Centroid $\lambda$ = "+ $
-              strcompress(string(rcm_lambda[frm_ind[it]]),/remove_all)+ $
-              " m       "+ $
-              "Centroid $\theta$ = "+ $
-              strcompress(string(rcm_theta[frm_ind[it]]/!dtor),/remove_all)+ $
-              " deg", $
-              target = frm[it], $
-              font_name = 'Times', $
-              font_size = 10.0)
+if n_elements(rcm_theta) ne 0 then $
+   for it=0,time.nt-1 do $
+      txt = text(0.0,0.01, $
+                 "Centroid $\lambda$ = "+ $
+                 strcompress(string(rcm_lambda[it]),/remove_all)+ $
+                 " m       "+ $
+                 "Centroid $\theta$ = "+ $
+                 strcompress(string(rcm_theta[it]/!dtor),/remove_all)+ $
+                 " deg", $
+                 target = frm[it], $
+                 font_name = 'Times', $
+                 font_size = 10.0)
 
 ;;==Add a path label
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    txt = text(0.0,0.90, $
               path, $
               target = frm[it], $
@@ -217,5 +235,5 @@ for it=0,n_frm-1 do $
               font_size = 10.0)
 
 ;;==Save individual images
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    frame_save, frm[it],filename=filename[it]
