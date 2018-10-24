@@ -10,16 +10,19 @@ if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 nkx = 256
 nky = 256
 
+;;==Declare angle parameter for ratio calculation
+angle = 'theta'
+
 ;;==Get run parameters
 params = set_eppic_params(path=path)
 dx = params.dx*params.nout_avg
 dy = params.dy*params.nout_avg
 
 ;;==Compute the ratio magnitude and phase
-rat = fbfa_do2004_eqn40(path,nkx=nky,nky=nkx)
+rat = fbfa_do2004_eqn40(path,nkx=nky,nky=nkx,/double,angle=angle)
 mag = sqrt(rat.re^2+rat.im^2)
 mag[where(~finite(mag))] = min(mag)
-pha = atan(rat.im/rat.re)
+pha = atan(rat.im,rat.re)
 pha[where(~finite(pha))] = 0.0
 
 ;;==Construct k-space vectors
@@ -32,16 +35,24 @@ kyvec = shift(kyvec,nky/2-1)
 filepath = expand_path(path)+path_sep()+'frames'
 filename = build_filename('den1_temp1_DO2004_eqn40',frame_type, $
                           path = filepath, $
-                          additions = axes)
+                          additions = [axes,angle])
 
 ;;==Declare an array of image handles
 frm = objarr(2)
+
+;;==Set common graphics parameters
+xrange = [-2*!pi,+2*!pi]
+yrange = [-2*!pi,+2*!pi]
 
 ;;==Create image frames
 frm[0] = image(alog10(mag),kxvec,kyvec, $
                rgb_table = 53, $
                axis_style = 1, $
                position = [0.10,0.50,0.40,0.80], $
+               min_value = -3, $
+               max_value = 0, $
+               xrange = xrange, $
+               yrange = yrange, $
                xmajor = 5, $
                xminor = 1, $
                ymajor = 5, $
@@ -53,12 +64,12 @@ frm[0] = image(alog10(mag),kxvec,kyvec, $
                xtickdir = 1, $
                ytickdir = 1, $
                font_name = 'Times', $
-               font_size = 14.0, $
+               font_size = 10.0, $
                /buffer)
 
 clr = colorbar(target = frm[0], $
-               title = '$log_10(|\tau_i/\eta_i|)$', $
-               major = 5, $
+               title = '$log_{10}|\tau_i/\eta_i|$', $
+               major = 4, $
                minor = 1, $
                orientation = 1, $
                textpos = 1, $
@@ -67,11 +78,15 @@ clr = colorbar(target = frm[0], $
                font_name = 'Times', $
                hide = 0)
 
-ct = get_custom_ct(1)
-frm[1] = image(pha,kxvec,kyvec, $
-               rgb_table = [[ct.r],[ct.r],[ct.b]], $
+ct = get_custom_ct(2)
+frm[1] = image(pha/!dtor,kxvec,kyvec, $
+               rgb_table = [[ct.r],[ct.g],[ct.b]], $
                axis_style = 1, $
                position = [0.10,0.10,0.40,0.40], $
+               min_value = -180, $
+               max_value = +180, $
+               xrange = xrange, $
+               yrange = yrange, $
                xmajor = 5, $
                xminor = 1, $
                ymajor = 5, $
@@ -83,11 +98,11 @@ frm[1] = image(pha,kxvec,kyvec, $
                xtickdir = 1, $
                ytickdir = 1, $
                font_name = 'Times', $
-               font_size = 14.0, $
+               font_size = 10.0, $
                /current)
 
-clr = colorbar(target = frm[0], $
-               title = '$arg^{-1}(|\tau_i/\eta_i|)$', $
+clr = colorbar(target = frm[1], $
+               title = '$arg(\tau_i/\eta_i)$', $
                major = 5, $
                minor = 1, $
                orientation = 1, $

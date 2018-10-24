@@ -312,6 +312,12 @@ if params.ndim_space eq 3 then time_3D = time_ref
 ;; @average_temperature_plot
 
 ;+
+; Make images of theoretical temperature/density ratio given by
+; Equation 40 in Dimant & Oppenheim (2004)
+;-
+@fbfa_do2004_eqn40_images
+
+;+
 ; Build temp0 and save it
 ;-
 ;; t0 = 0
