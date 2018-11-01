@@ -20,9 +20,7 @@ for it=0,time.nt-1 do $
                                               str_step[it], $
                                               'self_norm', $
                                               '20dB', $
-                                              ;; 'centroid', $
-                                              ;; 'no_cntrd', $
-                                              'DO2004_angles', $
+                                              'vd_chi', $
                                               'zoom'])
 
 ;;==Calculate theoretical angles (comment to suppress plotting)
@@ -116,7 +114,7 @@ for it=0,time.nt-1 do $
 ;;==Add a colorbar to each image
 for it=0,time.nt-1 do $
    clr = colorbar(target = frm[it], $
-                  title = '$P(\delta n/n_I)$', $
+                  title = '$P(\delta n/n_I)$ [dB]', $
                   major = 5, $
                   minor = 4, $
                   orientation = 1, $

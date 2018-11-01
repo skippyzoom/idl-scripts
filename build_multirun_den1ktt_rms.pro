@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/'
 
 ;;==Declare name of save file
 den1ktt_save_name = build_filename('den1ktt','sav', $
@@ -19,15 +19,15 @@ lam_lo = list(1.0,10.0)
 lam_hi = list(4.0,!NULL)
 
 ;;==Declare runs
-run = ['h0-Ey0_030-full_output', $
-       'h1-Ey0_030-full_output', $
-       'h2-Ey0_030-full_output']
-;; run = ['h0-Ey0_050-full_output', $
-;;        'h1-Ey0_050-full_output', $
-;;        'h2-Ey0_050-full_output']
-;; run = ['h0-Ey0_070-full_output', $
-;;        'h1-Ey0_070-full_output', $
-;;        'h2-Ey0_070-full_output']
+;; run = ['h0-Ey0_030', $
+;;        'h1-Ey0_030', $
+;;        'h2-Ey0_030']
+;; run = ['h0-Ey0_050', $
+;;        'h1-Ey0_050', $
+;;        'h2-Ey0_050']
+run = ['h0-Ey0_070', $
+       'h1-Ey0_070', $
+       'h2-Ey0_070']
 nr = n_elements(run)
 
 ;;==Declare note to append to filenames

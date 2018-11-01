@@ -15,6 +15,7 @@ delvar, $
    data_isft, $
    ranges, $
    time, $
+   time_ref, $
    frame, $
    img, $
    clr, $

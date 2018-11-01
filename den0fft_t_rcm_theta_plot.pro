@@ -9,9 +9,13 @@
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Declare file name
+if n_elements(bw) ne 0 then $
+   str_bw = 'bw'+strcompress(bw,/remove_all) $
+else str_bw = ''
 filepath = expand_path(path)+path_sep()+'frames'
 filename = build_filename('den0fft_t_rcm_theta',frame_type, $
-                          path = filepath)
+                          path = filepath, $
+                          additions = str_bw)
 
 ;;==Create plot frame
 frm = plot(float(time.stamp), $

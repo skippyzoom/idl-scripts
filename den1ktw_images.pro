@@ -8,34 +8,42 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-;;==Get wavelength keys
-lambda = den1ktw.keys()
+;; ;;==Get wavelength keys
+;; lambda = den1ktw.keys()
 
-;;==Sort wavelength keys from smallest to largest
-lambda = lambda.sort()
+;; ;;==Sort wavelength list from smallest to largest
+;; if isa(lambda,'list') then lambda = lambda.sort()
 
-;;==Declare file names (one for each wavelength)
-filename = expand_path(path)+path_sep()+ $
-           'frames'+path_sep()+ $
-           'den1ktw-'+lambda.toarray()+'m'+ $
-           ;; '-shift'+ $
-           '-second_half'+ $
-           ;; '-first_half'+ $
-           '-norm_max'+ $
-           '-vph'+ $
-           '.'+get_extension(frame_type)
+;;==Get wavelength keys from smallest to largest
+if n_elements(lambda) eq 0 then lambda = (den1ktw.keys()).sort()
 
-;;==Get effective time step
-;;  This will differ from params.dt*params.nout in cases when the main
-;;  script imported data at a sample rate > 1. It assumes a uniform
-;;  sample rate.
-dt = params.dt* $
-     (long(time.index[1])-long(time.index[0]))
-wdata = 2*!pi*fftfreq(nw,dt)
-wdata = shift(wdata,nw/2-1)
+;;==Convert list to string array, if necessary
+if isa(lambda,'list') then lambda = lambda.toarray()
 
 ;;==Get number of wavelengths
 nl = n_elements(lambda)
+
+;;==Declare file names (one for each wavelength)
+filepath = expand_path(path)+path_sep()+'frames'
+if isa(lambda,'string') then str_lambda = lambda $
+else str_lambda = string(float(lambda),format='(f5.1)')
+str_lambda = strcompress(str_lambda,/remove_all)
+filename = strarr(nl)
+for il=0,nl-1 do $
+   filename[il] = build_filename('den1ktw',frame_type, $
+                                 path = filepath, $
+                                 additions = [str_lambda[il], $
+                                              'second_half', $
+                                              ;; 'full_time', $
+                                              'norm_max', $
+                                              'vph'])
+
+;;==Get effective time step
+dt = params.dt*params.nout*time.subsample
+
+;;==Create frequency vector
+wdata = 2*!pi*fftfreq(nw,dt)
+wdata = shift(wdata,nw/2-1)
 
 ;;==Create an array of plot objects
 frm = objarr(nl)
@@ -69,7 +77,7 @@ for il=0,nl-1 do $
                    max_value = 0, $
                    rgb_table = 39, $
                    axis_style = 1, $
-                   title = lambda[il]+' m', $
+                   title = str_lambda[il]+' m', $
                    xtitle = 'Zenith Angle [deg].', $
                    ytitle = '$V_{ph}$ [m/s]', $
                    xstyle = 1, $
@@ -78,17 +86,19 @@ for il=0,nl-1 do $
                    ytickdir = 1, $
                    xticklen = xticklen, $
                    yticklen = xticklen/xy_scale, $
-                   xrange = trange, $
+                   ;; xrange = trange, $
                    ;; yrange = [-1.2e3,+1.2e3], $
-                   yrange = ([[-500,+500], $
-                              [-800,+800], $
-                              [-800,+800]])[*,il], $
+                   yrange = [-2e3,+2e3], $
+                   ;; yrange = ([[-500,+500], $
+                   ;;            [-800,+800], $
+                   ;;            [-800,+800]])[*,il], $
                    xmajor = xmajor, $
                    xminor = xminor, $
                    ymajor = 5, $
-                   yminor = ([4,7,7])[il], $
-                   xtickvalues = xtickvalues, $
-                   xtickname = xtickname, $
+                   ;; yminor = ([4,7,7])[il], $
+                   yminor = 4, $
+                   ;; xtickvalues = xtickvalues, $
+                   ;; xtickname = xtickname, $
                    xshowtext = 1, $
                    yshowtext = 1, $
                    font_name = 'Times', $

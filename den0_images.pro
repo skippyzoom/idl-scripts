@@ -8,24 +8,18 @@
 ;;==Set default frame type
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
-;;==Get frame indices
-frm_ind = get_frm_indices(path,time)
-
-;;==Get the number of time steps
-n_frm = n_elements(frm_ind)
-
 ;;==Declare file name(s)
 filepath = expand_path(path)+path_sep()+'frames'
-str_step = strcompress(time.index[frm_ind])
-filename = strarr(n_frm)
-for it=0,n_frm-1 do $
+str_step = strcompress(time.index)
+filename = strarr(time.nt)
+for it=0,time.nt-1 do $
    filename[it] = build_filename('den0',frame_type, $
                                  path = filepath, $
                                  additions = [axes, $
                                               str_step[it]])
 
 ;;==Preserve raw data
-fdata = den0[*,*,frm_ind]
+fdata = den0
 
 ;;==Get dimensions
 fsize = size(fdata)
@@ -47,10 +41,10 @@ fdata = smooth(fdata,sw,/edge_wrap)
 data_aspect = float(yf-y0)/(xf-x0)
 
 ;;==Declare an array of image handles
-frm = objarr(n_frm)
+frm = objarr(time.nt)
 
 ;;==Create image frames
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    frm[it] = image(fdata[x0:xf-1,y0:yf-1,it], $
                    xdata[x0:xf-1],ydata[y0:yf-1], $
                    ;; min_value = -max(abs(fdata[*,*,1:*])), $
@@ -79,7 +73,7 @@ for it=0,n_frm-1 do $
                    /buffer)
 
 ;;==Add a colorbar to each image
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    clr = colorbar(target = frm[it], $
                   title = '$\delta n/n_0$', $
                   major = 11, $
@@ -92,7 +86,7 @@ for it=0,n_frm-1 do $
                   hide = 0)
 
 ;;==Add a box
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    ply = polygon(dx*[nx/2-128,nx/2+128,nx/2+128,nx/2-128], $
                  dy*[ny/2-128,ny/2-128,ny/2+128,ny/2+128], $
                  /data, $
@@ -104,7 +98,7 @@ for it=0,n_frm-1 do $
                  hide = 1)
 
 ;;==Add a path label
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    txt = text(0.0,0.90, $
               path, $
               target = frm[it], $
@@ -112,5 +106,5 @@ for it=0,n_frm-1 do $
               font_size = 10.0)
 
 ;;==Save individual images
-for it=0,n_frm-1 do $
+for it=0,time.nt-1 do $
    frame_save, frm[it],filename=filename[it]

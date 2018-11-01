@@ -20,6 +20,9 @@ if time.haskey('subsample') then subsample = time.subsample $
 else subsample = 1
 
 ;;==Declare file name(s)
+if n_elements(bw) ne 0 then $
+   str_bw = 'bw'+strcompress(bw,/remove_all) $
+else str_bw = ''
 str_rms_ind = string(rms_ind*params.nout*subsample, $
                      format='(i06)')
 filename = strarr(n_rms)
@@ -32,7 +35,7 @@ for it=0,n_rms-1 do $
                                               str_rms_ind[it+n_rms], $
                                               'self_norm', $
                                               '20dB', $
-                                              ;; 'centroid', $
+                                              str_bw, $
                                               'ctd_vd_chi', $
                                               'zoom'])
 
@@ -132,7 +135,7 @@ for it=0,n_rms-1 do $
 ;;==Add a colorbar to each image
 for it=0,n_rms-1 do $
    clr = colorbar(target = frm[it], $
-                  title = '$P(\delta n/n_I)$', $
+                  title = '$P(\delta n/n_I)$ [dB]', $
                   major = 1+(frm[it].max_value-frm[it].min_value)/5, $
                   minor = 3, $
                   orientation = 1, $
