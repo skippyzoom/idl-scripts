@@ -43,20 +43,19 @@ fdata_rms[nkx/2-dc_width.xn:nkx/2+dc_width.xp, $
 fdata_rms[where(~finite(fdata_rms))] = min(fdata_rms[where(finite(fdata_rms))])
 
 ;;==Optionally sum bins to improve variance
-;;  XBW and YBW are the bin widths. Setting either to 1 has the effect
-;;  of skipping the sum in that dimension. Setting both to 1 causes
-;;  bin_sum to return fdata untouched.
-xbw = 1
-ybw = 1
-x0b = x0/xbw
-xfb = xf/xbw
-nkxb = nkx/xbw
-y0b = y0/ybw
-yfb = yf/ybw
-nkyb = nky/ybw
+;;  BW is the bin width. Setting it to 1 causes bin_sum to return
+;;  fdata untouched. The function bin_sum.pro accepts different bin
+;;  widths in each direction but that doesn't make sense here.
+bw = 1
+x0b = x0/bw
+xfb = xf/bw
+nkxb = nkx/bw
+y0b = y0/bw
+yfb = yf/bw
+nkyb = nky/bw
 fdata_b = fltarr(nkxb,nkyb,n_rms)
 for it=0,n_rms-1 do $
-   fdata_b[*,*,it] = bin_sum(fdata_rms[*,*,it],ybw,xbw)
+   fdata_b[*,*,it] = bin_sum(fdata_rms[*,*,it],bw,bw)
 
 ;;==Find centroid and variance of each image
 im = list()
@@ -69,7 +68,7 @@ for it=0,n_rms-1 do $
 ;;==Extract centroids and correct for binning
 rcm = fltarr(2,n_rms)
 for it=0,n_rms-1 do $
-   rcm[*,it] = im[it].centroid*[xbw,ybw]+[xbw/2,ybw/2]
+   rcm[*,it] = im[it].centroid*[bw,bw]+[bw/2,bw/2]
 
 ;;==Extract variance
 vcm = fltarr(2,n_rms)
@@ -85,11 +84,11 @@ for it=0,n_rms-1 do $
 dev_xy = fltarr(2,n_rms)
 for it=0,n_rms-1 do $
    dev_xy[*,it] = centroid_uncertainty(fdata_b[x0b:xfb-1,y0b:yfb-1,it], $
-                                       rcm_ctr[0,it]/xbw, $
-                                       rcm_ctr[1,it]/ybw, $
+                                       rcm_ctr[0,it]/bw, $
+                                       rcm_ctr[1,it]/bw, $
                                        /prop_to_f)
-dev_x = dev_xy[0,*]/sqrt(xbw)
-dev_y = dev_xy[1,*]/sqrt(ybw)
+dev_x = dev_xy[0,*]/sqrt(bw)
+dev_y = dev_xy[1,*]/sqrt(bw)
 
 ;;==Compute absolute coordinates
 rcm_abs = fltarr(2,n_rms)
