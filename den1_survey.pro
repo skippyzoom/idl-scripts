@@ -1,5 +1,5 @@
 ;+
-; Script for making survey images from calc_den0fft_t
+; Script for making survey images from den1
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------
@@ -8,12 +8,9 @@
 ;;==Declare file name
 ;;  Multi-paging only works with .pdf and .gif
 filepath = expand_path(path)+path_sep()+'frames'
-filename = build_filename('den0fft_t','pdf', $
+filename = build_filename('den1','pdf', $
                           path = filepath, $
                           additions = [axes, $
-                                       'self_norm', $
-                                       '20dB', $
-                                       'zoom', $
                                        'single_page', $
                                        'survey'])
 
@@ -41,73 +38,36 @@ position = multi_position(nc*nr, $
                           edges = [0.1,0.1,0.9,0.9], $
                           buffer = [-0.15,0.01])
 
-;;==Preserve raw FFT
-fdata = den0fft_t
-
 ;;==Get dimensions
-fsize = size(fdata)
-nkx = fsize[1]
-nky = fsize[2]
+fsize = size(den1)
+nx = fsize[1]
+ny = fsize[2]
 
 ;;==Declare image ranges
-x0 = params.ndim_space eq 2 ? nkx/2-nkx/8 : nkx/2-nkx/4
-xf = params.ndim_space eq 2 ? nkx/2+nkx/8 : nkx/2+nkx/4
-y0 = params.ndim_space eq 2 ? nky/2-nky/8 : nky/2-nky/4
-yf = params.ndim_space eq 2 ? nky/2+nky/8 : nky/2+nky/4
-
-;;==Convert complex FFT to its magnitude
-fdata = abs(fdata)
-
-;;==Shift FFT
-fdata = shift(fdata,nkx/2,nky/2,0)
-
-;;==Suppress lowest frequencies
-dc_width = {xn:0, xp:0, $
-            yn:0, yp:0}
-fdata[nkx/2-dc_width.xn:nkx/2+dc_width.xp, $
-      nky/2-dc_width.yn:nky/2+dc_width.yp,*] = min(fdata)
-
-;;==Covert to decibels
-fdata = 10*alog10(fdata^2)
-
-;;==Set non-finite values to smallest finite value
-fdata[where(~finite(fdata))] = min(fdata[where(finite(fdata))])
-
-;;==Normalize to 0 (i.e., logarithm of 1)
-;; fdata -= max(fdata)
-for it=0,time.nt-1 do $
-   fdata[*,*,it] -= max(fdata[*,*,it])
-
-;;==Set up kx and ky vectors
-kxdata = 2*!pi*fftfreq(nkx,dx)
-kxdata = shift(kxdata,nkx/2)
-kydata = 2*!pi*fftfreq(nky,dy)
-kydata = shift(kydata,nky/2)
-
-;;==Declare an array of image handles
-frm = objarr(n_per_page)
+x0 = 0
+xf = nx
+y0 = 0
+yf = ny
 
 ;;==Create survey frame
 frm = objarr(n_pages,n_per_page)
 for it=0,n_mask-1 do $
    frm[(it/n_per_page), $
-       (it mod n_per_page)] = image(fdata[x0:xf-1,y0:yf-1,ind_mask[it]], $
-                                    kxdata[x0:xf-1],kydata[y0:yf-1], $
+       (it mod n_per_page)] = image(den1[x0:xf-1,y0:yf-1,ind_mask[it]], $
+                                    xdata[x0:xf-1],ydata[y0:yf-1], $
                                     axis_style = 1, $
-                                    min_value = -20, $
-                                    max_value = 0, $
-                                    rgb_table = 39, $
+                                    min_value = -0.2, $
+                                    max_value = +0.2, $
+                                    rgb_table = 5, $
                                     position = position[*,it mod n_per_page], $
                                     xtickdir = 1, $
                                     ytickdir = 1, $
-                                    xminor = 1, $
-                                    yminor = 1, $
                                     xticklen = 0.02, $
                                     yticklen = 0.02, $
-                                    xtickvalues = [-2*!pi,0,+2*!pi], $
-                                    ytickvalues = [-2*!pi,0,+2*!pi], $
-                                    xtickname = ['$-2\pi$','0','$+2\pi$'], $
-                                    ytickname = ['$-2\pi$','0','$+2\pi$'], $
+                                    xtickvalues = dx*[0,nx/2,nx], $
+                                    ytickvalues = dy*[0,nx/2,nx], $
+                                    xtickname = ['','$L_x/2$','$L_x$'], $
+                                    ytickname = ['','$L_y/2$','$L_y$'], $
                                     font_name = 'Times', $
                                     font_size = 10.0, $
                                     xshowtext = (((it mod n_per_page)  /  nc) $
@@ -120,9 +80,9 @@ for it=0,n_mask-1 do $
 ;;==Add global color bar
 for ip=0,n_pages-1 do $
    clr = colorbar(target = frm[ip,0], $
-                  title = '$P(\delta n_i/n_I)$ [dB]', $
+                  title = '$\delta n_i/n_0$', $
                   major = 5, $
-                  minor = 4, $
+                  minor = 3, $
                   orientation = 1, $
                   textpos = 1, $
                   position = [0.90,0.20,0.91,0.80], $
@@ -132,7 +92,7 @@ for ip=0,n_pages-1 do $
 
 ;;==Add time stamp on each panel
 for it=0,n_mask-1 do $
-   txt = text(kxdata[x0],kydata[yf-1], $
+   txt = text(xdata[x0],ydata[yf-1], $
               time.stamp[ind_mask[it]], $
               /data, $
               vertical_alignment = 1.0, $
