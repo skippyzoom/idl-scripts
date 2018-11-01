@@ -11,7 +11,7 @@ fsize = size(den1)
 ;;==Declare dimensions of full FFT array
 nkx = fsize[1]
 nky = fsize[2]
-nw = next_power2(fsize[3])
+nw = max([512,next_power2(fsize[3])])
 
 ;;==Set up full FFT array (may be padded)
 den1fft_w = complexarr(nkx,nky,nw)
