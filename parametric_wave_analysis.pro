@@ -34,13 +34,13 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; Equally spaced time steps at a subsample frequency given relative
 ;; to params.nout, in the range [t0,tf)
 ;;-----------------------------------------------------------------------------
-;; ;; t0 = params.nt_max/2
-;; ;; tf = params.nt_max
-;; t0 = 0
+;; t0 = params.nt_max/2
 ;; tf = params.nt_max
-;; subsample = 2
-;; ;; subsample = nt_max/8
-;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+t0 = 0
+tf = params.nt_max
+subsample = 1
+;; subsample = nt_max/8
+timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
 
 ;;-----------------------------------------------------------------------------
 ;; First and last output time steps
@@ -92,8 +92,8 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;; An array of 'nt' time steps, equally spaced at the output frequency
 ;; of this EPPIC run
 ;;-----------------------------------------------------------------------------
-nt = 5
-timesteps = params.nout*lindgen(nt)
+;; nt = 5
+;; timesteps = params.nout*lindgen(nt)
 
 ;;==Create time struct
 time = time_strings(timesteps, $
@@ -106,11 +106,12 @@ time = time_strings(timesteps, $
 ;; @get_den1_plane
 ;; data_shift = [nx/4,0,0]
 ;; den1 = shift(den1,data_shift)
-;; ;; den1 = params.n0d1*(1 + den1)
+;; den1 = params.n0d1*(1 + den1)
 ;; for it=0,n_elements(time.index)-1 do $
 ;;    den1[*,*,it] = high_pass_filter(den1[*,*,it], $
 ;;                                    100, $
 ;;                                    dx=dx,dy=dy)
+;; @den1_movie
 
 ;; @calc_den1fft_t
 ;; @den1fft_t_images
@@ -257,11 +258,14 @@ time = time_strings(timesteps, $
 ;; @get_efield_plane
 ;; save, time,efield,filename=efield_save_name
 
-;; @get_efield_plane
+@get_efield_plane
 ;; @build_efield_components
-;; data_shift = [nx/4,0,0]
-;; Ex = shift(Ex,data_shift)
-;; Ey = shift(Ey,data_shift)
+Ex = efield.x
+Ey = efield.y
+delvar, efield
+data_shift = [nx/4,0,0]
+Ex = shift(Ex,data_shift)
+Ey = shift(Ey,data_shift)
 ;; Er = shift(Er,data_shift)
 ;; Et = shift(Et,data_shift)
 
@@ -329,29 +333,29 @@ time = time_strings(timesteps, $
 ;; save, time,Erktt, $
 ;;       filename=expand_path(path)+path_sep()+Erktt_save_name
 
-@get_den1_plane
-@get_fluxx1_plane
-@get_fluxy1_plane
-@get_fluxz1_plane
-@get_nvsqrx1_plane
-@get_nvsqry1_plane
-@get_nvsqrz1_plane
+;; @get_den1_plane
+;; @get_fluxx1_plane
+;; @get_fluxy1_plane
+;; @get_fluxz1_plane
+;; @get_nvsqrx1_plane
+;; @get_nvsqry1_plane
+;; @get_nvsqrz1_plane
 
-if n_elements(nx) ne 0 then data_shift = [nx/4,0,0]
-@shift_dist1_data
-@fix_parametric_wave_defects
+;; if n_elements(nx) ne 0 then data_shift = [nx/4,0,0]
+;; @shift_dist1_data
+;; @fix_parametric_wave_defects
 
 ;; @calc_fluxx1fft_t
 ;; @fluxx1fft_t_images
 ;; @calc_fluxy1fft_t
 ;; @fluxy1fft_t_images
 
-@build_temp1_from_fluxes
-;; save, time,temp1, $
-;;       filename=expand_path(path)+path_sep()+'temp1.sav'
-;; @temp1_rms_plot
-;; @thermal_instability
-;; restore, filename=expand_path(path)+path_sep()+'temp1.sav'
+;; @build_temp1_from_fluxes
+;; ;; save, time,temp1, $
+;; ;;       filename=expand_path(path)+path_sep()+'temp1.sav'
+;; ;; @temp1_rms_plot
+;; ;; @thermal_instability
+;; ;; restore, filename=expand_path(path)+path_sep()+'temp1.sav'
 
 ;; @calc_temp1fft_t
 ;; @temp1fft_t_images

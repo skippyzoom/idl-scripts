@@ -1,5 +1,5 @@
 ;+
-; Script for calculating spatial FFT from den1
+; Script for calculating spatial FFT from den1 plane
 ;
 ; Created by Matt Young.
 ;------------------------------------------------------------------------------

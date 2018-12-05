@@ -11,6 +11,7 @@ filepath = expand_path(path)+path_sep()+'frames'
 filename = build_filename('den1_temp1_rat_phase','pdf', $
                           path = filepath, $
                           additions = [axes, $
+                                       'TEST', $
                                        'single_page', $
                                        'survey'])
 
@@ -51,6 +52,10 @@ x0 = params.ndim_space eq 2 ? nkx/2-nkx/8 : nkx/2-nkx/4
 xf = params.ndim_space eq 2 ? nkx/2+nkx/8 : nkx/2+nkx/4
 y0 = params.ndim_space eq 2 ? nky/2-nky/8 : nky/2-nky/4
 yf = params.ndim_space eq 2 ? nky/2+nky/8 : nky/2+nky/4
+;; x0 = params.ndim_space eq 2 ? nkx/2-nkx/16 : nkx/2-nkx/8
+;; xf = params.ndim_space eq 2 ? nkx/2+nkx/16 : nkx/2+nkx/8
+;; y0 = params.ndim_space eq 2 ? nky/2-nky/16 : nky/2-nky/8
+;; yf = params.ndim_space eq 2 ? nky/2+nky/16 : nky/2+nky/8
 
 ;;==Set non-finite values to 0.0
 fdata[where(~finite(fdata))] = 0.0
@@ -66,6 +71,10 @@ ct = get_custom_ct(2)
 
 ;;==Create survey frame
 frm = objarr(n_pages,n_per_page)
+;; xshowtext = (((indgen(n_mask) mod n_per_page)  /  nc) eq nc-1)
+;; yshowtext = (((indgen(n_mask) mod n_per_page) mod nc) eq nc-1)
+xshowtext = 0
+yshowtext = 0
 for it=0,n_mask-1 do $
    frm[(it/n_per_page), $
        (it mod n_per_page)] = image(fdata[x0:xf-1,y0:yf-1,ind_mask[it]], $
@@ -81,31 +90,50 @@ for it=0,n_mask-1 do $
                                     yminor = 1, $
                                     xticklen = 0.02, $
                                     yticklen = 0.02, $
-                                    xtickvalues = [-2*!pi,0,+2*!pi], $
-                                    ytickvalues = [-2*!pi,0,+2*!pi], $
-                                    xtickname = ['$-2\pi$','0','$+2\pi$'], $
-                                    ytickname = ['$-2\pi$','0','$+2\pi$'], $
+                                    xrange = [-!pi,+!pi], $
+                                    yrange = [-!pi,+!pi], $
+                                    xtickvalues = [-!pi,0,+!pi], $
+                                    ytickvalues = [-!pi,0,+!pi], $
+                                    xtickname = ['$- \pi$','0','$+ \pi$'], $
+                                    ytickname = ['$- \pi$','0','$+ \pi$'], $
+                                    xtitle = '$k_x$ [m$^{-1}$]', $
+                                    ytitle = '$k_y$ [m$^{-1}$]', $
                                     font_name = 'Times', $
                                     font_size = 10.0, $
-                                    xshowtext = (((it mod n_per_page)  /  nc) $
-                                                 eq nc-1), $
-                                    yshowtext = (((it mod n_per_page) mod nc) $
-                                                 eq 0), $
+                                    xshowtext = xshowtext, $
+                                    yshowtext = yshowtext, $
                                     current = ((it mod n_per_page) gt 0), $
                                     /buffer)
 
 ;;==Add global color bar
+right_edge = frm[nc-1].position[2]+0.01
+width = 0.02
 for ip=0,n_pages-1 do $
    clr = colorbar(target = frm[ip,0], $
                   title = 'arg($\tau_i/\eta_i$) [deg.]', $
                   major = 13, $
-                  minor = 3, $
+                  minor = 2, $
                   orientation = 1, $
                   textpos = 1, $
-                  position = [0.90,0.20,0.91,0.80], $
+                  position = [right_edge,0.20,right_edge+width,0.80], $
                   font_size = 10.0, $
                   font_name = 'Times', $
                   hide = 0)
+
+;; ;;==Add radius markers
+;; r_overlay = [!pi,2*!pi]
+;; theta_overlay = 10*findgen(36)
+;; for it=0,n_mask-1 do $
+;;    frm[it] = overlay_rtheta(frm[it], $
+;;                             r_overlay, $
+;;                             theta_overlay, $
+;;                             /degrees, $
+;;                             r_color = 'white', $
+;;                             r_thick = 1, $
+;;                             r_linestyle = 'solid_line', $
+;;                             theta_color = 'white', $
+;;                             theta_thick = 1, $
+;;                             theta_linestyle = 'none')
 
 ;;==Add time stamp on each panel
 for it=0,n_mask-1 do $

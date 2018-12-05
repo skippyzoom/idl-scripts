@@ -88,7 +88,9 @@ for it=0,time.nt-1 do $
 dkx = 2*!pi/(nkx*dx)
 dky = 2*!pi/(nky*dy)
 rcm_lambda = 2*!pi/sqrt((dkx*rcm_ctr[0,*])^2+(dky*rcm_ctr[1,*])^2)
+rcm_lambda = reform(rcm_lambda)
 rcm_theta = atan(dky*rcm_ctr[1,*],dkx*rcm_ctr[0,*])
+rcm_theta = reform(rcm_theta)
 
 ;;==Calculate uncertainty in centroid angle
 dth_dx = fltarr(time.nt)

@@ -10,8 +10,10 @@
 if n_elements(frame_type) eq 0 then frame_type = '.pdf'
 
 ;;==Get RMS times from available time steps
-;; rms_ind = get_rms_indices(path,time,/from_frm_indices,delta=4)
-rms_ind = get_rms_indices(path,time)
+;; if n_elements(rms_ind) ne 0 then $
+;; rms_ind = get_rms_ranges(path,time,/from_frm_indices,delta=4)
+if n_elements(rms_ind) eq 0 then $
+   rms_ind = get_rms_ranges(path,time)
 rms_ind = transpose(rms_ind)
 n_rms = (size(rms_ind))[1]
 
@@ -37,9 +39,10 @@ for it=0,n_rms-1 do $
                                               '20dB', $
                                               str_bw, $
                                               'ctd_vd_chi', $
+                                              'new_dev', $
                                               'zoom'])
 
-;;==Calculate theoretical angles (comment to suppress plotting)
+;;==Calculate theoretical angles
 ;;  To suppress overlaying these angles on the FFT images, comment
 ;;  them out or set them to !NULL after using them.
 vd_angle = fbfa_vd_angle(path)

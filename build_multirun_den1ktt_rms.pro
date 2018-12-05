@@ -6,13 +6,12 @@
 ;-
 
 ;;==Declare project path
-proj_path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/'
+proj_path = get_base_dir()+path_sep()+'fb_flow_angle/2D-new_coll/'
 
 ;;==Declare name of save file
+additions = ['all_k','all_theta','subsample_8']
 den1ktt_save_name = build_filename('den1ktt','sav', $
-                                   additions = ['all_k', $
-                                                'all_theta', $
-                                                'subsample_1'])
+                                   additions = additions)
 
 ;;==Declare target wavelength ranges
 lam_lo = list(1.0,10.0)
@@ -22,12 +21,12 @@ lam_hi = list(4.0,!NULL)
 ;; run = ['h0-Ey0_030', $
 ;;        'h1-Ey0_030', $
 ;;        'h2-Ey0_030']
-;; run = ['h0-Ey0_050', $
-;;        'h1-Ey0_050', $
-;;        'h2-Ey0_050']
-run = ['h0-Ey0_070', $
-       'h1-Ey0_070', $
-       'h2-Ey0_070']
+run = ['h0-Ey0_050', $
+       'h1-Ey0_050', $
+       'h2-Ey0_050']
+;; run = ['h0-Ey0_070', $
+;;        'h1-Ey0_070', $
+;;        'h2-Ey0_070']
 nr = n_elements(run)
 
 ;;==Declare note to append to filenames
@@ -39,6 +38,8 @@ iph = 0
 ;;==Get common parameters from one directory
 path = expand_path(proj_path)+path_sep()+run[iph]
 params = set_eppic_params(path=path)
+
+;;==Restore data from one directory to get time and wavelength keys
 restore, expand_path(path)+path_sep()+den1ktt_save_name
 
 ;;==Get available wavelengths
@@ -63,9 +64,9 @@ nt = n_elements(time.index)
 
 ;;==Build the multi-run ktt hash
 mr_den1ktt = build_multirun_hash(proj_path, $
-                                   run, $
-                                   den1ktt_save_name, $
-                                   data_name)
+                                 run, $
+                                 den1ktt_save_name, $
+                                 data_name)
 
 ;;==Build the multi-run kttrms hash
 mr_kttrms = hash()

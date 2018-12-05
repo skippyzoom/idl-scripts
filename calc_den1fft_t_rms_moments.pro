@@ -14,8 +14,8 @@ y0 = nky/2-nky/8
 yf = nky/2+nky/8
 
 ;;==Get RMS times from available time steps
-;; rms_ind = get_rms_indices(path,time,/from_frm_indices,delta=4)
-rms_ind = get_rms_indices(path,time)
+;; rms_ind = get_rms_ranges(path,time,/from_frm_indices,delta=4)
+rms_ind = get_rms_ranges(path,time)
 rms_ind = transpose(rms_ind)
 n_rms = (size(rms_ind))[1]
 

@@ -27,10 +27,10 @@ nkx = fsize[1]
 nky = fsize[2]
 
 ;;==Declare image ranges
-x0 = nkx/2-nkx/8
-xf = nkx/2+nkx/8
-y0 = nky/2-nky/8
-yf = nky/2+nky/8
+x0 = params.ndim_space eq 2 ? nkx/2-nkx/8 : nkx/2-nkx/4
+xf = params.ndim_space eq 2 ? nkx/2+nkx/8 : nkx/2+nkx/4
+y0 = params.ndim_space eq 2 ? nky/2-nky/8 : nky/2-nky/4
+yf = params.ndim_space eq 2 ? nky/2+nky/8 : nky/2+nky/4
 
 ;;==Set non-finite values to 0.0
 fdata[where(~finite(fdata))] = 0.0
@@ -56,8 +56,8 @@ for it=0,time.nt-1 do $
                    max_value = +180, $
                    rgb_table = [[ct.r],[ct.g],[ct.b]], $
                    position = [0.10,0.10,0.80,0.80], $
-                   xrange = [-!pi,+!pi], $
-                   yrange = [-!pi,+!pi], $
+                   xrange = [-2*!pi,+2*!pi], $
+                   yrange = [-2*!pi,+2*!pi], $
                    xmajor = 3, $
                    xminor = 3, $
                    ymajor = 3, $
@@ -83,7 +83,7 @@ for it=0,time.nt-1 do $
    clr = colorbar(target = frm[it], $
                   title = 'arg($\tau_e/\eta_e$)', $
                   major = 13, $
-                  minor = 3, $
+                  minor = 2, $
                   orientation = 1, $
                   textpos = 1, $
                   position = [0.82,0.10,0.84,0.80], $

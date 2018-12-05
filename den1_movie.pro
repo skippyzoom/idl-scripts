@@ -13,27 +13,29 @@ filename = expand_path(path+path_sep()+'movies')+ $
            path_sep()+'den1'+ $
            '-'+axes+ $
            ;; '-filtered'+ $
+           ;; '-trough'+ $
            ;; '-full_shift'+ $
-           ;; '-from_denft1'+ $
-           ;; '-reset_TEST'+ $
+           ;; '-dimensions_TEST'+ $
            '.'+get_extension(movie_type)
 
 fdata = den1
 
 ;;==Declare graphics ranges wrt current plane
-;; x0 = nx/4-128
-;; xf = nx/4+128
+;; x0 = 3*nx/4-128
+;; xf = 3*nx/4+128
 ;; y0 = ny/4-128
 ;; yf = ny/4+128
 x0 = 0
 xf = nx
 y0 = 0
 yf = ny
+t0 = 0
+tf = time.nt
 
 ;;==Load graphics keywords for den1
 ;; @default_image_kw
 img_pos = [0.10,0.10,0.80,0.80]
-clr_pos = [0.82,0.10,0.84,0.80]
+clr_pos = [0.83,0.10,0.84,0.80]
 
 image_kw = dictionary('axis_style', 1, $
                       'position', img_pos, $
@@ -70,20 +72,25 @@ image_kw['min_value'] = -0.2
 image_kw['max_value'] = +0.2
 image_kw['axis_style'] = 2
 image_kw['rgb_table'] = 5
-image_kw['xtitle'] = 'Zonal [m]'
-image_kw['ytitle'] = 'Vertical [m]'
+;; image_kw['xtitle'] = 'Zonal [m]'
+;; image_kw['ytitle'] = 'Vertical [m]'
+image_kw['xtitle'] = 'Hall [m]'
+image_kw['ytitle'] = 'Pedersen [m]'
 image_kw['xticklen'] = 0.02
 image_kw['yticklen'] = 0.02*data_aspect
-image_kw['title'] = 'it = '+time.index
+;; image_kw['title'] = 'it = '+time.index[t0:tf-1]
+image_kw['title'] = 't = '+time.stamp[t0:tf-1]
 image_kw['xmajor'] = 5
 image_kw['xminor'] = 3
 image_kw['ymajor'] = 5
 image_kw['yminor'] = 3
 image_kw['font_size'] = 18
 image_kw['font_name'] = 'Times'
-;; image_kw['dimensions'] = [1024,256]
+;; ;; image_kw['dimensions'] = [1024,256]
+;; image_kw['dimensions'] = [1100,350]
 ;; image_kw['image_dimensions'] = [1024,256]
-image_kw['dimensions'] = [512,512]
+;; image_kw['dimensions'] = [512,512]
+image_kw['dimensions'] = [750,650]
 image_kw['image_dimensions'] = [512,512]
 colorbar_kw['title'] = '$\delta n/n_0$'
 colorbar_kw['font_size'] = 18
@@ -95,7 +102,7 @@ colorbar_kw['major'] = 5
 ;;                      'font_size', 10)
 
 ;;==Create movie
-data_graphics, fdata[x0:xf-1,y0:yf-1,*], $
+data_graphics, fdata[x0:xf-1,y0:yf-1,t0:tf-1], $
                xdata[x0:xf-1],ydata[y0:yf-1], $
                /make_movie, $
                filename = filename, $

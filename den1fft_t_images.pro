@@ -26,8 +26,8 @@ for it=0,time.nt-1 do $
 ;;==Calculate theoretical angles (comment to suppress plotting)
 ;;  To suppress overlaying these angles on the FFT images, comment
 ;;  them out or set them to !NULL after using them.
-vd_angle = fbfa_vd_angle(path)
-theta_opt = fbfa_chi_opt(path)+vd_angle
+;; vd_angle = fbfa_vd_angle(path)
+;; theta_opt = fbfa_chi_opt(path)+vd_angle
 
 ;;==Preserve raw data
 fdata = den1fft_t
@@ -38,10 +38,14 @@ nkx = fsize[1]
 nky = fsize[2]
 
 ;;==Declare ranges to show
-x0 = perp_plane ? nkx/2 : nkx/2-nkx/4
-xf = perp_plane ? nkx/2+nkx/4 : nkx/2+nkx/4
-y0 = perp_plane ? nky/2-nky/4 : nky/2
-yf = perp_plane ? nky/2+nky/4 : nky/2+nky/4
+;; x0 = perp_plane ? nkx/2 : nkx/2-nkx/4
+;; xf = perp_plane ? nkx/2+nkx/4 : nkx/2+nkx/4
+;; y0 = perp_plane ? nky/2-nky/4 : nky/2
+;; yf = perp_plane ? nky/2+nky/4 : nky/2+nky/4
+x0 = params.ndim_space eq 2 ? nkx/2-nkx/8 : nkx/2-nkx/4
+xf = params.ndim_space eq 2 ? nkx/2+nkx/8 : nkx/2+nkx/4
+y0 = params.ndim_space eq 2 ? nky/2-nky/8 : nky/2-nky/4
+yf = params.ndim_space eq 2 ? nky/2+nky/8 : nky/2+nky/4
 
 ;;==Convert complex FFT to its magnitude
 fdata = abs(fdata)
@@ -89,8 +93,14 @@ for it=0,time.nt-1 do $
                    rgb_table = 39, $
                    axis_style = 1, $
                    position = [0.10,0.10,0.80,0.80], $
-                   xrange = xrange, $
-                   yrange = yrange, $
+                   ;; xrange = xrange, $
+                   ;; yrange = yrange, $
+                   xrange = [-2*!pi,+2*!pi], $
+                   yrange = [-2*!pi,+2*!pi], $
+                   xtickvalues = [-2*!pi,0,+2*!pi], $
+                   ytickvalues = [-2*!pi,0,+2*!pi], $
+                   xtickname = ['$-2\pi$','0','$+2\pi$'], $
+                   ytickname = ['$-2\pi$','0','$+2\pi$'], $
                    xmajor = 3, $
                    xminor = xminor, $
                    ymajor = 3, $

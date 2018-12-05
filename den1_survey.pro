@@ -78,6 +78,8 @@ for it=0,n_mask-1 do $
                                     /buffer)
 
 ;;==Add global color bar
+right_edge = frm[nc-1].position[2]+0.01
+width = 0.02
 for ip=0,n_pages-1 do $
    clr = colorbar(target = frm[ip,0], $
                   title = '$\delta n_i/n_0$', $
@@ -85,7 +87,7 @@ for ip=0,n_pages-1 do $
                   minor = 3, $
                   orientation = 1, $
                   textpos = 1, $
-                  position = [0.90,0.20,0.91,0.80], $
+                  position = [right_edge,0.20,right_edge+width,0.80], $
                   font_size = 10.0, $
                   font_name = 'Times', $
                   hide = 0)
