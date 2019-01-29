@@ -18,7 +18,7 @@ all_files = file_search(expand_path(data_path)+path_sep()+'parallel*.h5', $
                         count = n_files)
 
 ;;==Select a subset of times and declare save-file name
-;;>>Second half of run
+;;>>First quarter of run
 sub_ind = [0:time_ref.nt/4-1]
 filename = 'den1fft_t-3D-first_quarter'
 ;;>>Second half of run
