@@ -94,23 +94,23 @@ else time_ref.subsample = 1
 ;+
 ; Make movies of den1 and den1fft_t
 ;-
-t0 = 0
-tf = nt_max
-subsample = 1
-if params.ndim_space eq 2 then subsample *= 8L
-timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
-time = time_strings(long(timesteps), $
-                    dt = params.dt, $
-                    scale = 1e3, $
-                    precision = 2)
-if n_elements(subsample) ne 0 then time.subsample = subsample $
-else time.subsample = 1
-rotate = 0
-@get_den1_plane
-if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
-   for it=0,(size(den1))[3]-1 do $
-      den1[*,*,it] = rotate(den1[*,*,it],1)
-@den1_movie
+;; t0 = 0
+;; tf = nt_max
+;; subsample = 1
+;; if params.ndim_space eq 2 then subsample *= 8L
+;; timesteps = params.nout*(t0 + subsample*lindgen((tf-t0-1)/subsample+1))
+;; time = time_strings(long(timesteps), $
+;;                     dt = params.dt, $
+;;                     scale = 1e3, $
+;;                     precision = 2)
+;; if n_elements(subsample) ne 0 then time.subsample = subsample $
+;; else time.subsample = 1
+;; rotate = 0
+;; @get_den1_plane
+;; if (params.ndim_space eq 3 && strcmp(axes,'yz')) then $
+;;    for it=0,(size(den1))[3]-1 do $
+;;       den1[*,*,it] = rotate(den1[*,*,it],1)
+;; @den1_movie
 ;; @calc_den1fft_t_plane
 ;; @den1fft_t_movie
 

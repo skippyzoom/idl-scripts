@@ -36,6 +36,8 @@ efield_save_name = expand_path(path)+path_sep()+ $
 ;;-----------------------------------------------------------------------------
 ;; t0 = params.nt_max/2
 ;; tf = params.nt_max
+;; t0 = 0
+;; tf = params.nt_max/4
 t0 = 0
 tf = params.nt_max
 subsample = 1
@@ -100,7 +102,8 @@ time = time_strings(timesteps, $
                     dt = params.dt, $
                     scale = 1e3, $
                     precision = 2)
-
+if n_elements(subsample) ne 0 then time.subsample = subsample $
+else time.subsample = 1
 ;; @analyze_moments
 
 ;; @get_den1_plane
@@ -249,6 +252,12 @@ time = time_strings(timesteps, $
 ;; @den1ktw_images
 ;; ;; @den1ktw_rms_plots
 
+lambda = [3.0,5.0,10.0]
+theta = [0,180]*!dtor
+@get_den1_plane
+den1 = shift(den1,[nx/4,0,0])
+;; .r pw_section_spectra
+
 ;; @den1_ktt_frames
 ;; @den1_ktt_movie
 ;; @den1_fft_movie
@@ -259,15 +268,15 @@ time = time_strings(timesteps, $
 ;; save, time,efield,filename=efield_save_name
 
 @get_efield_plane
-;; @build_efield_components
+;; ;; @build_efield_components
 Ex = efield.x
-Ey = efield.y
-delvar, efield
+;; Ey = efield.y
+;; delvar, efield
 data_shift = [nx/4,0,0]
 Ex = shift(Ex,data_shift)
-Ey = shift(Ey,data_shift)
-;; Er = shift(Er,data_shift)
-;; Et = shift(Et,data_shift)
+;; Ey = shift(Ey,data_shift)
+;; ;; Er = shift(Er,data_shift)
+;; ;; Et = shift(Et,data_shift)
 
 ;; restore, filename=efield_save_name,/verbose
 ;; @load_plane_params
