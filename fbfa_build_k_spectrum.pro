@@ -22,8 +22,10 @@ dky = 2*!pi/(dy*ny)
 dkz = 2*!pi/(dz*nz)
 
 ;;==Declare RMS range parallel to B
-i_kx0 = nx/2-2
-i_kxf = nx/2+2
+;; i_kx0 = nx/2-2
+;; i_kxf = nx/2+2
+i_kx0 = 0
+i_kxf = nx
 
 ;;==Declare time range
 it0 = 0
@@ -47,30 +49,23 @@ n_files_sub = n_elements(sub_files)
 ;;==Make sure there is the right number of files
 if n_files_sub eq nt then begin
 
-   ;;==Declare interpolation parameters
+   ;;==Needs differ slightly for 2-D v. 3-D runs
    if params.ndim_space eq 2 then begin
+
+      ;;==Declare interpolation parameters
       nk = min([nx,ny])
       dk = max([dx,dy])
-   endif $
-   else begin
-      nk = min([ny,nz])
-      dk = max([dy,dz])
-   endelse
-   k_modes = fftfreq(nk,dk)
-   if params.ndim_space eq 2 then $
-      lambda = 1.0/k_modes[1:nk/4] $
-   else $
-      lambda = 1.0/k_modes[1:nk/2]
-   lambda = reverse(lambda)
-   nl = n_elements(lambda)
-   theta = [0:2*!pi]
+      k_modes = fftfreq(nk,dk)
+      lambda = 1.0/k_modes[1:nk/4]
+      lambda = reverse(lambda)
+      nl = n_elements(lambda)
+      theta = [0:2*!pi]
 
-   ;;==Set up interpolation array
-   spectrum = make_array(nl,(itf-it0)/itd+1,value=0,/float)
+      ;;==Set up interpolation array
+      spectrum = make_array(nl,(itf-it0)/itd+1,value=0,/float)
 
-   ;;==Loop over files to build array
-   sys_t0 = systime(1)
-   if params.ndim_space eq 2 then begin
+      ;;==Loop over files to build array
+      sys_t0 = systime(1)
       for it=it0,itf-1,itd do begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[1,0])
@@ -90,8 +85,24 @@ if n_files_sub eq nt then begin
       endfor
       sys_tf = systime(1)
       print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
+
    endif $
    else begin
+
+      ;;==Declare interpolation parameters
+      nk = min([ny,nz])
+      dk = max([dy,dz])
+      k_modes = fftfreq(nk,dk)
+      lambda = 1.0/k_modes[1:nk/2]
+      lambda = reverse(lambda)
+      nl = n_elements(lambda)
+      theta = [0:2*!pi]
+
+      ;;==Set up interpolation array
+      spectrum = make_array(nl,(itf-it0)/itd+1,value=0,/float)
+
+      ;;==Loop over files to build array
+      sys_t0 = systime(1)
       for it=it0,itf-1,itd do begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[2,1,0])
@@ -111,8 +122,10 @@ if n_files_sub eq nt then begin
       endfor
       sys_tf = systime(1)
       print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
+
    endelse
 
+   ;;==Construct a time dictionary for this data subset
    substeps = time_ref.subsample*params.nout* $
               (it0 + itd*lindgen((itf-it0-1)/itd + 1))
    time = time_strings(substeps, $
