@@ -1,5 +1,15 @@
 ;+
-; Another script for writing the flow angle paper
+; Script for building the wavenumber spectrum, averaged over all
+; angles in k space, as a function of time. This script produces a
+; logically (2+1)-D array: For 2-D runs, it uses the FFT of the
+; simulation data; for 3-D runs, it computes the RMS over parallel
+; modes within a specified range. This script saves the data to a file
+; with the same name, regardless of parallel range or dimensions of
+; input data. It is the user's responsibility to rename the
+; resultant file in order the distinguish between, for example,
+; different parallel RMS ranges.
+;
+; Created by Matt Young.
 ;-
 
 ;;==Declare name of target data quantity
@@ -132,6 +142,8 @@ if n_files_sub eq nt then begin
                        dt = params.dt, $
                        scale = 1e3, $
                        precision = 2)
+
+   ;;==Save the data to disk
    savename = dataname+'-k_spectrum.sav'
    savepath = expand_path(path)+path_sep()+savename
    sys_t0 = systime(1)
