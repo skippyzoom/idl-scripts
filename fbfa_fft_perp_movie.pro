@@ -36,10 +36,10 @@ i_kxf = nx/2+2
 ;; i_kx0 = 0
 ;; i_kxf = nx
 
-;;==Declare time range
+;;==Declare time range and inter-frame interval
 it0 = 0
 itf = nt
-itd = 2
+itd = nt/2
 
 ;;==Get all file names
 datapath = expand_path(path)+path_sep()+'parallel'
@@ -63,10 +63,28 @@ if n_files_sub eq nt then begin
    npy = params.ndim_space eq 2 ? ny/2 : nz
    xmajor = 5
    ymajor = 5
-   xtickvalues = [0,npx/4,npx/2,3*npx/4,npx-1]
-   ytickvalues = [0,npy/4,npy/2,3*npy/4,npy-1]
+   ;; xtickvalues = [0,npx/4,npx/2,3*npx/4,npx-1]
+   ;; ytickvalues = [0,npy/4,npy/2,3*npy/4,npy-1]
+   mxdata = fftfreq(npx,dx)
+   mxdata = shift(mxdata,npx/2-1)
+   ikx2pi = find_closest(mxdata,1.0)
+   ikx0 = npx/2-1
+   ikxext = ikx2pi-ikx0
+   xrebin = 4
+   xtickvalues = 2*ikxext*xrebin*findgen(xmajor)/(xmajor-1)
    xtickname = ['$-2\pi$','$-\pi$','0','$+\pi$','$+2\pi$']
+   ix0 = ikx0-ikxext
+   ixf = ikx0+ikxext
+   mydata = fftfreq(npy,dy)
+   mydata = shift(mydata,npy/2-1)
+   iky2pi = find_closest(mydata,1.0)
+   iky0 = npy/2-1
+   ikyext = iky2pi-iky0
+   yrebin = 4
+   ytickvalues = 2*ikyext*yrebin*findgen(ymajor)/(ymajor-1)
    ytickname = ['$-2\pi$','$-\pi$','0','$+\pi$','$+2\pi$']
+   iy0 = iky0-ikyext
+   iyf = iky0+ikyext
    xtitle = "$k_{Hall}$"
    ytitle = "$k_{Ped}$"
    xtickfont_size = 18
@@ -77,7 +95,7 @@ if n_files_sub eq nt then begin
    rgb_table = 39
    min_value = -20
    max_value = 0
-
+   
    ;;==Set up movie
    video_path = expand_path(path)+path_sep()+'movies'+ $
                 path_sep()+data_name+'-fft.mp4'
@@ -108,6 +126,9 @@ if n_files_sub eq nt then begin
          min_fin = min(tmp[where(finite(tmp))])
          tmp[imiss] = min_fin
          tmp -= max(tmp)
+         tmp = tmp[ix0:ixf-1,iy0:iyf-1]
+         tmp = rebin(tmp,xrebin*(ixf-ix0),yrebin*(iyf-iy0), $
+                     /sample)
          frm = image(tmp, $
                      dimensions = dimensions, $
                      axis_style = axis_style, $
@@ -140,6 +161,22 @@ if n_files_sub eq nt then begin
                         font_size = font_size, $
                         title = "Norm. Power [dB]", $
                         orientation = 1)
+         k_overlay = 2*!pi/(1+findgen(10))
+         rk_scale = (((ixf-ix0)/2)/(2*!pi))
+         r_overlay = rk_scale*k_overlay*xrebin
+         theta_overlay = 10*findgen(36)
+         frm = overlay_rtheta(frm, $
+                              r_overlay, $
+                              theta_overlay, $
+                              /degrees, $
+                              center = [xrebin*(ixf-ix0)/2, $
+                                        yrebin*(iyf-iy0)/2], $
+                              r_color = 'white', $
+                              r_thick = 1, $
+                              r_linestyle = 'dot', $
+                              theta_color = 'white', $
+                              theta_thick = 1, $
+                              theta_linestyle = 'dot')
          frame = frm.copywindow()
          vtime = vobj.put(stream,frame)
          frm.close
@@ -194,6 +231,18 @@ if n_files_sub eq nt then begin
                         font_size = font_size, $
                         title = "Norm. Power [dB]", $
                         orientation = 1)
+         r_overlay = 2*!pi/(1+findgen(10))
+         theta_overlay = 10*findgen(36)
+         frm = overlay_rtheta(frm, $
+                              r_overlay, $
+                              theta_overlay, $
+                              /degrees, $
+                              r_color = 'white', $
+                              r_thick = 1, $
+                              r_linestyle = 'dot', $
+                              theta_color = 'white', $
+                              theta_thick = 1, $
+                              theta_linestyle = 'dot')
          frame = frm.copywindow()
          vtime = vobj.put(stream,frame)
          frm.close
