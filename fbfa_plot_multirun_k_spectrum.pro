@@ -15,7 +15,7 @@ n_paths = n_elements(paths)
 
 ;;==Declare which file to restore
 savename = strcmp(simdims,'3D',/fold_case) ? $
-           'den1-k_spectrum-kpar_4pnt_mean.sav' : $
+           'den1-k_spectrum-kpar_full_mean.sav' : $
            'den1-k_spectrum.sav'
 
 ;;==Declare the graphics file name
@@ -23,7 +23,7 @@ frmpath = build_filename(strip_extension(savename),'.pdf', $
                          path = get_base_dir()+path_sep()+ $
                          'fb_flow_angle/'+simdims+'-new_coll'+ $
                          path_sep()+'common'+path_sep()+'frames', $
-                         additions = ['multirun','bands'])
+                         additions = 'multirun')
 
 ;;==Declare wavelengths (in meters) of interest
 ;;  Set either to !NULL to use default.
@@ -67,14 +67,15 @@ for ip=0,n_paths-1 do begin
    dkz = 2*!pi/(dz*nz)
 
    ;;==Rescale spectrum by number of points
-   vol = long(nx)*long(ny)
+   vol = long(ny)
    if params.ndim_space eq 3 then begin
       str_kpar = strmid(savename,strpos(savename,'kpar')+5,4)
       case 1B of
-         strcmp(str_kpar,'full'): vol *= long(nz)
-         strcmp(str_kpar,'4pnt'): vol *= 4L
+         strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)
+         strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L
       endcase
-   endif
+   endif $
+   else vol *= long(nx)
    spectrum *= vol
 
    ;;==Set default wavelength range
@@ -91,13 +92,16 @@ for ip=0,n_paths-1 do begin
    ilf = find_closest(lambda,lamf)
 
    ;;==Create a frame of amplitude versus time within a k band
-   frm = plot(float(time.stamp), $
-              ;; rms(spectrum[il0:ilf-1,*],dim=1), $
-              total(spectrum[il0:ilf-1,*],1), $
+   xdata = float(time.stamp)
+   ;; ydata = total(spectrum[il0:ilf-1,*],1)
+   ydata = rms(spectrum[il0:ilf-1,*],dim=1)
+   ;; ydata = mean(spectrum[il0:ilf-1,*],dim=1)
+
+   frm = plot(xdata, $
+              ydata, $
               xstyle = 1, $
               /ylog, $
-              ;; yrange = [1e0,1e3], $
-              yrange = [1e0,1e5], $
+              yrange = [1e0,1e4], $
               xtitle = 'Time ['+time.unit+']', $
               ytitle = 'A(k)', $
               title = title, $
