@@ -1,21 +1,22 @@
 ;+
 ; Flow angle paper: Read k spectrum from a save file and make plots or
-; movies.
+; movies. See also fbfa_k_spectrum_movie.pro,
+; fbfa_k_spectrum_snapshots.pro, and fbfa_k_spectrum_bands.pro
 ;-
 
 ;;==Declare which graphics to make
 make_movie = 0B
-make_snapshots = 0B
+make_snapshots = 1B
 make_k_bands = 0B
+
+;;==Read in parameter dictionary
+params = set_eppic_params(path=path)
 
 ;;==Declare which file to restore
 savename = params.ndim_space eq 3 ? $
            'den1-k_spectrum-kpar_4pnt_mean.sav' : $
            'den1-k_spectrum.sav'
 savepath = expand_path(path)+path_sep()+savename
-
-;;==Read in parameter dictionary
-params = set_eppic_params(path=path)
 
 ;;==Build parameters
 nx = params.nx*params.nsubdomains/params.nout_avg
@@ -37,14 +38,15 @@ sys_tf = systime(1)
 print, "Elapsed minutes for restore: ",(sys_tf-sys_t0)/60.
 
 ;;==Rescale spectrum by number of points
-vol = long(nx)*long(ny)
+vol = long(ny)
 if params.ndim_space eq 3 then begin
    str_kpar = strmid(savename,strpos(savename,'kpar')+5,4)
    case 1B of
-      strcmp(str_kpar,'full'): vol *= long(nz)
-      strcmp(str_kpar,'4pnt'): vol *= 4L
+      strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)
+      strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L
    endcase
-endif
+endif $
+else vol *= long(nx)
 spectrum *= vol
 
 ;;==Create a video of amplitude versus k
@@ -64,7 +66,8 @@ if make_movie then begin
              /ylog, $
              resize = [4,4], $
              xtitle = 'k [m$^{-1}$]', $
-             ytitle = 'A(k)', $
+             ;; ytitle = 'A(k)', $
+             ytitle = '$\langle\delta n(k)\rangle$', $
              title = "t = "+time.stamp, $
              text = dictionary('xyz',[0,0], $
                                'string',savepath, $
@@ -77,22 +80,74 @@ endif                           ;MAKE_MOVIE
 
 ;;==Create a frame of amplitude versus k at select times
 if make_snapshots then begin
+
+   ;;==Determine the run subdirectory
+   run_subdir = strmid(path, $
+                       strlen(get_base_dir()+path_sep()+ $
+                              'fb_flow_angle'+path_sep()))
+
+   ;;==Assign time indices based on run
+   case 1B of
+      strcmp(run_subdir, $
+                 '2D-new_coll'+path_sep()+'h0-Ey0_050'+path_sep()): $
+         t_ind = [find_closest(float(time.stamp),17.92), $
+                  find_closest(float(time.stamp),78.85), $
+                  find_closest(float(time.stamp),114.69), $
+                  time.nt-1]
+      strcmp(run_subdir, $
+                 '2D-new_coll'+path_sep()+'h1-Ey0_050'+path_sep()): $
+         t_ind = [find_closest(float(time.stamp),17.92), $
+                  find_closest(float(time.stamp),68.10), $
+                  find_closest(float(time.stamp),111.10), $
+                  time.nt-1]
+      strcmp(run_subdir, $
+                 '2D-new_coll'+path_sep()+'h2-Ey0_050'+path_sep()): $
+         t_ind = [find_closest(float(time.stamp),17.92), $
+                  find_closest(float(time.stamp),111.10), $
+                  find_closest(float(time.stamp),139.78), $
+                  time.nt-1]
+      strcmp(run_subdir, $
+                 '3D-new_coll'+path_sep()+'h0-Ey0_050'+path_sep()): $
+         t_ind = [find_closest(float(time.stamp),9.86), $
+                  find_closest(float(time.stamp),24.19), $
+                  find_closest(float(time.stamp),32.26), $
+                  time.nt-1]
+      strcmp(run_subdir, $
+                 '3D-new_coll'+path_sep()+'h1-Ey0_050'+path_sep()): $
+         t_ind = [find_closest(float(time.stamp),9.86), $
+                  find_closest(float(time.stamp),21.50), $
+                  find_closest(float(time.stamp),30.46), $
+                  time.nt-1]
+      strcmp(run_subdir, $
+                 '3D-new_coll'+path_sep()+'h2-Ey0_050'+path_sep()): $
+         t_ind = [find_closest(float(time.stamp),9.86), $
+                  find_closest(float(time.stamp),28.67), $
+                  find_closest(float(time.stamp),38.53), $
+                  time.nt-1]
+   endcase         
+
    case params.ndim_space of
-      2: t_ind = [find_closest(float(time.stamp),13.44*8), $
-                  find_closest(float(time.stamp),23.30*8), $
-                  find_closest(float(time.stamp),34.05*8), $
-                  find_closest(float(time.stamp),44.80*8), $
-                  time.nt-1]
-      3: t_ind = [find_closest(float(time.stamp),13.44), $
-                  find_closest(float(time.stamp),23.30), $
-                  find_closest(float(time.stamp),34.05), $
-                  find_closest(float(time.stamp),44.80), $
-                  time.nt-1]
+      2: begin
+         ply_dk = -2.5
+         ply_a0 = 300.0
+         ply_af = ply_a0/10
+         ply_k0 = 3.5
+         ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
+                        ply_dk*alog10(ply_k0))/ply_dk)
+      end
+      3: begin
+         ply_dk = -3
+         ply_a0 = 200.0
+         ply_af = ply_a0/10
+         ply_k0 = 3.5
+         ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
+                        ply_dk*alog10(ply_k0))/ply_dk)
+      end
    endcase
+
    n_inds = n_elements(t_ind)            
    t_ind = reverse(t_ind)
-   color = ['black','blue','gray','green','red']
-
+   color = ['green','blue','gray','black']
    frmpath = build_filename(strip_extension(savename),'.pdf', $
                             path = expand_path(path)+path_sep()+'frames', $
                             additions = '')
@@ -106,15 +161,20 @@ if make_snapshots then begin
                  /xlog, $
                  /ylog, $
                  xtitle = 'k [m$^{-1}$]', $
-                 ytitle = 'A(k)', $
+                 ;; ytitle = 'A(k)', $
+                 ytitle = '$\langle\delta n(k)\rangle$', $
                  color = color[it], $
                  symbol = 'o', $
                  sym_size = 0.5, $
                  /sym_filled, $
                  overplot = (it gt 0), $
                  /buffer)
+      ply = polyline([ply_k0,ply_kf],[ply_a0,ply_af], $
+                     'k-', $
+                     target = frm, $
+                     /data)
       yrange = frm.yrange
-      txt = text(0.9,0.8-it*0.05, $
+      txt = text(0.85,0.8-it*0.05, $
                  "t = "+time.stamp[t_ind[it]], $
                  color = color[it], $
                  /normal, $
@@ -136,24 +196,43 @@ endif                           ;MAKE_SNAPSHOTS
 
 ;;==Create a frame of amplitude versus time at select k values
 if make_k_bands then begin
-   il0 = [0, $
-          find_closest(lambda,1.0), $
-          find_closest(lambda,4.0), $
-          find_closest(lambda,10.0)]
-   
-   ilf = [find_closest(lambda,1.0), $
-          find_closest(lambda,4.0), $
-          find_closest(lambda,10.0), $
-          n_elements(lambda)]
-   n_bands = n_elements(il0)
-;; name = ['submeter','meter','intermediate','decameter']
+
+   ;;==Choose wavelength bands.
+   ;;  The '-1' term in most bands separates adjacent bands, to avoid
+   ;;  doulble counting. It is distict from the '-1' in the FOR loop,
+   ;;  which exists purely for proper indexing. 
+   ;;----------------------------------------------------------------
+   ;; il = [[0,find_closest(lambda,1.0)-1], $
+   ;;       [find_closest(lambda,1.0),find_closest(lambda,3.0)-1], $
+   ;;       [find_closest(lambda,3.0),find_closest(lambda,6.0)-1], $
+   ;;       [find_closest(lambda,6.0),find_closest(lambda,10.0)-1], $
+   ;;       [find_closest(lambda,10.0),n_elements(lambda)]]
+   ;; name = ['$\lambda$ $<$ 1 m', $
+   ;;         '1 m $\leq$ $\lambda$ $<$ 3 m', $
+   ;;         '3 m $\leq$ $\lambda$ $<$ 6 m', $
+   ;;         '6 m $\leq$ $\lambda$ $<$ 10 m', $
+   ;;         '10 m $\leq$ $\lambda$']
+   ;; color = ['black','blue','sky blue','green','red']
+   ;; il = [[0,find_closest(lambda,1.0)-1], $
+   ;;       [find_closest(lambda,1.0),find_closest(lambda,5.0)-1], $
+   ;;       [find_closest(lambda,5.0),find_closest(lambda,10.0)-1], $
+   ;;       [find_closest(lambda,10.0),n_elements(lambda)]]
+   ;; name = ['$\lambda$ $<$ 1 m', $
+   ;;         '1 m $\leq$ $\lambda$ $<$ 5 m', $
+   ;;         '5 m $\leq$ $\lambda$ $<$ 10 m', $
+   ;;         '10 m $\leq$ $\lambda$']
+   ;; color = ['black','blue','green','red']
+   il = [[0,find_closest(lambda,1.0)-1], $
+         [find_closest(lambda,1.0),find_closest(lambda,5.0)-1], $
+         [find_closest(lambda,5.0),n_elements(lambda)]]
    name = ['$\lambda$ $<$ 1 m', $
-           '1 m $\leq$ $\lambda$ $<$ 4 m', $
-           '4 m $\leq$ $\lambda$ $<$ 10 m', $
-           '10 m $\leq$ $\lambda$']
-   color = ['black','blue','green','red']
-   txt_x = 0.32
-;; txt_y = params.ndim_space eq 2 ? 0.2 : 0.6
+           '1 m $\leq$ $\lambda$ $<$ 5 m', $
+           '5 m $\leq$ $\lambda$']
+   color = ['black','blue','green']
+   ilsize = size(il)
+   n_bands = ilsize[2]
+   txt_x = 0.31
+   ;; txt_y = params.ndim_space eq 2 ? 0.2 : 0.6
    txt_y = 0.70
    frmpath = build_filename(strip_extension(savename),'.pdf', $
                             path = expand_path(path)+path_sep()+'frames', $
@@ -161,11 +240,12 @@ if make_k_bands then begin
    sys_t0 = systime(1)
    for ib=0,n_bands-1 do begin
       frm = plot(float(time.stamp), $
-                 rms(spectrum[il0[ib]:ilf[ib]-1,*],dim=1), $
+                 rms(spectrum[il[0,ib]:il[1,ib]-1,*],dim=1), $
                  xstyle = 1, $
                  /ylog, $
                  ;; yrange = [1e-6,1e-2], $
                  yrange = [1e0,1e4], $
+                 ;; yrange = [1e0,1e6], $
                  xtitle = 'Time ['+time.unit+']', $
                  ytitle = 'A(k)', $
                  ;; name = name[ib], $
