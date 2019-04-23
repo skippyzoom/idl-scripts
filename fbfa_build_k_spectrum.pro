@@ -80,7 +80,7 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
-         tmp = abs(tmp)
+         tmp = abs(tmp)^2
          tmp = reform(tmp)
          ktt = interp_xy2kt(tmp, $
                             lambda = lambda, $
@@ -117,7 +117,7 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
-         tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*]),dim=1)
+         tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
          tmp = reform(tmp)
          ktt = interp_xy2kt(tmp, $
                             lambda = lambda, $
@@ -144,7 +144,7 @@ if n_files_sub eq nt then begin
                        precision = 2)
 
    ;;==Save the data to disk
-   savename = dataname+'-k_spectrum.sav'
+   savename = dataname+'_sqr-k_spectrum.sav'
    savepath = expand_path(path)+path_sep()+savename
    sys_t0 = systime(1)
    save, time,lambda,spectrum,filename=savepath
