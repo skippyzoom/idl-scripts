@@ -1,10 +1,10 @@
 ;+
 ; Flow angle paper: Read k spectrum from a save file and make plots
-; from multiple directories on the same axes.
+; versus time from multiple directories on the same axes.
 ;-
 
 ;;==Choose 2-D or 3-D data sets
-simdims = '3D'
+simdims = '2D'
 
 ;;==Declare paths
 paths = get_base_dir()+path_sep()+'fb_flow_angle/'+ $
@@ -15,8 +15,8 @@ n_paths = n_elements(paths)
 
 ;;==Declare which file to restore
 savename = strcmp(simdims,'3D',/fold_case) ? $
-           'den1-k_spectrum-kpar_full_mean.sav' : $
-           'den1-k_spectrum.sav'
+           'den1_sqr-k_spectrum-kpar_4pnt_mean.sav' : $
+           'den1_sqr-k_spectrum.sav'
 
 ;;==Declare the graphics file name
 frmpath = build_filename(strip_extension(savename),'.pdf', $
@@ -101,9 +101,13 @@ for ip=0,n_paths-1 do begin
               ydata, $
               xstyle = 1, $
               /ylog, $
-              yrange = [1e0,1e4], $
+              ;; yrange = [1e0,1e4], $
+              yrange = [1e-4,1e1], $
               xtitle = 'Time ['+time.unit+']', $
-              ytitle = 'A(k)', $
+              ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
+              ;; ytitle = 'A(k)', $
+              ytickname = ['$10^{-4}$','$10^{-3}$','$10^{-2}$', $
+                           '$10^{-1}$','$10^{0}$','$10^{+1}$'], $
               title = title, $
               color = colors[ip], $
               overplot = (ip gt 0), $
