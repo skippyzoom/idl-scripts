@@ -10,7 +10,7 @@ if n_elements(info_path) eq 0 then info_path = path
 if n_elements(data_path) eq 0 then data_path = path+path_sep()+'parallel'
 if n_elements(zero_point) eq 0 then zero_point = 0
 params = set_eppic_params(path=path)
-nt_max = calc_timesteps(path=path)
+nt_max = calc_timesteps(path=path,/verbose)
 params['nt_max'] = nt_max
 frame_type = '.pdf'
 movie_type = '.mp4'
