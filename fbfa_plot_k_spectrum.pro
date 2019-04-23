@@ -14,8 +14,8 @@ params = set_eppic_params(path=path)
 
 ;;==Declare which file to restore
 savename = params.ndim_space eq 3 ? $
-           'den1-k_spectrum-kpar_4pnt_mean.sav' : $
-           'den1-k_spectrum.sav'
+           'den1_sqr-k_spectrum-kpar_full_mean.sav' : $
+           'den1_sqr-k_spectrum.sav'
 savepath = expand_path(path)+path_sep()+savename
 
 ;;==Build parameters
@@ -128,18 +128,18 @@ if make_snapshots then begin
 
    case params.ndim_space of
       2: begin
-         ply_dk = -2.5
-         ply_a0 = 300.0
+         ply_dk = -5.0
+         ply_a0 = 1e-2
          ply_af = ply_a0/10
-         ply_k0 = 3.5
+         ply_k0 = 5.0
          ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
                         ply_dk*alog10(ply_k0))/ply_dk)
       end
       3: begin
-         ply_dk = -3
-         ply_a0 = 200.0
+         ply_dk = -6.0
+         ply_a0 = 1e-2
          ply_af = ply_a0/10
-         ply_k0 = 3.5
+         ply_k0 = 5.0
          ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
                         ply_dk*alog10(ply_k0))/ply_dk)
       end
@@ -154,27 +154,30 @@ if make_snapshots then begin
    sys_t0 = systime(1)
    for it=0,n_inds-1 do begin
       frm = plot(2*!pi/lambda, $
-                 spectrum[*,t_ind[it]], $
+                 spectrum[*,t_ind[it]]/max(spectrum[*,t_ind]), $
                  ;; yrange = [1e-6,1e-2], $
-                 yrange = [1e0,1e4], $
+                 ;; yrange = [1e0,1e4], $
+                 ;; yrange = [1e-6,1e0], $
                  xstyle = 1, $
                  /xlog, $
                  /ylog, $
                  xtitle = 'k [m$^{-1}$]', $
                  ;; ytitle = 'A(k)', $
-                 ytitle = '$\langle\delta n(k)\rangle$', $
+                 ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
+                 xtickfont_size = 14.0, $
+                 ytickfont_size = 14.0, $
                  color = color[it], $
                  symbol = 'o', $
                  sym_size = 0.5, $
                  /sym_filled, $
                  overplot = (it gt 0), $
                  /buffer)
-      ply = polyline([ply_k0,ply_kf],[ply_a0,ply_af], $
-                     'k-', $
-                     target = frm, $
-                     /data)
+      ;; ply = polyline([ply_k0,ply_kf],[ply_a0,ply_af], $
+      ;;                'k-', $
+      ;;                target = frm, $
+      ;;                /data)
       yrange = frm.yrange
-      txt = text(0.85,0.8-it*0.05, $
+      txt = text(0.85,0.8-it*0.03, $
                  "t = "+time.stamp[t_ind[it]], $
                  color = color[it], $
                  /normal, $
