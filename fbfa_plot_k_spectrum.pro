@@ -5,8 +5,8 @@
 ;-
 
 ;;==Declare which graphics to make
-make_movie = 0B
-make_snapshots = 1B
+make_movie = 1B
+make_snapshots = 0B
 make_k_bands = 0B
 
 ;;==Read in parameter dictionary
@@ -67,7 +67,7 @@ if make_movie then begin
              resize = [4,4], $
              xtitle = 'k [m$^{-1}$]', $
              ;; ytitle = 'A(k)', $
-             ytitle = '$\langle\delta n(k)\rangle$', $
+             ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
              title = "t = "+time.stamp, $
              text = dictionary('xyz',[0,0], $
                                'string',savepath, $
