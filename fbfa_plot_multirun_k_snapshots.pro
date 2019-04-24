@@ -152,7 +152,7 @@ for id=0,ndims_all-1 do begin
       case params.ndim_space of
          2: begin
             ply_dk = -5.0
-            ply_a0 = 1e-2
+            ply_a0 = 0.5
             ply_af = ply_a0/10
             ply_k0 = 5.0
             ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
@@ -160,9 +160,9 @@ for id=0,ndims_all-1 do begin
          end
          3: begin
             ply_dk = -6.0
-            ply_a0 = 1e-2
+            ply_a0 = 1.0
             ply_af = ply_a0/10
-            ply_k0 = 5.0
+            ply_k0 = 3.0
             ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
                            ply_dk*alog10(ply_k0))/ply_dk)
          end
@@ -172,7 +172,6 @@ for id=0,ndims_all-1 do begin
       ;; current_pos = position[*,ip+id*n_paths]
       row_is_bottom = (current_pos[1] eq min(position[1,*]))
       col_is_left = (current_pos[0] eq min(position[0,*]))
-      ;; yrange = params.ndim_space eq 2 ? [1e-3,1e2] : [1e-4,1e2]
 
       for it=0,n_inds-1 do begin
          frm = plot(2*!pi/lambda, $
@@ -184,7 +183,6 @@ for id=0,ndims_all-1 do begin
                     /xlog, $
                     /ylog, $
                     xtitle = 'k [m$^{-1}$]', $
-                    ;; ytitle = 'A(k)', $
                     ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
                     xtickfont_size = 12.0, $
                     ytickfont_size = 10.0, $
@@ -199,10 +197,10 @@ for id=0,ndims_all-1 do begin
          ax = frm.axes
          ax[0].showtext = row_is_bottom
          ax[1].showtext = col_is_left
-         ;; ply = polyline([ply_k0,ply_kf],[ply_a0,ply_af], $
-         ;;                'k-', $
-         ;;                target = frm, $
-         ;;                /data)
+         ply = polyline([ply_k0,ply_kf],[ply_a0,ply_af], $
+                        'k-', $
+                        target = frm, $
+                        /data)
 
       endfor
 
