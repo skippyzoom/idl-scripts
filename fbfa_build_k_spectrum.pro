@@ -80,8 +80,8 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
-         vol = long(nx)*long(ny)
-         ;; tmp *= vol
+         vol = long(nx)*long(ny)*dx*dy
+         ;; tmp *= long(vol)
          tmp = abs(tmp)^2
          tmp = reform(tmp)
          ktt = interp_xy2kt(tmp, $
@@ -92,7 +92,8 @@ if n_files_sub eq nt then begin
          for il=0,nl-1 do begin
             keys = ktt.keys()
             keys = keys.sort()
-            spectrum[il,(it-it0)/itd] = rms(ktt[keys[il]].f_interp)
+            ;; spectrum[il,(it-it0)/itd] = rms(ktt[keys[il]].f_interp)
+            spectrum[il,(it-it0)/itd] = mean(ktt[keys[il]].f_interp)
          endfor
       endfor
       sys_tf = systime(1)
@@ -119,8 +120,8 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
-         vol = long(nx)*long(ny)*long(nz)
-         ;; tmp *= vol
+         vol = long(nx)*long(ny)*long(nz)*dx*dy*dz
+         ;; tmp *= long(vol)
          tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
          tmp = reform(tmp)
          ktt = interp_xy2kt(tmp, $
@@ -131,7 +132,8 @@ if n_files_sub eq nt then begin
          for il=0,nl-1 do begin
             keys = ktt.keys()
             keys = keys.sort()
-            spectrum[il,(it-it0)/itd] = rms(ktt[keys[il]].f_interp)
+            ;; spectrum[il,(it-it0)/itd] = rms(ktt[keys[il]].f_interp)
+            spectrum[il,(it-it0)/itd] = mean(ktt[keys[il]].f_interp)
          endfor
       endfor
       sys_tf = systime(1)
@@ -148,10 +150,10 @@ if n_files_sub eq nt then begin
                        precision = 2)
 
    ;;==Save the data to disk
-   savename = dataname+'_sqr-k_spectrum-norm.sav'
+   savename = dataname+'_sqr-k_spectrum-test.sav'
    savepath = expand_path(path)+path_sep()+savename
    sys_t0 = systime(1)
-   save, time,lambda,spectrum,filename=savepath
+   save, time,lambda,spectrum,i_kx0,i_kxf,filename=savepath
    sys_tf = systime(1)
    print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
 
