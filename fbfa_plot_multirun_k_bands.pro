@@ -27,13 +27,15 @@ for id=0,ndims_all-1 do begin
 
    ;;==Declare which file to restore
    savename = strcmp(simdims,'3D',/fold_case) ? $
-              'den1_sqr-k_spectrum-kpar_4pnt_mean.sav' : $
+              'den1_sqr-k_spectrum-kpar_full_mean.sav' : $
               'den1_sqr-k_spectrum.sav'
 
    ;;==Declare wavelengths (in meters) of interest
    ;;  Set either to !NULL to use default.
-   lam0 = 1.0
-   lamf = 5.0
+   ;; lam0 = 1.0
+   ;; lamf = 5.0
+   lam0 = !NULL
+   lamf = !NULL
 
    ;;==Set color preferences
    colors = ['blue','green','red']
@@ -41,7 +43,55 @@ for id=0,ndims_all-1 do begin
    ;;==Set short name for run labels
    names = ['107 km', '110 km', '113 km']
 
-   ;;==Loop over all paths
+   ;; ;;==Loop over all paths to calculate max value
+   ;; max_val = 0.0
+   ;; for ip=0,n_paths-1 do begin
+
+   ;;    ;;==Select one path
+   ;;    path = paths[ip]
+
+   ;;    ;;==Read in parameter dictionary
+   ;;    params = set_eppic_params(path=path)
+
+   ;;    ;;==Restore the data
+   ;;    savepath = expand_path(path)+path_sep()+savename
+   ;;    sys_t0 = systime(1)
+   ;;    restore, filename=savepath,/verbose
+   ;;    sys_tf = systime(1)
+   ;;    print, "Elapsed minutes for restore: ",(sys_tf-sys_t0)/60.
+
+   ;;    ;;==Build parameters
+   ;;    nx = params.nx*params.nsubdomains/params.nout_avg
+   ;;    ny = params.ny/params.nout_avg
+   ;;    nz = params.nz/params.nout_avg
+   ;;    nt = time.nt
+   ;;    nl = n_elements(lambda)
+   ;;    dx = params.dx*params.nout_avg
+   ;;    dy = params.dy*params.nout_avg
+   ;;    dz = params.dz*params.nout_avg
+   ;;    dt = params.dt*params.nout
+   ;;    dkx = 2*!pi/(dx*nx)
+   ;;    dky = 2*!pi/(dy*ny)
+   ;;    dkz = 2*!pi/(dz*nz)
+
+   ;;    ;;==Rescale spectrum by number of points
+   ;;    vol = long(ny)
+   ;;    if params.ndim_space eq 3 then begin
+   ;;       str_kpar = strmid(savename,strpos(savename,'kpar')+5,4)
+   ;;       case 1B of
+   ;;          strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)
+   ;;          strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L
+   ;;       endcase
+   ;;    endif $
+   ;;    else vol *= long(nx)
+   ;;    spectrum *= vol
+
+   ;;    tmp = rms(spectrum[il0:ilf-1,1:*],dim=1)
+   ;;    max_val = max([max_val,max(tmp)])
+
+   ;; endfor
+
+   ;;==Loop over all paths to create plots
    for ip=0,n_paths-1 do begin
 
       ;;==Select one path
@@ -72,16 +122,23 @@ for id=0,ndims_all-1 do begin
       dkz = 2*!pi/(dz*nz)
 
       ;;==Rescale spectrum by number of points
-      vol = long(ny)
+      vol = long(ny)*dy
       if params.ndim_space eq 3 then begin
          str_kpar = strmid(savename,strpos(savename,'kpar')+5,4)
          case 1B of
-            strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)
-            strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L
+            strcmp(str_kpar,'full'): vol *= long(nz)*dz*long(nx)
+            strcmp(str_kpar,'4pnt'): vol *= long(nz)*dz*4L
          endcase
       endif $
-      else vol *= long(nx)
-      spectrum *= vol
+      else vol *= long(nx)*dx
+      ;; vol = params.ndim_space eq 3 ? $
+      ;;       long(nz)*long(ny)*long(nx)*dz*dy : $
+      ;;       long(nx)*long(ny)*dx*dy
+      spectrum *= long(vol)
+      ;;>>For some reason, the 3-D spectrum saturates at a value close
+      ;;to one quarter the saturated value of the 2-D spectrum. The
+      ;;only factor of 4 I can think of is the ratio of perpendicular
+      ;;cell sizes in 3-D to 2-D.
 
       ;;==Set default wavelength range
       if n_elements(lam0) eq 0 then lam0 = lambda[0]
@@ -98,24 +155,24 @@ for id=0,ndims_all-1 do begin
 
       ;;==Create a frame of amplitude versus time within a k band
       xdata = float(time.stamp)
-      ydata = rms(spectrum[il0:ilf-1,*],dim=1)
+      ydata = mean(spectrum[il0:ilf-1,1:*],dim=1)
 
       frm = plot(xdata, $
                  ydata, $
                  position = position[*,id], $
                  xstyle = 1, $
                  /ylog, $
-                 ;; yrange = [1e0,1e4], $
-                 yrange = [1e-4,1e1], $
+                 yrange = [1e-6,1e0], $
                  xtitle = 'Time ['+time.unit+']', $
                  ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
                  ;; ytitle = 'A(k)', $
-                 ytickname = ['$10^{-4}$','$10^{-3}$','$10^{-2}$', $
-                              '$10^{-1}$','$10^{0}$','$10^{+1}$'], $
+                 ;; ytickname = ['$10^{-4}$','$10^{-3}$','$10^{-2}$', $
+                 ;;              '$10^{-1}$','$10^{0}$','$10^{+1}$'], $
                  title = title, $
                  color = colors[ip], $
                  overplot = (ip gt 0), $
                  current = (id gt 0), $
+                 font_name = 'Times', $
                  /buffer)
       ax = frm.axes
       ax[1].showtext = (id eq 0)
@@ -139,7 +196,7 @@ endfor
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          'den1_sqr-k_spectrum-multirun-bands.pdf'
+          'den1_sqr-k_spectrum-multirun-bands_all.pdf'
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath

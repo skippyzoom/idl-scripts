@@ -69,15 +69,15 @@ for id=0,ndims_all-1 do begin
       dkz = 2*!pi/(dz*nz)
 
       ;;==Rescale spectrum by number of points
-      vol = long(ny)
+      vol = long(ny)*dy
       if params.ndim_space eq 3 then begin
          str_kpar = strmid(savename,strpos(savename,'kpar')+5,4)
          case 1B of
-            strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)
-            strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L
+            strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)*dz
+            strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L*dz
          endcase
       endif $
-      else vol *= long(nx)
+      else vol *= long(nx)*dx
       spectrum *= vol
 
       ;;==Assign time indices based on run
@@ -144,29 +144,34 @@ for id=0,ndims_all-1 do begin
                      time.nt-1]
       endcase         
 
+      ;;==Determine number of time indices
       n_inds = n_elements(t_ind)            
+
+      ;;==Construct a power-law fit to the final spectrum
+      ;; fy0 = 1e-1
+      ;; fy1 = 1e-2
+      ;; fx0 = find_closest(spectrum[*,t_ind[n_inds-1]],fy0)
+      ;; fx1 = find_closest(spectrum[*,t_ind[n_inds-1]],fy1)
+      ;; fk0 = 2*!pi/lambda[fx0]
+      ;; fk1 = 2*!pi/lambda[fx1]
+      ;; fitx = alog10(2*!pi/lambda[fx1:fx0])
+      ;; fity = alog10(spectrum[fx1:fx0,t_ind[n_inds-1]])
+      k_vals = reverse(2*!pi/lambda)
+      fk0 = 2.0
+      fk1 = 5.0
+      ifk0 = find_closest(k_vals,fk0)
+      ifk1 = find_closest(k_vals,fk1)
+      fitx = alog10(k_vals[ifk0:ifk1])
+      fity = alog10((reverse(spectrum))[ifk0:ifk1,t_ind[n_inds-1]])
+      fitc = linfit(fitx,fity,yfit=yfit)
+
+      ;;==Reverse the time indices for plotting
+      ;;  I did this so that the growth-stage spectrum stands out more
       t_ind = reverse(t_ind)
+
+      ;;==Declare plot colors
       ;; color = ['green','blue','gray','black']
       color = ['black','gray']
-
-      case params.ndim_space of
-         2: begin
-            ply_dk = -5.0
-            ply_a0 = 0.5
-            ply_af = ply_a0/10
-            ply_k0 = 5.0
-            ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
-                           ply_dk*alog10(ply_k0))/ply_dk)
-         end
-         3: begin
-            ply_dk = -6.0
-            ply_a0 = 1.0
-            ply_af = ply_a0/10
-            ply_k0 = 3.0
-            ply_kf = 10^(-(alog10(ply_a0/ply_af)- $
-                           ply_dk*alog10(ply_k0))/ply_dk)
-         end
-      endcase
 
       current_pos = position[*,ip*ndims_all+id]
       ;; current_pos = position[*,ip+id*n_paths]
@@ -175,10 +180,9 @@ for id=0,ndims_all-1 do begin
 
       for it=0,n_inds-1 do begin
          frm = plot(2*!pi/lambda, $
-                    ;; spectrum[*,t_ind[it]]/min(spectrum[*,t_ind]), $
                     spectrum[*,t_ind[it]], $
                     position = current_pos, $
-                    yrange = [1e-4,1e2], $
+                    yrange = [1e-6,1e0], $
                     xstyle = 1, $
                     /xlog, $
                     /ylog, $
@@ -192,15 +196,25 @@ for id=0,ndims_all-1 do begin
                     /sym_filled, $
                     overplot = (it gt 0), $
                     current = current_frm, $
+                    font_name = 'Times', $
                     /buffer)
+         opl = plot(10^fitx, $
+                    10^yfit, $
+                    color = 'red', $
+                    thick = 2, $
+                    /overplot)
          current_frm = 1B
          ax = frm.axes
          ax[0].showtext = row_is_bottom
          ax[1].showtext = col_is_left
-         ply = polyline([ply_k0,ply_kf],[ply_a0,ply_af], $
-                        'k-', $
-                        target = frm, $
-                        /data)
+         slope_str = strcompress(string(fitc[1],format='(f6.1)'),/remove_all)
+         txt = text(current_pos[2]-0.1, $
+                    current_pos[3]-0.1, $
+                    slope_str, $
+                    /normal, $
+                    color='red', $
+                    font_name = 'Times', $
+                    target = frm)
 
       endfor
 
