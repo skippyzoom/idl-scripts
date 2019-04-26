@@ -56,11 +56,7 @@ if make_movie then begin
                             additions = '')
    sys_t0 = systime(1)
    r = video(2*!pi/lambda,spectrum,'ko', $
-             ;; xrange = [0,128], $
-             ;; yrange = [0,2.5e-3], $
-             ;; xrange = [128,256], $
-             yrange = [1e-6,1e-2], $
-             ;; yrange = [1e-6,1e-4], $
+             yrange = [1e-4,1e2], $
              xstyle = 1, $
              /xlog, $
              /ylog, $
