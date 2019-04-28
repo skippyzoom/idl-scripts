@@ -8,12 +8,17 @@ alldims = ['2D','3D']
 ndims_all = n_elements(alldims)
 
 ;;==Compute positions
+edges = [0.1,0.1,0.9,0.9]
 position = multi_position([2,3], $
-                          edges = [0.1,0.1,0.9,0.9], $
+                          edges = edges, $
                           buffers = [0.0,0.0])
 
 ;;==Set boolean to reuse plot frame
 current_frm = 0B
+
+;;==Set short name for run labels
+names = ['107 km', '110 km', '113 km']
+names = reverse(names)
 
 ;;==Loop over dimension sets
 for id=0,ndims_all-1 do begin
@@ -68,17 +73,22 @@ for id=0,ndims_all-1 do begin
       dky = 2*!pi/(dy*ny)
       dkz = 2*!pi/(dz*nz)
 
-      ;;==Rescale spectrum by number of points
-      vol = long(ny)*dy
+      ;;==Rescale spectrum by number of perpendicular points.
+      spectrum *= long(ny)*dy
+      if params.ndim_space eq 3 then begin
+         spectrum *= long(nz)*dz
+      endif else begin
+         spectrum *= long(nx)*dx
+      endelse
+
+      ;;==Rescale 3-D runs to account for mean along B.
       if params.ndim_space eq 3 then begin
          str_kpar = strmid(savename,strpos(savename,'kpar')+5,4)
          case 1B of
-            strcmp(str_kpar,'full'): vol *= long(nz)*long(nx)*dz
-            strcmp(str_kpar,'4pnt'): vol *= long(nz)*4L*dz
+            strcmp(str_kpar,'full'): spectrum *= long(nx)
+            strcmp(str_kpar,'4pnt'): spectrum *= 4L
          endcase
-      endif $
-      else vol *= long(nx)*dx
-      spectrum *= vol
+      endif
 
       ;;==Assign time indices based on run
       case 1B of
@@ -148,14 +158,6 @@ for id=0,ndims_all-1 do begin
       n_inds = n_elements(t_ind)            
 
       ;;==Construct a power-law fit to the final spectrum
-      ;; fy0 = 1e-1
-      ;; fy1 = 1e-2
-      ;; fx0 = find_closest(spectrum[*,t_ind[n_inds-1]],fy0)
-      ;; fx1 = find_closest(spectrum[*,t_ind[n_inds-1]],fy1)
-      ;; fk0 = 2*!pi/lambda[fx0]
-      ;; fk1 = 2*!pi/lambda[fx1]
-      ;; fitx = alog10(2*!pi/lambda[fx1:fx0])
-      ;; fity = alog10(spectrum[fx1:fx0,t_ind[n_inds-1]])
       k_vals = reverse(2*!pi/lambda)
       fk0 = 2.0
       fk1 = 5.0
@@ -173,9 +175,24 @@ for id=0,ndims_all-1 do begin
       ;; color = ['green','blue','gray','black']
       color = ['black','gray']
 
+      ;;==Declare current position array
       current_pos = position[*,ip*ndims_all+id]
       ;; current_pos = position[*,ip+id*n_paths]
+
+      ;;==Declare y tick names
+      case ip of 
+         0: ytickname = [         '','$10^{-5}$','$10^{-4}$', $
+                         '$10^{-3}$','$10^{-2}$','$10^{-1}$']
+         1: ytickname = [         '','$10^{-5}$','$10^{-4}$', $
+                         '$10^{-3}$','$10^{-2}$',         '']
+         2: ytickname = ['$10^{-6}$','$10^{-5}$','$10^{-4}$', $
+                         '$10^{-3}$','$10^{-2}$',         '']
+         else: ytickname = ['', '', '', '', '', '']
+      endcase
+      ;;==Check if this is the bottom row
       row_is_bottom = (current_pos[1] eq min(position[1,*]))
+
+      ;;==Check if this is the left column
       col_is_left = (current_pos[0] eq min(position[0,*]))
 
       for it=0,n_inds-1 do begin
@@ -187,9 +204,10 @@ for id=0,ndims_all-1 do begin
                     /xlog, $
                     /ylog, $
                     xtitle = 'k [m$^{-1}$]', $
-                    ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
+                    ;; ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
                     xtickfont_size = 12.0, $
                     ytickfont_size = 10.0, $
+                    ytickname = ytickname, $
                     color = color[it], $
                     symbol = 'o', $
                     sym_size = 0.5, $
@@ -208,7 +226,7 @@ for id=0,ndims_all-1 do begin
          ax[0].showtext = row_is_bottom
          ax[1].showtext = col_is_left
          slope_str = strcompress(string(fitc[1],format='(f6.1)'),/remove_all)
-         txt = text(current_pos[2]-0.1, $
+         txt = text(current_pos[2]-0.12, $
                     current_pos[3]-0.1, $
                     slope_str, $
                     /normal, $
@@ -218,9 +236,42 @@ for id=0,ndims_all-1 do begin
 
       endfor
 
+      ;;==Print altitude on each panel
+      txt = text(current_pos[2]-0.01, $
+                 current_pos[3]-0.01, $
+                 names[ip], $
+                 /normal, $
+                 alignment = 1.0, $
+                 vertical_alignment = 1.0, $
+                 target = frm, $
+                 font_name = 'Times', $
+                 font_size = 12.0)
    endfor
 
+   ;;==Print dimensions above each column
+   txt = text(0.5*(current_pos[0]+current_pos[2]), $
+              edges[3]+0.01, $
+              simdims, $
+              /normal, $
+              alignment = 0.5, $
+              target = frm, $
+              font_name = 'Times', $
+              font_size = 12.0)
+
+
 endfor
+
+;;==Print a common y-axis title
+txt = text(edges[0]-0.07, $
+           0.5*(edges[0]+edges[2]), $
+          '$\langle|\delta n(k)/n_0|^2\rangle$', $
+           /normal, $
+           alignment = 0.5, $
+           baseline = [0,1,0], $
+           updir = [-1,0,0], $
+           target = frm, $
+           font_name = 'Times', $
+           font_size = 12.0)
 
 ;;==Declare the graphics file name
 frmpath = get_base_dir()+path_sep()+ $
