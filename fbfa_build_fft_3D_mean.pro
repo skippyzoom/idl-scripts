@@ -49,6 +49,9 @@ else $
 ;;==Count the new number of files
 n_files_sub = n_elements(sub_files)
 
+;;==Allocate the array
+fftdata = fltarr(ny,nz,(itf-it0)/itd+1)
+
 ;;==Make sure there is the right number of files
 if n_files_sub eq nt then begin
 
@@ -62,6 +65,7 @@ if n_files_sub eq nt then begin
       ;; tmp *= long(vol)
       tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
       tmp = reform(tmp)
+      fftdata[*,*,(it-it0)/itd] = tmp
    endfor
    sys_tf = systime(1)
    print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
@@ -75,10 +79,10 @@ if n_files_sub eq nt then begin
                        precision = 2)
 
    ;;==Save the data to disk
-   savename = dataname+'-fft-pseudo_2D.sav'
+   savename = dataname+'-fft-kpar_mean.sav'
    savepath = expand_path(path)+path_sep()+savename
    sys_t0 = systime(1)
-   save, time,lambda,spectrum,filename=savepath
+   save, time,fftdata,i_kx0,i_kxf,filename=savepath
    sys_tf = systime(1)
    print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
 
