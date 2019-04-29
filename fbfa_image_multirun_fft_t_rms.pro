@@ -179,23 +179,6 @@ for id=0,ndims_all-1 do begin
             ;;==Extract current position array
             current_pos = position[*,ip*n_ranges+ir]
 
-            ;;==Declare x tick names
-            case ir of
-               ;; 0: xtickname = ['0','$+\pi$',''       ]
-               ;; 1: xtickanme = [ '','$+\pi$','$+2\pi$']
-               0: xtickname = ['0','$+\pi/2$',''       ]
-               1: xtickanme = [ '','$+\pi/2$','$+\pi$']
-               else: xtickname = ['', '', '']
-            endcase
-
-            ;;==Declare y tick names
-            case ip of 
-               0: ytickname = ['$\pm$ $\pi$','0','$+$ $\pi$'  ]
-               1: ytickname = ['$\pm$ $\pi$','0','$\pm$ $\pi$']
-               2: ytickname = [  '$-$ $\pi$','0',''           ]
-               else: ytickname = ['', '', '']
-            endcase
-
             ;;==Check if this is the bottom row
             row_is_bottom = (current_pos[1] eq min(position[1,*]))
 
@@ -214,16 +197,10 @@ for id=0,ndims_all-1 do begin
                         max_value = 0, $
                         rgb_table = 39, $
                         position = current_pos, $
-                        ;; xrange = [nx/2,nx/2+nx/8], $
-                        ;; yrange = [ny/2-ny/8,ny/2+ny/8], $
-                        ;; xrange = [0,+2*!pi], $
-                        ;; yrange = [-!pi,+!pi], $
                         xrange = [0,+!pi], $
                         yrange = [-!pi/2,+!pi/2], $
                         xtickvalues = [0.0,4.0,3.0,2.0,1.0], $
                         ytickvalues = [-2.0,-1.0,0,+1.0,+2.0], $
-                        ;; xtickname = xtickname, $
-                        ;; ytickname = ytickname, $
                         xmajor = 3, $
                         xminor = 3, $
                         ymajor = 3, $
@@ -236,8 +213,6 @@ for id=0,ndims_all-1 do begin
                         ytickdir = 1, $
                         xticklen = 0.02, $
                         yticklen = 0.02, $
-                        ;; xshowtext = 1, $
-                        ;; yshowtext = 1, $
                         xtickfont_size = 12.0, $
                         ytickfont_size = 12.0, $
                         font_name = 'Times', $
@@ -250,8 +225,6 @@ for id=0,ndims_all-1 do begin
             ax[1].showtext = col_is_left
 
             ;;==Add radius and angle markers
-            ;; r_overlay = 2*!pi/(1+findgen(10))
-            ;; theta_overlay = 10*findgen(36)
             r_overlay = [4.0,3.0,2.0,1.0]
             theta_overlay = [0.0,-30.0,-60.0,-90.0]
             frm = overlay_rtheta(frm, $
@@ -299,18 +272,6 @@ for id=0,ndims_all-1 do begin
                                  theta_color = 'white', $
                                  theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
-            ;; txt = text(0.0,0.01, $
-            ;;            "$\langle\lambda\rangle$ = "+ $
-            ;;            strcompress(string(2*!pi/rcm_kmag), $
-            ;;                        /remove_all)+ $
-            ;;            " [m]      "+ $
-            ;;            "$\langle\theta\rangle$ = "+ $
-            ;;            strcompress(string(rcm_theta/!dtor), $
-            ;;                        /remove_all)+ $
-            ;;            " [deg]", $
-            ;;            target = frm, $
-            ;;            font_name = 'Times', $
-            ;;            font_size = 10.0)
 
             ;;==Add lines at +/- one standard deviation of centroid
             frm = overlay_rtheta(frm, $
@@ -331,6 +292,24 @@ for id=0,ndims_all-1 do begin
                                  theta_color = 'white', $
                                  theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
+
+            ;;==Print angle of centroid on frame
+            str_rcm_theta = string(rcm_theta/!dtor, $
+                                   format='(f6.1)')
+            str_rcm_theta = strcompress(str_rcm_theta, $
+                                        /remove_all)
+            txt = text(current_pos[0]+0.17, $
+                       current_pos[3]-0.025, $
+                       "$\langle\theta\rangle$ = "+ $
+                       str_rcm_theta+ $
+                       "$^\circ$", $
+                       /normal, $
+                       target = frm, $
+                       alignment = 0.0, $
+                       color = 'white', $
+                       font_name = 'Times', $
+                       font_size = 8.0)
+
             tf = systime(1)
             print, "Elapsed minutes for frame: ",(tf-t0)/60.
 
