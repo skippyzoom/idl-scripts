@@ -11,9 +11,10 @@ ndims_all = n_elements(alldims)
 
 ;;==Compute positions
 edges = [0.1,0.1,0.9,0.9]
+buffers = [-0.3,0.0]
 position = multi_position([2,3], $
                           edges = edges, $
-                          buffers = [0.0,0.0])
+                          buffers = buffers)
 
 ;;==Set short name for run labels
 names = ['107 km', '110 km', '113 km']
@@ -95,27 +96,27 @@ for id=0,ndims_all-1 do begin
                '2D-new_coll'+path_sep()+ $
                    'h0-Ey0_050'+path_sep()): begin
                growth_it = find_closest(float(time.stamp),78.85)
-               t_ind = [[growth_it-2, $
-                         growth_it+2], $
-                        [time.nt-10, $
+               t_ind = [[growth_it-10, $
+                         growth_it], $
+                        [3*time.nt/4, $
                          time.nt-1]]
             end
             strcmp(run_subdir, $
                '2D-new_coll'+path_sep()+ $
                    'h1-Ey0_050'+path_sep()): begin
                growth_it = find_closest(float(time.stamp),78.85)
-               t_ind = [[growth_it-2, $
-                         growth_it+2], $
-                        [time.nt-10, $
+               t_ind = [[growth_it-10, $
+                         growth_it], $
+                        [3*time.nt/4, $
                          time.nt-1]]
             end
             strcmp(run_subdir, $
                '2D-new_coll'+path_sep()+ $
                    'h2-Ey0_050'+path_sep()): begin
                growth_it = find_closest(float(time.stamp),111.10)
-               t_ind = [[growth_it-2, $
-                         growth_it+2], $
-                        [time.nt-10, $
+               t_ind = [[growth_it-10, $
+                         growth_it], $
+                        [3*time.nt/4, $
                          time.nt-1]]
             end
          endcase
@@ -149,14 +150,14 @@ for id=0,ndims_all-1 do begin
                                       mask_value = 0.0, $
                                       mask_type = 'relative_max')
                xcm = cm.x
-               ycm = cm.y
+               ycm = cm.y-0.5*(c_yf-c_y0)
                dev_xcm = cm.dev_x
                dev_ycm = cm.dev_y
                tmp_kmag[it] = sqrt((dkx*xcm)^2 + (dky*ycm)^2)
                tmp_theta[it] = atan(ycm,xcm)
             endfor
             tf = systime(1)
-            print, "Elapsed minutes for centroids: ",(tf-t0)/60.
+            print, "Elapsed minutes for centroid: ",(tf-t0)/60.
 
             ;;==Compute mean centroid and uncertainty
             theta_m = moment(tmp_theta)
@@ -165,8 +166,6 @@ for id=0,ndims_all-1 do begin
             kmag_m = moment(tmp_kmag)
             rcm_kmag = kmag_m[0]
             dev_kmag = kmag_m[1]
-
-            help, rcm_theta
 
             ;;==Condition data
             fdata = rms(fdata,dim=3)
@@ -180,7 +179,31 @@ for id=0,ndims_all-1 do begin
             ;;==Extract current position array
             current_pos = position[*,ip*n_ranges+ir]
 
+            ;;==Declare x tick names
+            case ir of
+               ;; 0: xtickname = ['0','$+\pi$',''       ]
+               ;; 1: xtickanme = [ '','$+\pi$','$+2\pi$']
+               0: xtickname = ['0','$+\pi/2$',''       ]
+               1: xtickanme = [ '','$+\pi/2$','$+\pi$']
+               else: xtickname = ['', '', '']
+            endcase
+
+            ;;==Declare y tick names
+            case ip of 
+               0: ytickname = ['$\pm$ $\pi$','0','$+$ $\pi$'  ]
+               1: ytickname = ['$\pm$ $\pi$','0','$\pm$ $\pi$']
+               2: ytickname = [  '$-$ $\pi$','0',''           ]
+               else: ytickname = ['', '', '']
+            endcase
+
+            ;;==Check if this is the bottom row
+            row_is_bottom = (current_pos[1] eq min(position[1,*]))
+
+            ;;==Check if this is the left column
+            col_is_left = (current_pos[0] eq min(position[0,*]))
+
             ;;==Create frames
+            t0 = systime(1)
             imgf = fdata[i_x0:i_xf-1,i_y0:i_yf-1]
             imgx = kxdata[i_x0-1:i_xf-2]
             imgy = kydata[i_y0-2:i_yf-3]
@@ -191,9 +214,16 @@ for id=0,ndims_all-1 do begin
                         max_value = 0, $
                         rgb_table = 39, $
                         position = current_pos, $
-                        xrange = [0,+2*!pi], $
-                        ;; xrange = [-!pi,+!pi], $
-                        yrange = [-!pi,+!pi], $
+                        ;; xrange = [nx/2,nx/2+nx/8], $
+                        ;; yrange = [ny/2-ny/8,ny/2+ny/8], $
+                        ;; xrange = [0,+2*!pi], $
+                        ;; yrange = [-!pi,+!pi], $
+                        xrange = [0,+!pi], $
+                        yrange = [-!pi/2,+!pi/2], $
+                        xtickvalues = [0.0,4.0,3.0,2.0,1.0], $
+                        ytickvalues = [-2.0,-1.0,0,+1.0,+2.0], $
+                        ;; xtickname = xtickname, $
+                        ;; ytickname = ytickname, $
                         xmajor = 3, $
                         xminor = 3, $
                         ymajor = 3, $
@@ -206,8 +236,8 @@ for id=0,ndims_all-1 do begin
                         ytickdir = 1, $
                         xticklen = 0.02, $
                         yticklen = 0.02, $
-                        xshowtext = 1, $
-                        yshowtext = 1, $
+                        ;; xshowtext = 1, $
+                        ;; yshowtext = 1, $
                         xtickfont_size = 12.0, $
                         ytickfont_size = 12.0, $
                         font_name = 'Times', $
@@ -215,19 +245,24 @@ for id=0,ndims_all-1 do begin
                         current = current_frm, $
                         /buffer)
             current_frm = 1B
+            ax = frm.axes
+            ax[0].showtext = row_is_bottom
+            ax[1].showtext = col_is_left
 
             ;;==Add radius and angle markers
-            r_overlay = 2*!pi/(1+findgen(10))
-            theta_overlay = 10*findgen(36)
+            ;; r_overlay = 2*!pi/(1+findgen(10))
+            ;; theta_overlay = 10*findgen(36)
+            r_overlay = [4.0,3.0,2.0,1.0]
+            theta_overlay = [0.0,-30.0,-60.0,-90.0]
             frm = overlay_rtheta(frm, $
                                  r_overlay, $
                                  theta_overlay, $
                                  /degrees, $
                                  r_color = 'white', $
-                                 r_thick = 1, $
+                                 r_thick = 0.5, $
                                  r_linestyle = 'dot', $
                                  theta_color = 'white', $
-                                 theta_thick = 1, $
+                                 theta_thick = 0.5, $
                                  theta_linestyle = 'dot')
 
             ;;==Add angle of drift velocity
@@ -236,10 +271,10 @@ for id=0,ndims_all-1 do begin
                                  r_overlay[0], $
                                  vd_angle, $
                                  r_color = 'white', $
-                                 r_thick = 1, $
+                                 r_thick = 0.5, $
                                  r_linestyle = 'none', $
                                  theta_color = 'magenta', $
-                                 theta_thick = 2, $
+                                 theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
 
             ;;==Add optimal flow angle
@@ -248,10 +283,10 @@ for id=0,ndims_all-1 do begin
                                  r_overlay[0], $
                                  theta_opt, $
                                  r_color = 'white', $
-                                 r_thick = 1, $
+                                 r_thick = 0.5, $
                                  r_linestyle = 'none', $
                                  theta_color = 'cyan', $
-                                 theta_thick = 2, $
+                                 theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
 
             ;;==Add angle of centroid and print on frame
@@ -259,10 +294,10 @@ for id=0,ndims_all-1 do begin
                                  r_overlay[0], $
                                  rcm_theta, $
                                  r_color = 'white', $
-                                 r_thick = 2, $
+                                 r_thick = 0.5, $
                                  r_linestyle = 'none', $
                                  theta_color = 'white', $
-                                 theta_thick = 2, $
+                                 theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
             ;; txt = text(0.0,0.01, $
             ;;            "$\langle\lambda\rangle$ = "+ $
@@ -282,31 +317,35 @@ for id=0,ndims_all-1 do begin
                                  r_overlay[0], $
                                  rcm_theta+dev_theta, $
                                  r_color = 'white', $
-                                 r_thick = 2, $
+                                 r_thick = 0.5, $
                                  r_linestyle = 'none', $
                                  theta_color = 'white', $
-                                 theta_thick = 2, $
+                                 theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
             frm = overlay_rtheta(frm, $
                                  r_overlay[0], $
                                  rcm_theta-dev_theta, $
                                  r_color = 'white', $
-                                 r_thick = 2, $
+                                 r_thick = 0.5, $
                                  r_linestyle = 'none', $
                                  theta_color = 'white', $
-                                 theta_thick = 2, $
+                                 theta_thick = 1, $
                                  theta_linestyle = 'solid_line')
+            tf = systime(1)
+            print, "Elapsed minutes for frame: ",(tf-t0)/60.
 
          endfor ;; ir=0,n_ranges-1
       endfor ;; ip=0,n_paths-1
       
       ;;==Add global colorbar
-      title = '$\langle|\delta n(k)/n_0|^2\rangle$'
+      title = '$\langle|\delta n(k)/n_0|^2\rangle$ [dB]'
       major = 1 + $
               (frm.max_value-frm.min_value)/5
-      clr_pos = [edges[2]+0.02, $
+      ;; global_right_edge = max(position[2,*])+buffers[0]
+      global_right_edge = 0.75
+      clr_pos = [global_right_edge+0.02, $
                  0.5*(edges[0]+edges[2])-0.3, $
-                 edges[2]+0.04, $
+                 global_right_edge+0.04, $
                  0.5*(edges[0]+edges[2])+0.3]
       clr = colorbar(target = frm, $
                      title = title, $
