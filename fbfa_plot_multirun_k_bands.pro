@@ -1,6 +1,8 @@
 ;+
 ; Flow angle paper: Read k spectrum from a save file and make plots
 ; versus time from multiple directories on the same axes.
+;
+; Created by Matt Young.
 ;-
 
 ;;==Declare all dimensions
