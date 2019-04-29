@@ -79,7 +79,7 @@ if n_files_sub eq nt then begin
                        precision = 2)
 
    ;;==Save the data to disk
-   savename = dataname+'-fft-kpar_mean.sav'
+   savename = dataname+'_sqr-fft-kpar_mean.sav'
    savepath = expand_path(path)+path_sep()+savename
    sys_t0 = systime(1)
    save, time,fftdata,i_kx0,i_kxf,filename=savepath
