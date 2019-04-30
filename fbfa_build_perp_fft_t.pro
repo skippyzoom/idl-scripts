@@ -26,8 +26,10 @@ dkz = 2*!pi/(dz*nz)
 ;;==Declare RMS range parallel to B
 ;; i_kx0 = nx/2-2
 ;; i_kxf = nx/2+2
+;; str_kpar = 'kpar_4pnt_mean'
 i_kx0 = 0
 i_kxf = nx
+str_kpar = 'kpar_full_mean'
 
 ;;==Declare time range
 it0 = 0
@@ -72,8 +74,6 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
-         vol = long(nx)*long(ny)*dx*dy
-         ;; tmp *= long(vol)
          tmp = abs(tmp)^2
          tmp = reform(tmp)
          fftdata[*,*,(it-it0)/itd] = tmp
@@ -101,8 +101,6 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
-         vol = long(nx)*long(ny)*long(nz)*dx*dy*dz
-         ;; tmp *= long(vol)
          tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
          tmp = reform(tmp)
          fftdata[*,*,(it-it0)/itd] = tmp
@@ -119,7 +117,7 @@ if n_files_sub eq nt then begin
                           precision = 2)
 
       ;;==Save the data to disk
-      savename = dataname+'_sqr-fft-kpar_full_mean.sav'
+      savename = dataname+'_sqr-fft-'+str_kpar+'.sav'
       savepath = expand_path(path)+path_sep()+savename
       sys_t0 = systime(1)
       save, time,fftdata,i_kx0,i_kxf,filename=savepath
