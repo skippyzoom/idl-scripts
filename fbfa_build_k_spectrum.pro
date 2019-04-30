@@ -2,12 +2,16 @@
 ; Script for building the wavenumber spectrum, averaged over all
 ; angles in k space, as a function of time. This script produces a
 ; logically (2+1)-D array: For 2-D runs, it uses the FFT of the
-; simulation data; for 3-D runs, it computes the RMS over parallel
+; simulation data; for 3-D runs, it computes the mean over parallel
 ; modes within a specified range. This script saves the data to a file
 ; with the same name, regardless of parallel range or dimensions of
 ; input data. It is the user's responsibility to rename the
 ; resultant file in order the distinguish between, for example,
-; different parallel RMS ranges.
+; different parallel ranges.
+;
+; See also fbfa_build_perp_fft_t.pro, which just builds and saves the
+; (2+1)-D FFT array. It may be simpler to build that once, then create
+; interpolated spectra and graphics from there.
 ;
 ; Created by Matt Young.
 ;-
@@ -34,8 +38,10 @@ dkz = 2*!pi/(dz*nz)
 ;;==Declare RMS range parallel to B
 ;; i_kx0 = nx/2-2
 ;; i_kxf = nx/2+2
+;; str_kpar = 'kpar_4pnt_mean'
 i_kx0 = 0
 i_kxf = nx
+str_kpar = 'kpar_full_mean'
 
 ;;==Declare time range
 it0 = 0
@@ -59,6 +65,14 @@ n_files_sub = n_elements(sub_files)
 ;;==Make sure there is the right number of files
 if n_files_sub eq nt then begin
 
+   ;;==Construct a time dictionary for this data subset
+   substeps = time_ref.subsample*params.nout* $
+              (it0 + itd*lindgen((itf-it0-1)/itd + 1))
+   time = time_strings(substeps, $
+                       dt = params.dt, $
+                       scale = 1e3, $
+                       precision = 2)
+
    ;;==Needs differ slightly for 2-D v. 3-D runs
    if params.ndim_space eq 2 then begin
 
@@ -80,8 +94,6 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
-         vol = long(nx)*long(ny)*dx*dy
-         ;; tmp *= long(vol)
          tmp = abs(tmp)^2
          tmp = reform(tmp)
          ktt = interp_xy2kt(tmp, $
@@ -92,12 +104,19 @@ if n_files_sub eq nt then begin
          for il=0,nl-1 do begin
             keys = ktt.keys()
             keys = keys.sort()
-            ;; spectrum[il,(it-it0)/itd] = rms(ktt[keys[il]].f_interp)
             spectrum[il,(it-it0)/itd] = mean(ktt[keys[il]].f_interp)
          endfor
       endfor
       sys_tf = systime(1)
       print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
+
+      ;;==Save the data to disk
+      savename = dataname+'_sqr-k_spectrum.sav'
+      savepath = expand_path(path)+path_sep()+savename
+      sys_t0 = systime(1)
+      save, time,lambda,spectrum,i_kx0,i_kxf,filename=savepath
+      sys_tf = systime(1)
+      print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
 
    endif $
    else begin
@@ -120,8 +139,6 @@ if n_files_sub eq nt then begin
          tmp = get_h5_data(sub_files[it],dataname)
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
-         vol = long(nx)*long(ny)*long(nz)*dx*dy*dz
-         ;; tmp *= long(vol)
          tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
          tmp = reform(tmp)
          ktt = interp_xy2kt(tmp, $
@@ -132,30 +149,21 @@ if n_files_sub eq nt then begin
          for il=0,nl-1 do begin
             keys = ktt.keys()
             keys = keys.sort()
-            ;; spectrum[il,(it-it0)/itd] = rms(ktt[keys[il]].f_interp)
             spectrum[il,(it-it0)/itd] = mean(ktt[keys[il]].f_interp)
          endfor
       endfor
       sys_tf = systime(1)
       print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
 
+      ;;==Save the data to disk
+      savename = dataname+'_sqr-k_spectrum-'+str_kpar+'.sav'
+      savepath = expand_path(path)+path_sep()+savename
+      sys_t0 = systime(1)
+      save, time,lambda,spectrum,i_kx0,i_kxf,filename=savepath
+      sys_tf = systime(1)
+      print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
+
    endelse
-
-   ;;==Construct a time dictionary for this data subset
-   substeps = time_ref.subsample*params.nout* $
-              (it0 + itd*lindgen((itf-it0-1)/itd + 1))
-   time = time_strings(substeps, $
-                       dt = params.dt, $
-                       scale = 1e3, $
-                       precision = 2)
-
-   ;;==Save the data to disk
-   savename = dataname+'_sqr-k_spectrum-test.sav'
-   savepath = expand_path(path)+path_sep()+savename
-   sys_t0 = systime(1)
-   save, time,lambda,spectrum,i_kx0,i_kxf,filename=savepath
-   sys_tf = systime(1)
-   print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
 
 endif $
 else print, "N_FILES_SUB not equal to NT"
