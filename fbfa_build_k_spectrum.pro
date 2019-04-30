@@ -114,7 +114,7 @@ if n_files_sub eq nt then begin
       savename = dataname+'_sqr-k_spectrum.sav'
       savepath = expand_path(path)+path_sep()+savename
       sys_t0 = systime(1)
-      save, time,lambda,spectrum,i_kx0,i_kxf,filename=savepath
+      save, time,lambda,spectrum,filename=savepath
       sys_tf = systime(1)
       print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
 
