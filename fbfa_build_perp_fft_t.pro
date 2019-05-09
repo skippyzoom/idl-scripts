@@ -108,14 +108,6 @@ if n_files_sub eq nt then begin
       sys_tf = systime(1)
       print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
 
-      ;;==Construct a time dictionary for this data subset
-      substeps = time_ref.subsample*params.nout* $
-                 (it0 + itd*lindgen((itf-it0-1)/itd + 1))
-      time = time_strings(substeps, $
-                          dt = params.dt, $
-                          scale = 1e3, $
-                          precision = 2)
-
       ;;==Save the data to disk
       savename = dataname+'_sqr-fft-'+str_kpar+'.sav'
       savepath = expand_path(path)+path_sep()+savename
