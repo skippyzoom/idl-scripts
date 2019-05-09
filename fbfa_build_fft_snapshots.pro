@@ -60,4 +60,73 @@ else $
 ;;==Extract the snapshot times
 snap_files = sub_files[t_ind]
 
+;;==Make sure there are files to process
+if n_elements(snap_files) gt 0 then begin
+
+   ;;==Construct a time dictionary for this data subset
+   substeps = time_ref.subsample*params.nout*t_ind
+   time = time_strings(substeps, $
+                       dt = params.dt, $
+                       scale = 1e3, $
+                       precision = 2)
+
+   ;;==Needs differ slightly for 2-D v. 3-D runs
+   if params.ndim_space eq 2 then begin
+
+      ;;==Allocate the array
+      fftdata = fltarr(nx,ny,n_inds)
+
+      ;;==Loop over files to build array
+      sys_t0 = systime(1)
+      for it=0,n_inds-1 do begin
+         tmp = get_h5_data(snap_files[it],dataname)
+         tmp = transpose(tmp,[1,0])
+         tmp = fft(tmp,/center,/overwrite)
+         tmp = abs(tmp)^2
+         tmp = reform(tmp)
+         fftdata[*,*,it] = tmp
+      endfor
+      sys_tf = systime(1)
+      print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
+
+      ;;==Save the data to disk
+      savename = dataname+'_sqr-snapshots-fft.sav'
+      savepath = expand_path(path)+path_sep()+savename
+      sys_t0 = systime(1)
+      save, time,fftdata,i_kx0,i_kxf,filename=savepath
+      sys_tf = systime(1)
+      print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
+
+   endif $
+   else begin
+
+      ;;==Allocate the array
+      fftdata = fltarr(ny,nz,n_inds)
+
+      ;;==Loop over files to build array
+      sys_t0 = systime(1)
+      for it=0,n_inds-1 do begin
+         tmp = get_h5_data(snap_files[it],dataname)
+         tmp = transpose(tmp,[2,1,0])
+         tmp = fft(tmp,/center,/overwrite)
+         tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
+         tmp = reform(tmp)
+         fftdata[*,*,it] = tmp
+      endfor
+      sys_tf = systime(1)
+      print, "Elapsed minutes for build: ",(sys_tf-sys_t0)/60.
+
+      ;;==Save the data to disk
+      savename = dataname+'_sqr-snapshots-fft-'+str_kpar+'.sav'
+      savepath = expand_path(path)+path_sep()+savename
+      sys_t0 = systime(1)
+      save, time,fftdata,i_kx0,i_kxf,filename=savepath
+      sys_tf = systime(1)
+      print, "Elapsed minutes for save: ",(sys_tf-sys_t0)/60.
+
+   endelse
+
+endif $
+else print, "No files found"
+
 end
