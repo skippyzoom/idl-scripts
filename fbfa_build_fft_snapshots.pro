@@ -7,7 +7,12 @@
 ;-
 
 ;;==Declare name of target data quantity
-dataname = 'den1'
+dataname = 'efield'
+
+;;==Set name for reading
+if strcmp(dataname, 'efield') then readname = 'phi' $
+else readname = dataname
+
 
 ;;==Read in parameter dictionary
 params = set_eppic_params(path=path)
@@ -79,7 +84,17 @@ if n_elements(snap_files) gt 0 then begin
       ;;==Loop over files to build array
       sys_t0 = systime(1)
       for it=0,n_inds-1 do begin
-         tmp = get_h5_data(snap_files[it],dataname)
+         tmp = get_h5_data(snap_files[it],readname)
+         if strcmp(dataname, 'efield') then begin
+            orig = tmp
+            grad = gradient(orig, $
+                            dx = dx, $
+                            dy = dy)
+            xcomp = -1.0*grad.x
+            ycomp = -1.0*grad.y
+            mag = sqrt(xcomp^2 + ycomp^2)
+            tmp = mag
+         endif
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
          tmp = abs(tmp)^2
@@ -106,7 +121,19 @@ if n_elements(snap_files) gt 0 then begin
       ;;==Loop over files to build array
       sys_t0 = systime(1)
       for it=0,n_inds-1 do begin
-         tmp = get_h5_data(snap_files[it],dataname)
+         tmp = get_h5_data(snap_files[it],readname)
+         if strcmp(dataname, 'efield') then begin
+            orig = tmp
+            grad = gradient(orig, $
+                            dx = dx, $
+                            dy = dy, $
+                            dz = dz)
+            xcomp = -1.0*grad.x
+            ycomp = -1.0*grad.y
+            zcomp = -1.0*grad.z
+            mag = sqrt(xcomp^2 + ycomp^2 + zcomp^2)
+            tmp = mag
+         endif
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
          tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)

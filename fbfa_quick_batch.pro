@@ -43,6 +43,7 @@ path = get_base_dir()+path_sep()+'fb_flow_angle/2D-new_coll/h0-Ey0_050/'
 ;; .r fbfa_build_perp_fft_t
 ;; .r fbfa_plot_k_spectrum
 ;; .r fbfa_fft_perp_movie
+.r fbfa_build_fft_snapshots
 
 @unload_defaults
 @unload_data
@@ -56,6 +57,7 @@ path = get_base_dir()+path_sep()+'fb_flow_angle/2D-new_coll/h1-Ey0_050/'
 ;; .r fbfa_build_perp_fft_t
 ;; .r fbfa_plot_k_spectrum
 ;; .r fbfa_fft_perp_movie
+.r fbfa_build_fft_snapshots
 
 @unload_defaults
 @unload_data
@@ -69,6 +71,7 @@ path = get_base_dir()+path_sep()+'fb_flow_angle/2D-new_coll/h2-Ey0_050/'
 ;; .r fbfa_build_perp_fft_t
 ;; .r fbfa_plot_k_spectrum
 ;; .r fbfa_fft_perp_movie
+.r fbfa_build_fft_snapshots
 
 @unload_defaults
 @unload_data
@@ -86,6 +89,7 @@ path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h0-Ey0_050/'
 ;; .r fbfa_build_perp_fft_t
 ;; .r fbfa_plot_k_spectrum
 ;; .r fbfa_fft_perp_movie
+.r fbfa_build_fft_snapshots
 
 @unload_defaults
 @unload_data
@@ -103,6 +107,7 @@ path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h1-Ey0_050/'
 ;; .r fbfa_build_perp_fft_t
 ;; .r fbfa_plot_k_spectrum
 ;; .r fbfa_fft_perp_movie
+.r fbfa_build_fft_snapshots
 
 @unload_defaults
 @unload_data
@@ -120,3 +125,4 @@ path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h2-Ey0_050/'
 ;; .r fbfa_build_perp_fft_t
 ;; .r fbfa_plot_k_spectrum
 ;; .r fbfa_fft_perp_movie
+.r fbfa_build_fft_snapshots
