@@ -93,68 +93,7 @@ for id=0,ndims_all-1 do begin
       endif
 
       ;;==Assign time indices based on run
-      case 1B of
-         ;; strcmp(run_subdir, $
-         ;;         '2D-new_coll'+path_sep()+'h0-Ey0_050'+path_sep()): $
-         ;;    t_ind = [find_closest(float(time.stamp),17.92), $
-         ;;             find_closest(float(time.stamp),78.85), $
-         ;;             find_closest(float(time.stamp),114.69), $
-         ;;             time.nt-1]
-         strcmp(run_subdir, $
-                 '2D-new_coll'+path_sep()+'h0-Ey0_050'+path_sep()): $
-            t_ind = [find_closest(float(time.stamp),78.85), $
-                     time.nt-1]
-         ;; strcmp(run_subdir, $
-         ;;         '2D-new_coll'+path_sep()+'h1-Ey0_050'+path_sep()): $
-         ;;    t_ind = [find_closest(float(time.stamp),17.92), $
-         ;;             find_closest(float(time.stamp),68.10), $
-         ;;             find_closest(float(time.stamp),111.10), $
-         ;;             time.nt-1]
-         strcmp(run_subdir, $
-                 '2D-new_coll'+path_sep()+'h1-Ey0_050'+path_sep()): $
-            t_ind = [find_closest(float(time.stamp),78.85), $
-                     time.nt-1]
-         ;; strcmp(run_subdir, $
-         ;;         '2D-new_coll'+path_sep()+'h2-Ey0_050'+path_sep()): $
-         ;;    t_ind = [find_closest(float(time.stamp),17.92), $
-         ;;             find_closest(float(time.stamp),111.10), $
-         ;;             find_closest(float(time.stamp),139.78), $
-         ;;             time.nt-1]
-         strcmp(run_subdir, $
-                 '2D-new_coll'+path_sep()+'h2-Ey0_050'+path_sep()): $
-            t_ind = [find_closest(float(time.stamp),111.10), $
-                     time.nt-1]
-         ;; strcmp(run_subdir, $
-         ;;         '3D-new_coll'+path_sep()+'h0-Ey0_050'+path_sep()): $
-         ;;    t_ind = [find_closest(float(time.stamp),9.86), $
-         ;;             find_closest(float(time.stamp),24.19), $
-         ;;             find_closest(float(time.stamp),32.26), $
-         ;;             time.nt-1]
-         strcmp(run_subdir, $
-                 '3D-new_coll'+path_sep()+'h0-Ey0_050'+path_sep()): $
-            t_ind = [find_closest(float(time.stamp),30.46), $
-                     time.nt-1]
-         ;; strcmp(run_subdir, $
-         ;;         '3D-new_coll'+path_sep()+'h1-Ey0_050'+path_sep()): $
-         ;;    t_ind = [find_closest(float(time.stamp),9.86), $
-         ;;             find_closest(float(time.stamp),21.50), $
-         ;;             find_closest(float(time.stamp),30.46), $
-         ;;             time.nt-1]
-         strcmp(run_subdir, $
-                 '3D-new_coll'+path_sep()+'h1-Ey0_050'+path_sep()): $
-            t_ind = [find_closest(float(time.stamp),25.09), $
-                     time.nt-1]
-         ;; strcmp(run_subdir, $
-         ;;         '3D-new_coll'+path_sep()+'h2-Ey0_050'+path_sep()): $
-         ;;    t_ind = [find_closest(float(time.stamp),9.86), $
-         ;;             find_closest(float(time.stamp),28.67), $
-         ;;             find_closest(float(time.stamp),38.53), $
-         ;;             time.nt-1]
-         strcmp(run_subdir, $
-                 '3D-new_coll'+path_sep()+'h2-Ey0_050'+path_sep()): $
-            t_ind = [find_closest(float(time.stamp),30.46), $
-                     time.nt-1]
-      endcase         
+      t_ind = fbfa_select_time_indices(run_subdir, time_ref)
 
       ;;==Determine number of time indices
       n_inds = n_elements(t_ind)            
@@ -169,8 +108,8 @@ for id=0,ndims_all-1 do begin
       fity = alog10((reverse(spectrum))[ifk0:ifk1,t_ind[n_inds-1]])
       fitc = linfit(fitx,fity,yfit=yfit)
 
-      ;;==Reverse the time indices for plotting
-      ;;  I did this so that the growth-stage spectrum stands out more
+      ;;==Reverse the time indices for plotting 
+      ;; I did this so that the growth-stage spectrum stands out more
       t_ind = reverse(t_ind)
 
       ;;==Declare plot colors
