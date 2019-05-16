@@ -25,6 +25,9 @@ names = reverse(names)
 ;;==Choose which snapshot to show
 it = 1
 
+;;==Toggle fits
+plot_fits = 'den1'
+
 ;;==Loop over dimension sets
 for id=0,ndims_all-1 do begin
 
@@ -90,12 +93,12 @@ for id=0,ndims_all-1 do begin
       savename = 'den1'+savebase
       savepath = expand_path(path)+path_sep()+savename
       restore, filename=savepath,/verbose
-      print, time
+      ;; print, time
       den1_spectrum = spectrum[*,it]*scale
       savename = 'efield'+savebase
       savepath = expand_path(path)+path_sep()+savename
       restore, filename=savepath,/verbose
-      print, time
+      ;; print, time
       efield_spectrum = spectrum[*,it]*scale
       sys_tf = systime(1)
       print, "Elapsed minutes for restore: ",(sys_tf-sys_t0)/60.
@@ -183,32 +186,38 @@ for id=0,ndims_all-1 do begin
       ax[1].showtext = col_is_left
 
       ;;==Plot fits
-      opl = plot(10^fitx, $
-                 10^den1_yfit, $
-                 color = 'green', $
-                 thick = 2, $
-                 /overplot)
-      slope_str = strcompress(string(den1_fitc[1],format='(f6.1)'),/remove_all)
-      txt = text(current_pos[2]-0.12, $
-                 current_pos[3]-0.10, $
-                 slope_str, $
-                 /normal, $
-                 color='green', $
-                 font_name = 'Times', $
-                 target = frm)
-      opl = plot(10^fitx, $
-                 10^efield_yfit, $
-                 color = 'red', $
-                 thick = 2, $
-                 /overplot)
-      slope_str = strcompress(string(efield_fitc[1],format='(f6.1)'),/remove_all)
-      txt = text(current_pos[2]-0.12, $
-                 current_pos[3]-0.15, $
-                 slope_str, $
-                 /normal, $
-                 color='red', $
-                 font_name = 'Times', $
-                 target = frm)
+      if where(strmatch(plot_fits, 'den1')) ge 0 then begin
+         opl = plot(10^fitx, $
+                    10^den1_yfit, $
+                    color = 'green', $
+                    thick = 2, $
+                    /overplot)
+         slope_str = strcompress(string(den1_fitc[1], $
+                                        format='(f6.1)'),/remove_all)
+         txt = text(current_pos[2]-0.12, $
+                    current_pos[3]-0.10, $
+                    slope_str, $
+                    /normal, $
+                    color='green', $
+                    font_name = 'Times', $
+                    target = frm)
+      endif
+      if where(strmatch(plot_fits, 'efield')) ge 0 then begin
+         opl = plot(10^fitx, $
+                    10^efield_yfit, $
+                    color = 'red', $
+                    thick = 2, $
+                    /overplot)
+         slope_str = strcompress(string(efield_fitc[1], $
+                                        format='(f6.1)'),/remove_all)
+         txt = text(current_pos[2]-0.12, $
+                    current_pos[3]-0.15, $
+                    slope_str, $
+                    /normal, $
+                    color='red', $
+                    font_name = 'Times', $
+                    target = frm)
+      endif
 
       ;;==Print altitude on each panel
       txt = text(current_pos[2]-0.01, $
@@ -240,7 +249,7 @@ txt = text(edges[0]-0.07, $
            0.5*(edges[0]+edges[2]), $
           ;; '$\langle|\delta n(k)/n_0|^2\rangle$, '+ $
           ;; '$\langle|\delta E(k)/E_0|^2\rangle$', $
-          '$\langle|\delta f(k)/f_0|^2\rangle$, ', $
+          '$\langle|\delta f(k)/f_0|^2\rangle$', $
            /normal, $
            alignment = 0.5, $
            baseline = [0,1,0], $
