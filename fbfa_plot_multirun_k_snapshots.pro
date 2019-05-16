@@ -1,6 +1,7 @@
 ;+
 ; Flow angle paper: Read k spectrum from a save file and make plots
-; versus time from multiple directories on the same axes.
+; versus time from multiple directories on the same axes. This routine
+; assumes that the save file contains only the snapshots of interest.
 ;
 ; Created by Matt Young.
 ;-
@@ -37,8 +38,8 @@ for id=0,ndims_all-1 do begin
 
    ;;==Declare which file to restore
    savename = strcmp(simdims,'3D',/fold_case) ? $
-              'den1_sqr-k_spectrum-kpar_full_mean.sav' : $
-              'den1_sqr-k_spectrum.sav'
+              'den1_sqr-snapshots-k_spectrum-kpar_full_mean.sav' : $
+              'den1_sqr-snapshots-k_spectrum.sav'
 
    ;;==Loop over all paths
    for ip=0,n_paths-1 do begin
@@ -92,12 +93,6 @@ for id=0,ndims_all-1 do begin
          endcase
       endif
 
-      ;;==Assign time indices based on run
-      t_ind = fbfa_select_time_indices(run_subdir, time_ref)
-
-      ;;==Determine number of time indices
-      n_inds = n_elements(t_ind)            
-
       ;;==Construct a power-law fit to the final spectrum
       k_vals = reverse(2*!pi/lambda)
       fk0 = 2.0
@@ -105,15 +100,10 @@ for id=0,ndims_all-1 do begin
       ifk0 = find_closest(k_vals,fk0)
       ifk1 = find_closest(k_vals,fk1)
       fitx = alog10(k_vals[ifk0:ifk1])
-      fity = alog10((reverse(spectrum))[ifk0:ifk1,t_ind[n_inds-1]])
+      fity = alog10((reverse(spectrum))[ifk0:ifk1,time.nt-1])
       fitc = linfit(fitx,fity,yfit=yfit)
 
-      ;;==Reverse the time indices for plotting 
-      ;; I did this so that the growth-stage spectrum stands out more
-      t_ind = reverse(t_ind)
-
       ;;==Declare plot colors
-      ;; color = ['green','blue','gray','black']
       color = ['black','gray']
 
       ;;==Declare current position array
@@ -130,22 +120,22 @@ for id=0,ndims_all-1 do begin
                          '$10^{-3}$','$10^{-2}$',         '']
          else: ytickname = ['', '', '', '', '', '']
       endcase
+
       ;;==Check if this is the bottom row
       row_is_bottom = (current_pos[1] eq min(position[1,*]))
 
       ;;==Check if this is the left column
       col_is_left = (current_pos[0] eq min(position[0,*]))
 
-      for it=0,n_inds-1 do begin
+      for it=0,time.nt-1 do begin
          frm = plot(2*!pi/lambda, $
-                    spectrum[*,t_ind[it]], $
+                    spectrum[*,it], $
                     position = current_pos, $
                     yrange = [1e-6,1e0], $
                     xstyle = 1, $
                     /xlog, $
                     /ylog, $
                     xtitle = 'k [m$^{-1}$]', $
-                    ;; ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
                     xtickfont_size = 12.0, $
                     ytickfont_size = 10.0, $
                     ytickname = ytickname, $
