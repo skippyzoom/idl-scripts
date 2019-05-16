@@ -90,10 +90,12 @@ for id=0,ndims_all-1 do begin
       savename = 'den1'+savebase
       savepath = expand_path(path)+path_sep()+savename
       restore, filename=savepath,/verbose
+      print, time
       den1_spectrum = spectrum[*,it]*scale
       savename = 'efield'+savebase
       savepath = expand_path(path)+path_sep()+savename
       restore, filename=savepath,/verbose
+      print, time
       efield_spectrum = spectrum[*,it]*scale
       sys_tf = systime(1)
       print, "Elapsed minutes for restore: ",(sys_tf-sys_t0)/60.
@@ -101,7 +103,7 @@ for id=0,ndims_all-1 do begin
       ;;==Extract number of wavelengths
       nl = n_elements(lambda)
 
-      ;;==Construct a power-law fit to each final spectrum
+      ;;==Construct a power-law fit to the density spectrum
       k_vals = reverse(2*!pi/lambda)
       fk0 = 2.0
       fk1 = 5.0
@@ -109,11 +111,23 @@ for id=0,ndims_all-1 do begin
       ifk1 = find_closest(k_vals,fk1)
       fitx = alog10(k_vals[ifk0:ifk1])
       den1_fity = alog10((reverse(den1_spectrum))[ifk0:ifk1])
-      den1_fitc = linfit(fitx,den1_fity,yfit=den1_yfit,chisqr=den1_chisqr,prob=den1_prob)
+      den1_fitc = linfit(fitx,den1_fity,yfit=den1_yfit, $
+                         chisqr=den1_chisqr,prob=den1_prob,sigma=den1_sigma)
+      help, den1_chisqr,den1_prob
+      print, "DEN1_SIGMA: ",den1_sigma
+
+      ;;==Construct a power-law fit to the E-field spectrum
+      k_vals = reverse(2*!pi/lambda)
+      fk0 = 2.0
+      fk1 = 5.0
+      ifk0 = find_closest(k_vals,fk0)
+      ifk1 = find_closest(k_vals,fk1)
+      fitx = alog10(k_vals[ifk0:ifk1])
       efield_fity = alog10((reverse(efield_spectrum))[ifk0:ifk1])
-      efield_fitc = linfit(fitx,efield_fity,yfit=efield_yfit,chisqr=efield_chisqr,prob=efield_prob)
-      help, den1_chisqr,efield_chisqr
-      help, den1_prob,efield_prob
+      efield_fitc = linfit(fitx,efield_fity,yfit=efield_yfit, $
+                           chisqr=efield_chisqr,prob=efield_prob,sigma=efield_sigma)
+      help, efield_chisqr,efield_prob
+      print, "EFIELD_SIGMA: ",efield_sigma
 
       ;;==Declare current position array
       current_pos = position[*,ip*ndims_all+id]
@@ -224,8 +238,9 @@ endfor
 ;;==Print a common y-axis title
 txt = text(edges[0]-0.07, $
            0.5*(edges[0]+edges[2]), $
-          '$\langle|\delta n(k)/n_0|^2\rangle$, '+ $
-          '$\langle|\delta E(k)/E_0|^2\rangle$', $
+          ;; '$\langle|\delta n(k)/n_0|^2\rangle$, '+ $
+          ;; '$\langle|\delta E(k)/E_0|^2\rangle$', $
+          '$\langle|\delta f(k)/f_0|^2\rangle$, ', $
            /normal, $
            alignment = 0.5, $
            baseline = [0,1,0], $
