@@ -13,7 +13,6 @@ dataname = 'efield'
 if strcmp(dataname, 'efield') then readname = 'phi' $
 else readname = dataname
 
-
 ;;==Read in parameter dictionary
 params = set_eppic_params(path=path)
 
@@ -29,6 +28,7 @@ dt = params.dt*params.nout
 dkx = 2*!pi/(dx*nx)
 dky = 2*!pi/(dy*ny)
 dkz = 2*!pi/(dz*nz)
+E0 = params.Ex0_external+params.Ey0_external+params.Ez0_external
 
 ;;==Declare RMS range parallel to B
 ;; i_kx0 = nx/2-2
@@ -93,7 +93,7 @@ if n_elements(snap_files) gt 0 then begin
             xcomp = -1.0*grad.x
             ycomp = -1.0*grad.y
             mag = sqrt(xcomp^2 + ycomp^2)
-            tmp = mag
+            tmp = (mag-E0)/E0
          endif
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
@@ -132,7 +132,7 @@ if n_elements(snap_files) gt 0 then begin
             ycomp = -1.0*grad.y
             zcomp = -1.0*grad.z
             mag = sqrt(xcomp^2 + ycomp^2 + zcomp^2)
-            tmp = mag
+            tmp = (mag-E0)/E0
          endif
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
