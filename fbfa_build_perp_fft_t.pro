@@ -5,7 +5,11 @@
 ;-
 
 ;;==Declare name of target data quantity
-dataname = 'den1'
+dataname = 'efield'
+
+;;==Set name for reading
+if strcmp(dataname, 'efield') then readname = 'phi' $
+else readname = dataname
 
 ;;==Read in parameter dictionary
 params = set_eppic_params(path=path)
@@ -22,6 +26,7 @@ dt = params.dt*params.nout
 dkx = 2*!pi/(dx*nx)
 dky = 2*!pi/(dy*ny)
 dkz = 2*!pi/(dz*nz)
+E0 = params.Ex0_external+params.Ey0_external+params.Ez0_external
 
 ;;==Declare RMS range parallel to B
 ;; i_kx0 = nx/2-2
@@ -71,7 +76,17 @@ if n_files_sub eq nt then begin
       ;;==Loop over files to build array
       sys_t0 = systime(1)
       for it=it0,itf-1,itd do begin
-         tmp = get_h5_data(sub_files[it],dataname)
+         tmp = get_h5_data(sub_files[it],readname)
+         if strcmp(dataname, 'efield') then begin
+            orig = tmp
+            grad = gradient(orig, $
+                            dx = dx, $
+                            dy = dy)
+            xcomp = -1.0*grad.x
+            ycomp = -1.0*grad.y
+            mag = sqrt(xcomp^2 + ycomp^2)
+            tmp = (mag-E0)/E0
+         endif
          tmp = transpose(tmp,[1,0])
          tmp = fft(tmp,/center,/overwrite)
          tmp = abs(tmp)^2
@@ -98,7 +113,19 @@ if n_files_sub eq nt then begin
       ;;==Loop over files to build array
       sys_t0 = systime(1)
       for it=it0,itf-1,itd do begin
-         tmp = get_h5_data(sub_files[it],dataname)
+         tmp = get_h5_data(sub_files[it],readname)
+         if strcmp(dataname, 'efield') then begin
+            orig = tmp
+            grad = gradient(orig, $
+                            dx = dx, $
+                            dy = dy, $
+                            dz = dz)
+            xcomp = -1.0*grad.x
+            ycomp = -1.0*grad.y
+            zcomp = -1.0*grad.z
+            mag = sqrt(xcomp^2 + ycomp^2 + zcomp^2)
+            tmp = (mag-E0)/E0
+         endif
          tmp = transpose(tmp,[2,1,0])
          tmp = fft(tmp,/center,/overwrite)
          tmp = mean(abs(tmp[i_kx0:i_kxf-1,*,*])^2,dim=1)
