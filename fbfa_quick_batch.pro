@@ -3,34 +3,6 @@
 ; paper. 
 ;-
 
-;; @unload_defaults
-;; @unload_data
-;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h1-Ey0_050/'
-;; ;; ;; rotate = 0
-;; ;; ;; axes = 'xy'
-;; @fb_flow_angle_analysis
-;; ;; ;; @calc_den1fft_t_theta
-;; ;; .r hybrid_disp_rel_plot
-
-
-;; @unload_defaults
-;; @unload_data
-;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h0-Ey0_050/'
-;; @fbfa_defaults_and_time
-;; .r fbfa_varphi1_3D_images
-
-;; @unload_defaults
-;; @unload_data
-;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h1-Ey0_050/'
-;; @fbfa_defaults_and_time
-;; .r fbfa_varphi1_3D_images
-
-;; @unload_defaults
-;; @unload_data
-;; path = get_base_dir()+path_sep()+'fb_flow_angle/3D-new_coll/h2-Ey0_050/'
-;; @fbfa_defaults_and_time
-;; .r fbfa_varphi1_3D_images
-
 @unload_defaults
 @unload_data
 path = get_base_dir()+path_sep()+'fb_flow_angle/2D-new_coll/h0-Ey0_050/'
