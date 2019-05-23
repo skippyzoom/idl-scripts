@@ -23,6 +23,13 @@ current_frm = 0B
 names = ['107 km', '110 km', '113 km']
 names = reverse(names)
 
+;;==Open a log file
+logpath = get_base_dir()+path_sep()+ $
+          'fb_flow_angle'+path_sep()+'common'+ $
+          path_sep()+'frames'+path_sep()+ $
+          'den1_sqr-k_spectrum-multirun-snapshots.log'
+openw, wlun,logpath,/get_lun
+
 ;;==Loop over dimension sets
 for id=0,ndims_all-1 do begin
 
@@ -101,7 +108,13 @@ for id=0,ndims_all-1 do begin
       ifk1 = find_closest(k_vals,fk1)
       fitx = alog10(k_vals[ifk0:ifk1])
       fity = alog10((reverse(spectrum))[ifk0:ifk1,time.nt-1])
-      fitc = linfit(fitx,fity,yfit=yfit)
+      fitc = linfit(fitx,fity,yfit=yfit, $
+                    sigma=sigma,chisqr=chisqr,prob=prob)
+      printf, wlun,"PATH = ",run_subdir
+      printf, wlun,"SIGMA = ",sigma
+      printf, wlun,"CHISQR = ",chisqr
+      printf, wlun,"PROB = ",prob
+      printf, wlun," "
 
       ;;==Declare plot colors
       color = ['black','gray']
@@ -141,7 +154,8 @@ for id=0,ndims_all-1 do begin
                     ytickname = ytickname, $
                     color = color[it], $
                     symbol = 'o', $
-                    sym_size = 0.5, $
+                    sym_size = 0.1, $
+                    linestyle = 'none', $
                     /sym_filled, $
                     overplot = (it gt 0), $
                     current = current_frm, $
@@ -156,9 +170,11 @@ for id=0,ndims_all-1 do begin
          ax = frm.axes
          ax[0].showtext = row_is_bottom
          ax[1].showtext = col_is_left
-         slope_str = strcompress(string(fitc[1],format='(f6.1)'),/remove_all)
-         txt = text(current_pos[2]-0.12, $
-                    current_pos[3]-0.1, $
+         slope_str = string(fitc[1],format='(f6.1)')
+         slope_str = strcompress(slope_str,/remove_all)
+         slope_str += "$\pm$ "+string(sigma[1],format='(f3.1)')
+         txt = text(current_pos[2]-0.11, $
+                    current_pos[3]-0.10, $
                     slope_str, $
                     /normal, $
                     color='red', $
@@ -168,8 +184,8 @@ for id=0,ndims_all-1 do begin
       endfor
 
       ;;==Print altitude on each panel
-      txt = text(current_pos[2]-0.01, $
-                 current_pos[3]-0.01, $
+      txt = text(current_pos[2]-0.02, $
+                 current_pos[3]-0.02, $
                  names[ip], $
                  /normal, $
                  alignment = 1.0, $
@@ -212,6 +228,10 @@ frmpath = get_base_dir()+path_sep()+ $
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath
+
+;;==Close the log file
+close, wlun
+free_lun, wlun
 
 end
 
