@@ -4,7 +4,7 @@
 ;-
 
 ;;==Declare name of target data quantity
-dataname = 'efield'
+dataname = 'den1'
 
 ;;==Set name for reading
 if strcmp(dataname, 'efield') then readname = 'phi' $
@@ -70,7 +70,7 @@ if n_files_sub eq nt then begin
    if params.ndim_space eq 2 then begin
 
       ;;==Allocate the array
-      fftdata = fltarr(nx,ny,(itf-it0)/itd+1)
+      fftdata = complexarr(nx,ny,(itf-it0)/itd+1)
 
       ;;==Loop over files to build array
       sys_t0 = systime(1)
@@ -106,7 +106,7 @@ if n_files_sub eq nt then begin
    else begin
 
       ;;==Allocate the array
-      fftdata = fltarr(ny,nz,(itf-it0)/itd+1)
+      fftdata = complexarr(ny,nz,(itf-it0)/itd+1)
 
       ;;==Loop over files to build array
       sys_t0 = systime(1)
