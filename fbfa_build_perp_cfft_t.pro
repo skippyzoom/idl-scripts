@@ -1,6 +1,8 @@
 ;+
-; Flow angle paper: Similar to fbfa_build_perp_fft_t.pro except that
-; this script leaves the complex array as is.
+; Flow angle project: Similar to fbfa_build_perp_fft_t.pro except that
+; this routine leaves the complex array as is.
+;
+; Created by Matt Young
 ;-
 
 ;;==Declare name of target data quantity
