@@ -106,6 +106,8 @@ for id=0,ndims_all-1 do begin
                            right_edge, $
                            top_edge], $
                  yrange = [1e-4,1e-1], $
+                 ytickname = ['$10^{-4}$', '$10^{-3}$', $
+                              '$10^{-2}$', '$10^{-1}$'], $
                  ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
                  color = colors[ia], $
                  font_name = 'Times', $
