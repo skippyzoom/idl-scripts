@@ -105,6 +105,7 @@ for id=0,ndims_all-1 do begin
                            bottom_edge, $
                            right_edge, $
                            top_edge], $
+                 xtitle = 'Time ['+time.unit+']', $
                  yrange = [1e-4,1e-1], $
                  ytickname = ['$10^{-4}$', '$10^{-3}$', $
                               '$10^{-2}$', '$10^{-1}$'], $
