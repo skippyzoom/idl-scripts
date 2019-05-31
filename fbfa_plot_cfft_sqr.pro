@@ -17,7 +17,7 @@ n_altitudes = n_elements(altitudes)
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          dataname+'-cfft_sqr-TEST.pdf'
+          dataname+'-cfft-sqr_rms.pdf'
 
 ;;==Declare plot colors.
 colors = ['blue', 'green', 'red']
@@ -82,7 +82,6 @@ for id=0,ndims_all-1 do begin
       lx = nx*dx
       ly = ny*dy
       lz = nz*dz
-      help, nx,ny,nz,dx,dy,dz
 
       ;;==Declare normalization factor.
       factor = 1.0
@@ -90,13 +89,11 @@ for id=0,ndims_all-1 do begin
                double(nx)*nx*ny*nz : $
                double(nx)*ny
       factor = sqrt(factor)
-      print, "FACTOR: ",factor
 
       ;;==Build array for plotting.
       sqr_rms = fltarr(time.nt)
       for it=0,time.nt-1 do $
          sqr_rms[it] = rms(factor*abs(fftdata[*,*,it]))^2
-      print, "FINAL VALUE: ",sqr_rms[time.nt-1]
 
       ;;==Create the frame or add plots.
       frm = plot(float(time.stamp), $
