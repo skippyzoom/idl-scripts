@@ -17,10 +17,10 @@ position = multi_position([2,1], $
 
 ;;==Declare wavelengths (in meters) of interest
 ;;  Set either to !NULL to use default.
-lam0 = 1.0
-lamf = 5.0
-;; lam0 = !NULL
-;; lamf = !NULL
+;; lam0 = 1.0
+;; lamf = 5.0
+lam0 = !NULL
+lamf = !NULL
 
 ;;==Set color preferences
 colors = ['blue','green','red']
@@ -76,13 +76,15 @@ for id=0,ndims_all-1 do begin
       dky = 2*!pi/(dy*ny)
       dkz = 2*!pi/(dz*nz)
 
-      ;;==Rescale spectrum by number of perpendicular points.
-      spectrum *= long(ny)*dy
+      ;;==Rescale spectrum by perpendicular area.
+      perp_area = 1.0
+      perp_area *= long(ny)*dy
       if params.ndim_space eq 3 then begin
-         spectrum *= long(nz)*dz
+         perp_area *= long(nz)*dz
       endif else begin
-         spectrum *= long(nx)*dx
+         perp_area *= long(nx)*dx
       endelse
+      spectrum *= perp_area
 
       ;;==Rescale 3-D runs to account for mean along B.
       if params.ndim_space eq 3 then begin
@@ -121,7 +123,7 @@ for id=0,ndims_all-1 do begin
                  position = current_pos, $
                  xstyle = 1, $
                  /ylog, $
-                 yrange = [1e-5,1e-1], $
+                 yrange = [1e-8,1e-3], $
                  xtitle = 'Time ['+time.unit+']', $
                  ytitle = '$\langle|\delta n(k)/n_0|^2\rangle$', $
                  color = colors[ip], $
@@ -174,7 +176,7 @@ txt = text(0.5*(edges[0]+edges[2]), $
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          'den1_sqr-k_spectrum-multirun-bands_meter.pdf'
+          'den1_sqr-k_spectrum-multirun-bands_all.pdf'
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath
