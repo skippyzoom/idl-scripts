@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare name of target data quantity
-dataname = 'den1'
+dataname = 'efield'
 
 ;;==Set name for reading
 if strcmp(dataname, 'efield') then readname = 'phi' $
@@ -24,10 +24,15 @@ dx = params.dx*params.nout_avg
 dy = params.dy*params.nout_avg
 dz = params.dz*params.nout_avg
 dt = params.dt*params.nout
-dkx = 2*!pi/(dx*nx)
-dky = 2*!pi/(dy*ny)
-dkz = 2*!pi/(dz*nz)
 E0 = params.Ex0_external+params.Ey0_external+params.Ez0_external
+
+;;==Declare time indices
+it0 = 0
+itf = nt
+;; itd = 2*time_ref.subsample
+;; itd = 2
+;; itd = 1
+itd = params.ndim_space eq 2 ? 4 : 2
 
 ;;==Get all file names
 datapath = expand_path(path)+path_sep()+'parallel'
@@ -36,7 +41,7 @@ files = file_search(expand_path(datapath)+ $
                     count = n_files)
 
 ;;==Construct a time dictionary for this data subset
-steps = params.nout*lindgen(nt)
+steps = params.nout*(it0+itd*lindgen((itf-it0-1)/itd+1))
 time = time_strings(steps, $
                     dt = params.dt, $
                     scale = 1e3, $
@@ -46,11 +51,12 @@ time = time_strings(steps, $
 if params.ndim_space eq 2 then begin
 
    ;;==Allocate the array
-   data = fltarr(nx,ny,nt)
+   data = fltarr(nx,ny,(itf-it0)/itd+1)
+   help, data
 
    ;;==Loop over files to build array
    sys_t0 = systime(1)
-   for it=0,nt-1 do begin
+   for it=it0,itf-1,itd do begin
       tmp = get_h5_data(files[it],readname)
       if strcmp(dataname, 'efield') then begin
          orig = tmp
@@ -63,7 +69,7 @@ if params.ndim_space eq 2 then begin
          tmp = (mag-E0)/E0
       endif
       tmp = transpose(tmp,[1,0])
-      data[*,*,it] = tmp
+      data[*,*,(it-it0)/itd] = tmp
    endfor
    sys_tf = systime(1)
    print, "Elapsed minutes for read: ",(sys_tf-sys_t0)/60.
@@ -72,11 +78,12 @@ endif $
 else begin
 
    ;;==Allocate the array
-   data = fltarr(nx,ny,nz,nt)
+   data = fltarr(nx,ny,nz,(itf-it0)/itd+1)
+   help, data
 
    ;;==Loop over files to build array
    sys_t0 = systime(1)
-   for it=0,nt-1 do begin
+   for it=it0,itf-1,itd do begin
       tmp = get_h5_data(files[it],readname)
       if strcmp(dataname, 'efield') then begin
          orig = tmp
@@ -91,7 +98,7 @@ else begin
          tmp = (mag-E0)/E0
       endif
       tmp = transpose(tmp,[2,1,0])
-      data[*,*,*,it] = tmp
+      data[*,*,*,(it-it0)/itd] = tmp
    endfor
    sys_tf = systime(1)
    print, "Elapsed minutes for read: ",(sys_tf-sys_t0)/60.
@@ -99,7 +106,9 @@ else begin
 endelse
 
 ;;==Save the data to disk
-savename = dataname+'.sav'
+savename = dataname+ $
+           '-itd_'+strcompress(itd,/remove_all)+ $
+           '.sav'
 savepath = expand_path(path)+path_sep()+savename
 sys_t0 = systime(1)
 save, time,data,filename=savepath
