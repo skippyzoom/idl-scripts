@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare name of target data quantity
-dataname = 'efield'
+dataname = 'phi'
 
 ;;==Set name for reading
 if strcmp(dataname, 'efield') then readname = 'phi' $
@@ -34,11 +34,8 @@ itf = nt
 ;; itd = 1
 itd = params.ndim_space eq 2 ? 4 : 2
 
-;;==Get all file names
+;;==Declare path to data files
 datapath = expand_path(path)+path_sep()+'parallel'
-files = file_search(expand_path(datapath)+ $
-                    path_sep()+'parallel*.h5', $
-                    count = n_files)
 
 ;;==Construct a time dictionary for this data subset
 steps = params.nout*(it0+itd*lindgen((itf-it0-1)/itd+1))
@@ -51,13 +48,15 @@ time = time_strings(steps, $
 if params.ndim_space eq 2 then begin
 
    ;;==Allocate the array
-   data = fltarr(nx,ny,(itf-it0)/itd+1)
+   data = fltarr(nx,ny,time.nt)
    help, data
 
    ;;==Loop over files to build array
    sys_t0 = systime(1)
-   for it=it0,itf-1,itd do begin
-      tmp = get_h5_data(files[it],readname)
+   for it=0,time.nt-1 do begin
+      file = expand_path(datapath)+path_sep()+ $
+             'parallel'+time.index[it]+'.h5'
+      tmp = get_h5_data(file,readname)
       if strcmp(dataname, 'efield') then begin
          orig = tmp
          grad = gradient(orig, $
@@ -69,7 +68,7 @@ if params.ndim_space eq 2 then begin
          tmp = (mag-E0)/E0
       endif
       tmp = transpose(tmp,[1,0])
-      data[*,*,(it-it0)/itd] = tmp
+      data[*,*,it] = tmp
    endfor
    sys_tf = systime(1)
    print, "Elapsed minutes for read: ",(sys_tf-sys_t0)/60.
@@ -78,13 +77,15 @@ endif $
 else begin
 
    ;;==Allocate the array
-   data = fltarr(nx,ny,nz,(itf-it0)/itd+1)
+   data = fltarr(nx,ny,nz,time.nt)
    help, data
 
    ;;==Loop over files to build array
    sys_t0 = systime(1)
-   for it=it0,itf-1,itd do begin
-      tmp = get_h5_data(files[it],readname)
+   for it=0,time.nt-1 do begin
+      file = expand_path(datapath)+path_sep()+ $
+             'parallel'+time.index[it]+'.h5'
+      tmp = get_h5_data(file,readname)
       if strcmp(dataname, 'efield') then begin
          orig = tmp
          grad = gradient(orig, $
@@ -98,7 +99,7 @@ else begin
          tmp = (mag-E0)/E0
       endif
       tmp = transpose(tmp,[2,1,0])
-      data[*,*,*,(it-it0)/itd] = tmp
+      data[*,*,*,it] = tmp
    endfor
    sys_tf = systime(1)
    print, "Elapsed minutes for read: ",(sys_tf-sys_t0)/60.
