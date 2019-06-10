@@ -3,14 +3,13 @@
 ; in space and the FFT in time.
 ;-
 
-dataname = 'efield'
-
 ;;==Declare all dimensions
 alldims = ['2D','3D']
 ndims_all = n_elements(alldims)
 
 ;;==Compute positions
-edges = [0.1,0.1,0.9,0.9]
+edges = [0.2,0.1,0.8,0.9]
+buffers = [0.0,0.0]
 position = multi_position([2,3], $
                           edges = edges, $
                           buffers = [0.0,0.0])
@@ -51,6 +50,7 @@ for ic=0,n_cols-1 do begin
       col_is_left = (current_pos[0] eq min(position[0,*]))
 
       ;;==Set up data
+      nt = n_elements(xdata[0,0])
       xtmp = xdata[ip]
       xtmp = xtmp[nt/2+1:*]
       ytmp = ydata[ip]
@@ -122,7 +122,7 @@ txt = text(edges[0]-0.07, $
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          'efield-rms_fft_w-4m_boom.pdf'
+          'efield-rocket.pdf'
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath
