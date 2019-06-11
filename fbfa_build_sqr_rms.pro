@@ -6,7 +6,7 @@
 ;-
 
 ;;==Declare name of file to restore
-savename = 'den1.sav'
+savename = 'den1-itd_1.sav'
 
 ;;==Declare all dimensions
 alldims = ['2D','3D']
