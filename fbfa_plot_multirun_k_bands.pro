@@ -5,6 +5,10 @@
 ; Created by Matt Young.
 ;-
 
+;;==Declare plot name and type
+plotname = 'den1_sqr-k_spectrum-multirun-bands_all'
+plottype = 'png'
+
 ;;==Declare all dimensions
 alldims = ['2D','3D']
 ndims_all = n_elements(alldims)
@@ -176,7 +180,7 @@ txt = text(0.5*(edges[0]+edges[2]), $
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          'den1_sqr-k_spectrum-multirun-bands_all.pdf'
+          plotname+'.'+plottype
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath

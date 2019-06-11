@@ -4,6 +4,10 @@
 ; adjusting graphics without reading data from memory every time.
 ;-
 
+;;==Declare plot name and type
+plotname = 'den1-sqr_rms'
+plottype = 'png'
+
 ;;==Declare all dimensions
 alldims = ['2D','3D']
 ndims_all = n_elements(alldims)
@@ -83,7 +87,7 @@ endfor ;;ndims_all
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          'den1-sqr_rms.pdf'
+          plotname+'.'+plottype
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath

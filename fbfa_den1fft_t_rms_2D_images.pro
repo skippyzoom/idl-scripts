@@ -61,7 +61,7 @@ kydata = shift(kydata,ny/2-1)
 
 ;;==Declare file name
 filepath = expand_path(path)+path_sep()+'frames'
-filename = build_filename('den1fft_t_rms','pdf', $
+filename = build_filename('den1fft_t_rms','png', $
                           additions = ['growth', $
                                        'centroid'], $
                           path = filepath)

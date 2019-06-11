@@ -3,6 +3,10 @@
 ; (see, for example, fbfa_build_rocket_spectrum.pro).
 ;-
 
+;;==Declare plot name and type
+plotname = 'efield-rocket'
+plottype = 'png'
+
 ;;==Declare all dimensions
 alldims = ['2D','3D']
 ndims_all = n_elements(alldims)
@@ -170,7 +174,7 @@ txt = text(edges[0]-0.07, $
 frmpath = get_base_dir()+path_sep()+ $
           'fb_flow_angle'+path_sep()+'common'+ $
           path_sep()+'frames'+path_sep()+ $
-          'efield-rocket.pdf'
+          plotname+'.'+plottype
 
 ;;==Save graphics frame
 frame_save, frm,filename = frmpath

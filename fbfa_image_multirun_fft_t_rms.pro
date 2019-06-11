@@ -8,6 +8,9 @@
 ; Created by Matt Young.
 ;-
 
+;;==Declare plot type
+plottype = 'png'
+
 ;;==Declare all dimensions
 alldims = ['2D','3D']
 ndims_all = n_elements(alldims)
@@ -412,7 +415,7 @@ for id=0,ndims_all-1 do begin
                 path_sep()+'2D-new_coll'+ $
                 path_sep()+'common'+ $
                 path_sep()+'frames'+ $
-                path_sep()+swap_extension(savename,'pdf')
+                path_sep()+swap_extension(savename,plottype)
       frame_save, frm,filename = frmpath
 
    endif $
@@ -799,7 +802,7 @@ for id=0,ndims_all-1 do begin
                 path_sep()+'3D-new_coll'+ $
                 path_sep()+'common'+ $
                 path_sep()+'frames'+ $
-                path_sep()+swap_extension(savename,'pdf')
+                path_sep()+swap_extension(savename,plottype)
       frame_save, frm,filename = frmpath
 
    endelse ;; 3D
